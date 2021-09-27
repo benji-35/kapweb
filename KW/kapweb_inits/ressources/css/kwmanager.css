@@ -1,0 +1,252 @@
+body {
+    padding: 0;
+    margin: 0;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.content {
+    position: absolute;
+    width:100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+}
+
+.navMenu{
+    width: 15%;
+    background: rgb(2,0,36);
+    background: -moz-linear-gradient(235deg, rgba(2,0,36,1) 0%, rgba(121,9,9,1) 71%, rgba(255,0,0,1) 100%);
+    background: -webkit-linear-gradient(235deg, rgba(2,0,36,1) 0%, rgba(121,9,9,1) 71%, rgba(255,0,0,1) 100%);
+    background: linear-gradient(235deg, rgba(2,0,36,1) 0%, rgba(121,9,9,1) 71%, rgba(255,0,0,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024",endColorstr="#ff0000",GradientType=1);  
+    text-align: center;
+    display: block;
+    color: white;
+}
+
+.contextMenu {
+    width: 85%;
+    background-color: rgb(235, 235, 235);
+    text-align: center;
+}
+
+.closeMenuNav {
+    display: none;
+    text-align: center;
+    color: white;
+    width: 90%;
+    border: 2px solid white;
+    position: relative;
+    left: 5%;
+}
+
+.contextDev {
+    display: none;
+}
+
+.btnNavMenu {
+    width: 100%;
+    height: 50px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    text-transform: capitalize;
+    font-size: large;
+}
+
+.btnNavMenu:hover {
+    background-color: rgba(94, 94, 94, 0.5);
+}
+
+.btnSelected {
+    background-color: rgba(71, 71, 71, 0.7);
+    width: 100%;
+    height: 50px;
+    color: white;
+    border: none;
+    font-size: large;
+    text-transform: uppercase;
+}
+
+.titleContextDev {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+}
+
+.deconnectForm {
+    width: 100%;
+    position: relative;
+    bottom: 0;
+}
+
+.deconnectForm input{
+    width: 100%;
+    height: 50px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    text-transform: capitalize;
+    font-size: large;
+}
+
+.deconnectForm input:hover {
+    background-color: rgba(94, 94, 94, 0.5);
+}
+
+.formCreatePage {
+    margin-top: 20px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    border: 2px solid black;
+    padding: 0;
+    width: 400px;
+    background-color: orange;
+}
+
+.formCreatePage input {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.whiteDiv {
+    width: 100%;
+    background-color: white;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.pageDescription {
+    width: 90%;
+    border: 2px solid black;
+    display: block ruby;
+}
+
+th {
+    display: table-cell;
+    padding: 15px;
+    background-color: gray;
+}
+
+.tablePages {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 98%;
+}
+
+.tableDeletedPages {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 98%;
+}
+
+.tableTables {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 98%;
+}
+
+.editPageUrl {
+    color: black;
+    text-decoration: none;
+    width: auto;
+    font-size: 16px;
+    font-family: "sans-serif";
+    font-weight: lighter;
+}
+
+.editPageUrl:hover {
+    cursor: default;
+}
+
+.editPageUrl:hover .dEditPageLink {
+    background-color: #d1d1d1;
+}
+
+.dEditPageLink {
+    background-color: #e9e9eD;
+    border: gray;
+    border-radius: 4px;
+    width: 100%;
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.restorePage {
+    width: 40%;
+    height: 25px;
+}
+
+.deleteFinalPage {
+    width: 40%;
+    height: 25px;
+}
+
+.argsTable {
+    width: 90%;
+    height: 25px;
+}
+
+.descriptionTable  {
+    width: 98%;
+}
+
+.selectTypeArg {
+    width: 80%;
+    margin-right: 10%;
+    margin-left: 10%;
+    height: 50px;
+}
+
+.checkCanBeNullTable {
+    width: 25px;
+    height: 25px;
+    margin: 5px;
+}
+
+.fakeButtonA {
+    text-decoration: none;
+    color: black;
+}
+
+.fakeButtonA:hover {
+    cursor: default;
+}
+
+.fakeButtonA:hover .fakeButton {
+    background-color: #d6d6d6;
+}
+
+.fakeButton {
+    border: 1px solid gray;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #e9e9ed;
+    width: 100%;
+}
+
+.deleteTable {
+    width: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+    
+.errorMsg {
+    background-color: rgba(255, 0, 0, 0.514);
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 0px;
+    margin-top: 0;
+    padding-left: 5px;
+    padding-right: 5px;
+}

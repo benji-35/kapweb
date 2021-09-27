@@ -1,0 +1,57 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+.formConnect {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    border: 2px solid black;
+    padding: 0;
+    width: 400px;
+    background-color: orange;
+}
+
+.formConnect input {
+    height: 50px;
+    width: 90%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+input[type="text"]::placeholder {
+    transform: translateX(5px);
+}
+
+.formCreate h1 {
+    background-color: orange;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.whiteInForm {
+    background-color: white;
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#connection {
+    display: block;
+}
+
+#creation {
+    display: none;
+}
+
+.formConnect button {
+    width: 80%;
+    height: 25px;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-bottom: 10px;
+}
