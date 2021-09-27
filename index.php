@@ -143,6 +143,18 @@ if (!$hlp->haveConnectionDbIntels() || $canConnect == false) {
             } else {
                 require $hlp->getPathPage($url);
             }
+        } else if (count($url) == 2 && $url[0] == "confirmEmail") {
+            unset($_SESSION['confEmail']);
+            $_SESSION['confEmail'] = $url[1];
+            unset($url[1]);
+            require $hlp->getPathPage($url);
+        } else if (count($url) == 2 && $url[0] == "changePassword") {
+            unset($_SESSION['chgPwd']);
+            $_SESSION['chgPwd'] = $url[1];
+            unset($url[1]);
+            require $hlp->getPathPage($url);
+        } else if (count($url) >= 1 && $url[0] == "pageNotFound") {
+            require $hlp->getPathPage($url);
         } else {
             require $hlp->getPathPage(array("KW"));
         }

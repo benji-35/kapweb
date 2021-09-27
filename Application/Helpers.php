@@ -100,11 +100,15 @@ class Helpers {
     public static function getMainUrl():string {
         global $cf;
         $res = $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_url");
-        if ($res != "") {
-            return $res;
+        $resTmp = "";
+        for ($i = 0; $i < strlen($res) - 1; $i++) {
+            $resTmp .= $res[$i];
+        }
+        if ($resTmp != "") {
+            return $resTmp;
         } else {
             self::$cf->addValueFormKeyConf($cf->getFilesConfig(), "main_url", "http://localhost/kapweb");
-            return self::$cf->getValueFromKeyConf($cf->getFilesConfig(), "main_url");
+            return self::getMainUrl();
         }
     }
 
@@ -129,7 +133,7 @@ class Helpers {
         }
     }
 
-    public static function generateConfirmMail($email) {
+    public static function generateConfirmMail($email, $isSu) {
         global $db, $cf;
         $cid = self::generateCid();
         $obj = "Confirmation de votre mail pour le site " . $cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name");
@@ -139,12 +143,104 @@ class Helpers {
             . " .\n\n\nSi ce n'est pas vous veuillez cliquer sur ce lien" . " .\n" 
             . "Encore merci et à bientôt sur " . $cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name");
         $header = "From: " . $cf->getValueFromKeyConf($cf->getFilesConfig(), "email-confirm-password");
+        $connect = $db->connect();
+        $stm = $connect->prepare("INSERT INTO kp_mailconfirm (cid, email, isSu, checked, changeMail) VALUES (?, ?, ?, ?, ?)");
+        $stm->execute(array(
+            $cid,
+            $email,
+            $isSu,
+            0,
+            0
+        ));
+        $db->disconnect();
         mail($to, $obj, $msg, $header);
     }
 
-    public static function generateChangePwd($email) {
+    public static function generateChangePwd($email, $isSu) {
         global $db;
         $cid = self::generateCid();
+        $connect = $db->connect();
+        $stm = $connect->prepare("INSERT INTO kp_mailconfirm (cid, email, isSu, checked, changeMail) VALUES (?, ?, ?, ?, ?)");
+        $stm->execute(array(
+            $cid,
+            $email,
+            $isSu,
+            0,
+            0
+        ));
+        $db->disconnect();
+    }
+
+    private static function getEmailFromCid($cid):string {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_mailconfirm WHERE cid=?");
+        $stm->execute(array($cid));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return $resStm['email'];
+        }
+        return "";
+    }
+
+    private static function getIsSuFromCid($cid):int {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_mailconfirm WHERE cid=?");
+        $stm->execute(array($cid));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return $resStm['isSu'];
+        }
+        return 0;
+    }
+
+    public static function validConfirmEmail($cid) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE kp_mailconfirm SET checked = '1' WHERE cid=?");
+        $stm->execute(array($cid));
+        $email = self::getEmailFromCid($cid);
+        if (self::getIsSuFromCid($cid) == 1) {
+            $stm = $connect->prepare("UPDATE su_users SET status = '1' WHERE email=?");
+            $stm->execute(array($email));
+        } else {
+            $stm = $connect->prepare("UPDATE no_users SET status = '1' WHERE email=?");
+            $stm->execute(array($email));
+        }
+        $db->disconnect();
+    }
+
+    public static function deleteAccountFromCid($cid) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE kp_mailconfirm SET checked = '1' WHERE cid=?");
+        $stm->execute(array($cid));
+        $email = self::getEmailFromCid($cid);
+        if (self::getIsSuFromCid($cid) == 1) {
+            $stm = $connect->prepare("UPDATE su_users SET deleted = '1' WHERE email=?");
+            $stm->execute(array($email));
+        } else {
+            $stm = $connect->prepare("UPDATE no_users SET deleted = '1' WHERE email=?");
+            $stm->execute(array($email));
+        }
+        $db->disconnect();
+    }
+
+    public static function cidExists($cid): bool {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_mailconfirm WHERE cid=?");
+        $stm->execute(array($cid));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            if ($resStm['checked'] == 0)
+                return true;
+        }
+        return false;
     }
 
     /*
@@ -404,7 +500,7 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
-                1
+                0
             ));
             $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu) VALUES " .
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -417,7 +513,7 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
-                1
+                0
             ));
         }
         if (self::tabelExists("kp_cookies") == false) {
@@ -473,7 +569,7 @@ class Helpers {
         if (self::tabelExists("kp_mailconfirm") == false) {
             $structure = ""
                 . "ALTER TABLE kp_mailconfirm ADD COLUMN email varchar(255) NOT NULL;"
-                . "ALTER TABLE kp_mailconfirm ADD COLUMN uid int(11) NOT NULL;"
+                . "ALTER TABLE kp_mailconfirm ADD COLUMN uid int(11) NOT NULL DEFAULT -1;"
                 . "ALTER TABLE kp_mailconfirm ADD COLUMN isSu tinyint(1) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE kp_mailconfirm ADD COLUMN checked tinyint(1) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE kp_mailconfirm ADD COLUMN changeMail tinyint(1) NOT NULL DEFAULT 0;";
@@ -511,9 +607,9 @@ class Helpers {
                 5,
                 "varchar,text,int,tinyint,tinyint,tinyint",
                 "name,description,lifetime,deleted,editable",
-                0,
-                0,
                 1,
+                0,
+                0,
                 0
             ));
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -1047,7 +1143,7 @@ class Helpers {
         ));
         $db->disconnect();
         if (self::isEmailUsedInAccounts($email)) {
-            self::generateConfirmMail($email);
+            self::generateConfirmMail($email, 1);
             return 1;
         }
         return 2;
@@ -1273,8 +1369,10 @@ class Helpers {
             $fname
         ));
         $db->disconnect();
-        if (self::isNoAccount($email, $pwd) == 1)
+        if (self::isNoAccount($email, $pwd) == 1) {
+            self::generateConfirmMail($email, 0);
             return 1;
+        }
         return 2;
     }
 

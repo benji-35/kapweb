@@ -2,12 +2,25 @@
     $displayConfirm = false;
     $displayChangePwd = false;
 
-    if (isset($_SESSION['confEmail']))
+    if (isset($_SESSION['confEmail']) && $hlp->cidExists($_SESSION['confEmail']) == true) {
         $displayConfirm = true;
-    if (isset($_SESSION['chgPwd']))
+    }
+    if (isset($_SESSION['chgPwd']) && $hlp->cidExists($_SESSION['chgPwd']) == true) {
         $displayChangePwd = true;
+    }
     if ($displayConfirm == false && $displayChangePwd == false) {
-        header("location: " . $hlp->getMainUrl() . "/pageNotFound");
+        $hdrTamp = "";
+        $mUrl = $hlp->getMainUrl();
+        $hdr = "location: " . $hdrTamp . "/pageNotFound";
+        header($hdr);
+    }
+    if (isset($_POST['validEmail'])) {
+        $hlp->validConfirmEmail($_SESSION['confEmail']);
+        header("location: " . $hlp->getMainUrl());
+    }
+    if (isset($_POST['deleteAccount'])) {
+        $hlp->deleteAccountFromCid($_SESSION['confEmail']);
+        header("location: " . $hlp->getMainUrl());
     }
 ?>
 <!DOCTYPE html>
@@ -37,7 +50,7 @@
         <?php
             if ($displayChangePwd) {
         ?>
-            <form class="chgPwd">
+            <form class="chgPwd" method="POST">
                 <picture>
                     <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
                 </picture>
@@ -51,7 +64,7 @@
         <?php
             } else if ($displayConfirm) {
         ?>
-        <form class="chgPwd">
+        <form class="chgPwd" method="POST">
                 <picture>
                     <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
                 </picture>
