@@ -193,6 +193,24 @@
             $_SESSION['cookiesError'] = "The cookie name is already taken";
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
+
+    if (isset($_POST['nawAdmin'])) {
+        unset($_SESSION['addAdminError']);
+        $errorsCreateAdmin = array(
+            "This email is already taken in account",
+            "You've create an account",
+            "An error occured while creating the account"
+        );
+        if ($_POST['pwdNewAdmin'] == $_POST['confNewAdminPwd']) {
+            $resCheck = $hlp->createSuAccount($_POST['pseudoNewAdmin'], $_POST['emailNewAdmin'], $_POST['pwdNewAdmin']);
+            if ($resCheck != 1) {
+                $_SESSION['addAdminError'] = $errorsCreateAdmin[$resCheck];
+            }
+        } else {
+            $_SESSION['addAdminError'] = "Le mot de passe n'est pas le même que le mot de passe de confirmation";
+        }
+        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -359,6 +377,27 @@
                                 ?>
                             </tbody>
                         </table>
+                    </form>
+                    <form class="formCreatePage" method="POST">
+                        <picture>
+                            <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
+                        </picture>
+                        <h3>Créer un nouveau compte admin</h3>
+                        <div class="whiteDiv">
+                            <input type="text" placeholder="Pseudo" name="pseudoNewAdmin" required>
+                            <input type="email" placeholder="Email..." name="emailNewAdmin" required>
+                            <input type="password" placeholder="Mot de passe.." name="pwdNewAdmin" required>
+                            <input type="password" placeholder="Confirmez mot de passe..." name="confNewAdminPwd" required>
+                            <input type="submit" value="créer" name="nawAdmin">
+                            <?php
+                                if (isset($_SESSION['addAdminError'])) {
+                            ?>
+                                <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);"><?=$_SESSION['addAdminError']?></p>
+                            <?php
+                                }
+                            ?>
+                        </div>
+                        <p>Vous pouvez créer d'autres comptes administrateur en remplissant ce formulaire</p>
                     </form>
                 </div>
                 <div class="contextDev" id="usersContext">

@@ -136,7 +136,7 @@ class ConfFiles {
     private static function haveKeyInText($text, $key):bool {
         $lines = explode("\n", $text);
         for ($i = 0; $i < count($lines); $i++) {
-            if (self::strStartWith($lines[$i], "db="))
+            if (self::strStartWith($lines[$i], $key))
                 return true;
         }
         return false;
@@ -150,8 +150,8 @@ class ConfFiles {
             fclose($f);
             $totStr = $str;
         }
-        if (self::haveKeyInText($str, $key)) {
-            $text = explode("\n", $str);
+        if (self::haveKeyInText($totStr, $key)) {
+            $text = explode("\n", $totStr);
             $totStr = "";
             for ($i = 0; $i < count($text); $i++) {
                 if (self::strStartWith($text[$i], $key . "=")) {
@@ -165,11 +165,13 @@ class ConfFiles {
             }
         } else {
             if ($totStr != "")
-            $totStr .= "\n";
+                $totStr .= "\n";
             $totStr .= $key . "=" . $value; 
         }
         $f = fopen($pathFile, "w");
-        fwrite($f, $totStr, strlen($totStr));
+        if ($f) {
+            fwrite($f, $totStr, strlen($totStr));
+        }
         fclose($f);
     }
 
