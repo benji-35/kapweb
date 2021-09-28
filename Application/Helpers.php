@@ -9,7 +9,7 @@ class Helpers {
     private static $db = NULL;
     private static $cf = NULL;
 
-    private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html lang=\"<?=\$_SESSION['lang']?>\">\n"
+    private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html lang=\"<?=\$hlp->getLanguageShortFromId(\$_SESSION['lang'])?>\">\n"
         . "\t<head>\n\t\t<title><?=\$_SESSION['titlePage']?></title>\n"
         . "\t\t<meta charset=\"utf-8\">\n"
         . "\t\t<?php\n"
