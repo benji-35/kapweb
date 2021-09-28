@@ -18,9 +18,22 @@
     if (isset($_POST['connect'])) {
         unset($_SESSION['c_errors']);
         $uid = $hlp->getUidNoAccount($_POST['connectEmail'], $_POST['connectPwd']);
+        $suid = $hlp->isSuAccount($_POST['connectEmail'], $_POST['connectPwd']);
         if ($uid == -1) {
-            $_SESSION['c_errors'] = "Le compte est innexistant ou le mot de passe n'est pas bon.<br>";
+            if ($suid == true) {
+                unset($_SESSION['c_errors']);
+                $_SESSION['suemail'] = $_POST['connectEmail'];
+                $_SESSION['supwd'] = $_POST['connectPwd'];
+                if (isset($_SESSION['pathAfterConnect'])) {
+                    header("location: " . $_SESSION['pathAfterConnect']);
+                } else {
+                    header("location: " . $hlp->getMainUrl());
+                }
+            } else {
+                $_SESSION['c_errors'] = "Le compte est innexistant ou le mot de passe n'est pas bon.<br>";
+            }
         } else {
+            unset($_SESSION['c_errors']);
             $resCheck = $hlp->isNoAccount($_POST['connectEmail'], $_POST['connectPwd']);
             if ($resCheck == 1) {
                 $_SESSION['no_pwd'] = $_POST['connectPwd'];

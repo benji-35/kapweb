@@ -8,6 +8,14 @@ class ConfFiles {
 
     public function __construct() {}
 
+    public static function strCanBeRead($str): bool {
+        for ($i = 0; $i < strlen($str); $i++) {
+            if ($str[$i] != "\t" && $str[$i] != "\n" && $str[$i] != " ")
+                return true;
+        }
+        return false;
+    }
+
     public static function strContains(string $str, string $target):bool {
         $s1 = strlen($str);
         $s2 = strlen($target);
@@ -115,7 +123,7 @@ class ConfFiles {
 
     public static function getValueFromKeyConf($pathFile, $key):string {
         if (file_exists($pathFile) == false || filesize($pathFile) == 0)
-            return "";
+            return "\0";
         $f = fopen($pathFile, "r");
         $str = fread($f, filesize($pathFile));
         fclose($f);
@@ -127,10 +135,14 @@ class ConfFiles {
                 for ($i = 2; $i < count($arrLine); $i++) {
                     $res .= "=" . $arrLine[$i];
                 }
-                return $res;
+                if (self::strCanBeRead($res)) {
+                    return $res;
+                } else {
+                    return "\0";
+                }
             }
         }
-        return "";
+        return "\0";
     }
 
     private static function haveKeyInText($text, $key):bool {

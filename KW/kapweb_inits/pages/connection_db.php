@@ -10,7 +10,7 @@
             $gerArr = explode(",", $_SESSION['tampDbCreation']);
             $connArr = array(
                 "host" => $gerArr[0],
-                "dbName" => "",
+                "dbName" => "mysql",
                 "username" => $gerArr[1],
                 "passsword" => $gerArr[2],
             );
@@ -29,6 +29,7 @@
         }
         $_SESSION['tampDbCreation'] = $_POST['host'] . "," . $_POST['uname'] . "," . $_POST['pwd'];
         $_SESSION['stepDbConnection'] = 1;
+        header("location: " . $hlp->getMainUrl());
     }
     if (isset($_POST['finalizeDb'])) {
         if ($_POST['selectMethod'] == "1" && $_POST['dbSelector'] != "-1") {
@@ -86,12 +87,21 @@
                 <h3>PhpMyAdmin Intels</h3>
                 <div class="whiteInForm">
                     <?php
-                    if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name") == "") {
+                        $valWebSiteName = $cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name");
+                        if (strlen($valWebSiteName) <= 0 || $valWebSiteName[0] == 0) {
                     ?>
+                        <div class="headerLineBlack">
+                            <div class="lineBlack"></div>
+                            <h3>Website</h3>
+                        </div>
                         <input type="text" placeholder="Website name..." name="WebsiteName">
                     <?php
                         }
                     ?>
+                    <div class="headerLineBlack">
+                        <div class="lineBlack"></div>
+                        <h3>Database</h3>
+                    </div>
                     <input type="text" placeholder="host..." required name="host">
                     <input type="text" placeholder="username..." name="uname">
                     <input type="password" placeholder="password..." name="pwd">
@@ -111,7 +121,13 @@
                 <div class="whiteInForm">
                     <select id="selectMethod" onchange="displayGoodInterface()" name="selectMethod">
                         <option value="0" hidden>Select method</option>
+                        <?php
+                            if (count($emptiesBd) > 0) {
+                        ?>
                         <option value="1">Sélectionner une base de donnée</option>
+                        <?php
+                            }
+                        ?>
                         <option value="2">Créer une base de donnée</option>
                     </select>
                     <div id="existing">

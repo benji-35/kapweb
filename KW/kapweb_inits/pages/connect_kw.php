@@ -29,7 +29,7 @@
         unset($_SESSION['connectError']);
         $resCheck = $hlp->isSuAccount($_POST['pseudo'], $_POST['pwd']);
         if ($resCheck == 1) {
-            $_SESSION['supseudo'] = $_POST['pseudo'];
+            $_SESSION['suemail'] = $_POST['pseudo'];
             $_SESSION['supwd'] = $_POST['pwd'];
             if (isset($_SESSION['pathAfterConnect'])) {
                 header("location: " . $_SESSION['pathAfterConnect']);
@@ -73,9 +73,9 @@
                 <picture>
                     <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
                 </picture>
-                <h3>Connection</h3>
+                <h3>Connection Administrator</h3>
                 <div class="whiteInForm">
-                    <input type="text" placeholder="  pseudo..." name="pseudo" required>
+                    <input type="email" placeholder="  email..." name="pseudo" required>
                     <input type="password" placeholder="  password..." name="pwd" required>
                     <input type="submit" value="se connecter" name="connect">
                     <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Forgot your password ?</p></div></a>
@@ -95,7 +95,7 @@
         ?>
             <form method="POST" class="formConnect">
                 <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
-                <h3>Create account</h3>
+                <h3>Create account Administrator</h3>
                 <div class="whiteInForm">
                     <input type="text" placeholder="pseudo..." name="pseudoCreate" required>
                     <input type="email" placeholder="email..." name="emailCreate" required>

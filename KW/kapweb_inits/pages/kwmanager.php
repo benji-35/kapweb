@@ -1,7 +1,7 @@
 <?php
     if ($hlp->isConnectedSu() == false)
         header("location: " . $hlp->getMainUrl() . "/KW");
-    if (!isset($_SESSION['supseudo']) || !isset($_SESSION['supwd']))
+    if (!isset($_SESSION['suemail']) || !isset($_SESSION['supwd']))
         header("location: " . $hlp->getMainUrl() . "/KW");
     $pages = $hlp->getPages();
     $deletedPages = $hlp->getDeletedPages();

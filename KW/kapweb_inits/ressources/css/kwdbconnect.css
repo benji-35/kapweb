@@ -20,6 +20,12 @@ input {
     width: 90%;
     margin-top: 10px;
     margin-bottom: 10px;
+    box-sizing: border-box;
+    padding-left: 15px;
+}
+
+input::placeholder {
+    padding-left: 15px;
 }
 
 select {
@@ -49,4 +55,29 @@ select {
 #creating {
     display: none;
     text-align: center;
+}
+
+.headerLineBlack {
+    position: relative;
+    width: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 10px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.lineBlack {
+    width: 100%;
+    height: 0px;
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.headerLineBlack h3 {
+    background-color: white;
+    color: black;
+    font-size: 1.5em;
+    transform: translate(4em, -1.8em);
+    width: 5em;
 }

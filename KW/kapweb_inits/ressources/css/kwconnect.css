@@ -39,10 +39,12 @@ body {
     width: 90%;
     margin-top: 10px;
     margin-bottom: 10px;
+    box-sizing: border-box;
+    padding-left: 15px;
 }
 
 input[type="text"]::placeholder {
-    transform: translateX(5px);
+    padding-left: 15px;
 }
 
 .formCreate h1 {

@@ -117,17 +117,17 @@ class Helpers {
         $filesCss = scandir("KW/public/ressources/css");
         $filesJs = scandir("KW/public/ressources/js");
         for ($i = 0; $i < count($files); $i++) {
-            if ($files[$i] != "." && $files[$i] != "..") {
+            if ($files[$i] != "." && $files[$i] != ".." && $files[$i] != ".gitkeep") {
                 unlink("KW/public/pages/" . $files[$i]);
             }
         }
         for ($i = 0; $i < count($filesCss); $i++) {
-            if ($filesCss[$i] != "." && $filesCss[$i] != "..") {
+            if ($filesCss[$i] != "." && $filesCss[$i] != ".." && $files[$i] != ".gitkeep") {
                 unlink("KW/public/ressources/css/" . $filesCss[$i]);
             }
         }
         for ($i = 0; $i < count($filesJs); $i++) {
-            if ($filesJs[$i] != "." && $filesJs[$i] != "..") {
+            if ($filesJs[$i] != "." && $filesJs[$i] != ".." && $files[$i] != ".gitkeep") {
                 unlink("KW/public/ressources/js/" . $filesJs[$i]);
             }
         }
@@ -425,7 +425,7 @@ class Helpers {
                 "/KW/kapweb_inits/ressources/css/kwdbconnect.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu) VALUES " .
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu) VALUES " .
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "editPageKp",
@@ -435,6 +435,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kweditpage.css",
+                "/KW/kapweb_inits/ressources/js/kpeditpage.js",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
                 1
             ));
@@ -1149,11 +1150,11 @@ class Helpers {
         return 2;
     }
 
-    public static function isSuAccount($pseudo, $pwd): int {
+    public static function isSuAccount($email, $pwd): int {
         global $db;
         $connect = $db->connect();
-        $stm = $connect->prepare("SELECT * FROM su_users WHERE pseudo=?");
-        $stm->execute(array($pseudo));
+        $stm = $connect->prepare("SELECT * FROM su_users WHERE email=?");
+        $stm->execute(array($email));
         $resStm = $stm->fetch();
         $db->disconnect();
         if ($resStm) {
@@ -1211,8 +1212,8 @@ class Helpers {
     }
 
     public static function disconnectSelf() {
-        if (isset($_SESSION['supseudo']))
-            unset($_SESSION['supseudo']);
+        if (isset($_SESSION['suemail']))
+            unset($_SESSION['suemail']);
         if (isset($_SESSION['supwd']))
             unset($_SESSION['supwd']);
         if (isset($_SESSION['no_pwd']))
@@ -1223,12 +1224,12 @@ class Helpers {
 
     public static function isConnectedSu():bool {
         $res = true;
-        if (!isset($_SESSION['supseudo']))
+        if (!isset($_SESSION['suemail']))
             $res = false;
         if (!isset($_SESSION['supwd']) && $res == true)
             $res = false;
         if ($res == true) {
-            $res = self::isSuAccount($_SESSION['supseudo'], $_SESSION['supwd']);
+            $res = self::isSuAccount($_SESSION['suemail'], $_SESSION['supwd']);
         }
         return $res;
     }
@@ -1410,7 +1411,7 @@ class Helpers {
             $res = array();
             $connect = $db->connect();
             $stm = $connect->prepare("SELECT * FROM su_users WHERE pseudo=?");
-            $stm->execute(array($_SESSION['supseudo']));
+            $stm->execute(array($_SESSION['suemail']));
             $resStm = $stm->fetch();
             if ($resStm)
                 $res = $resStm;

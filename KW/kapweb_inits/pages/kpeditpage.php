@@ -6,7 +6,7 @@
 	$pageExists = true;
 	if ($hlp->isConnectedSu() == false)
 		header("location: " . $hlp->getMainUrl() . "/KW");
-	if (!isset($_SESSION['supseudo']) || !isset($_SESSION['supwd']) || !isset($_SESSION['urlEdit']))
+	if (!isset($_SESSION['suemail']) || !isset($_SESSION['supwd']) || !isset($_SESSION['urlEdit']))
 		header("location: " . $hlp->getMainUrl() . "/KW");
 	if ($hlp->pageExists($_SESSION['urlEdit'])) {
 		$textToEdit = $ep->getHtmlEditable($_SESSION['urlEdit']);
@@ -61,7 +61,7 @@
 			<a class="fakeButtonA" href="<?=$hlp->getMainUrl() . "/KW/manager"?>"><div class="fakeButton"><p>Back to manager</p></div></a>
 			<div class="frontend">
 				<h3>HTML</h3>
-				<textarea id="inputHtml" onchange="runResult()" class="phpEdit" name="phpEdit"><?=$textToEdit?></textarea>
+				<textarea id="inputHtml" class="phpEdit" name="phpEdit"><?=$textToEdit?></textarea>
 			</div>
 			<div class="backend">
 				<div class="leftBackend">
@@ -69,7 +69,7 @@
 					<?php
 						if ($cssJs['css'] != null) {
 					?>
-						<textarea id="inputCss" onchange="runResult()" class="cssEdit" name="cssEdit"><?=$cssJs['css']?></textarea>
+						<textarea id="inputCss" class="cssEdit" name="cssEdit"><?=$cssJs['css']?></textarea>
 					<?php
 						} else {
 					?>
@@ -83,7 +83,7 @@
 					<?php
 						if ($cssJs['js'] != null) {
 					?>
-						<textarea id="inputJs" onchange="runResult()" class="jsEdit" name="jsEdit"><?=$cssJs['js']?></textarea>
+						<textarea id="inputJs" class="jsEdit" name="jsEdit"><?=$cssJs['js']?></textarea>
 					<?php
 						} else {
 					?>
