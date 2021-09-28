@@ -250,3 +250,45 @@ th {
     padding-left: 5px;
     padding-right: 5px;
 }
+
+.tableDashBoard {
+    width: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.tableDashBoard th {
+    display: table-cell;
+    background-color: gray;
+    padding: 0;
+}
+
+#saveCurrUrl {
+    display: none;
+}
+
+#currUrlEdit {
+    display: none;
+}
+
+#currUrl {
+    width: 75%;
+}
+
+.urlTd {
+    width: 40%;
+}
+
+.modifUrlForm {
+    display: block ruby;
+    text-align: center;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.modifUrlForm input[type="text"] {
+    width: 75%;
+}

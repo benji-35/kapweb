@@ -6,6 +6,21 @@ class ConfFiles {
     private static $pathDbConfig = "KW/kapweb_sys/kw_db_connect.conf";
     private static $pathOtherConf = "KW/kapweb_sys/kw_files.conf";
 
+    private static $baseDbConfig = "db=";
+    private static $baseOtherConfig = "#icons\n" 
+        . "main_icon=KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico\n"
+        . "main_iconBlack=KW/kapweb_inits/ressources/imgs/kwLogo.ico\n"
+        . "main_icon_png=KW/kapweb_inits/ressources/imgs/kwLogo.png\n"
+        . "#url for the website\n"
+        . "main_url=http://localhost/kapweb\n"
+        . "#website name\n"
+        . "website_name=Coucou\n"
+        . "#settings for sign-in\n"
+        . "user-signin-ids=false\n"
+        . "user-signin-pseudo=false\n"
+        . "#email that will use for sending confirm email\n"
+        . "email-confirm-password=\n";
+
     public function __construct() {}
 
     public static function strCanBeRead($str): bool {
@@ -123,26 +138,31 @@ class ConfFiles {
 
     public static function getValueFromKeyConf($pathFile, $key):string {
         if (file_exists($pathFile) == false || filesize($pathFile) == 0)
-            return "\0";
+            return "";
         $f = fopen($pathFile, "r");
         $str = fread($f, filesize($pathFile));
         fclose($f);
         $lines = explode("\n", $str);
         for ($i = 0; $i < count($lines); $i++) {
+            for ($x = 0; $x < strlen($lines[$i]); $x++) {
+                if ($lines[$i][$x] == "\n") {
+                    $lines[$i] = self::strRmChars($lines[$i], $x, $x + 1);
+                }
+            }
             $arrLine = explode("=", $lines[$i]);
             if (count($arrLine) >= 2 && self::strEquality($arrLine[0], $key)) {
                 $res = $arrLine[1];
-                for ($i = 2; $i < count($arrLine); $i++) {
-                    $res .= "=" . $arrLine[$i];
+                for ($x = 2; $x < count($arrLine); $x++) {
+                    $res .= "=" . $arrLine[$x];
                 }
                 if (self::strCanBeRead($res)) {
                     return $res;
                 } else {
-                    return "\0";
+                    return "";
                 }
             }
         }
-        return "\0";
+        return "";
     }
 
     private static function haveKeyInText($text, $key):bool {
@@ -156,6 +176,12 @@ class ConfFiles {
 
     public static function addValueFormKeyConf($pathFile, $key, $value) {
         $totStr = "";
+        if (!isset($key) || !isset($value) || !isset($pathFile))
+            return;
+        if ($value == "" || strlen($value) <= 0) {
+            self::resetValueFromKey($pathFile, $key);
+            return;
+        }
         if (file_exists($pathFile) && filesize($pathFile) > 0) {
             $f = fopen($pathFile, "r");
             $str = fread($f, filesize($pathFile));
@@ -187,6 +213,28 @@ class ConfFiles {
         fclose($f);
     }
 
+    public static function resetValueFromKey($pathFile, $key) {
+        $totStr = "";
+        $finalRes = "";
+        if (file_exists($pathFile) && filesize($pathFile) > 0) {
+            $f = fopen($pathFile, "r");
+            $str = fread($f, filesize($pathFile));
+            fclose($f);
+            $totStr = $str;
+        }
+        $lines = explode("\n", $totStr);
+        for ($i = 0; $i < count($lines); $i++) {
+            if (self::strStartWith($lines[$i], $key . "=")) {
+                $lines[$i] = $key . "=";
+            }
+            if ($finalRes == "") {
+                $finalRes = $lines[$i];
+            } else {
+                $finalRes .= "\n" . $lines[$i];
+            }
+        }
+    }
+
     public static function sys_getMainIco():string {
         return self::getValueFromKeyConf(self::$pathOtherConf, "main_icon");
     }
@@ -197,6 +245,14 @@ class ConfFiles {
 
     public static function getFilesConfig():string {
         return self::$pathOtherConf;
+    }
+
+    public static function generateOtherSettings() {
+        $f = fopen(self::getFilesConfig(), "w");
+        if ($f) {
+            fwrite($f, self::$baseOtherConfig, strlen(self::$baseOtherConfig));
+        }
+        fclose($f);
     }
 }
 ?>

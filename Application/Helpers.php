@@ -6,8 +6,8 @@ use Application\ConfFiles;
 
 class Helpers {
 
-    private static $db = null;
-    private static $cf = null;
+    private static $db = NULL;
+    private static $cf = NULL;
 
     private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html>\n"
         . "\t<head>\n\t\t<title><?=\$_SESSION['titlePage']?></title>\n"
@@ -100,15 +100,11 @@ class Helpers {
     public static function getMainUrl():string {
         global $cf;
         $res = $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_url");
-        $resTmp = "";
-        for ($i = 0; $i < strlen($res) - 1; $i++) {
-            $resTmp .= $res[$i];
-        }
-        if ($resTmp != "") {
-            return $resTmp;
+        if ($res != "") {
+            return $res;
         } else {
             self::$cf->addValueFormKeyConf($cf->getFilesConfig(), "main_url", "http://localhost/kapweb");
-            return self::getMainUrl();
+            return "http://localhost/kapweb";
         }
     }
 
@@ -249,12 +245,15 @@ class Helpers {
     public static function haveConnectionDbIntels():bool {
         global $cf;
         $vals = $cf->getValueFromKeyConf($cf->getDbConfig(), "db");
-        if ($vals == "") {
+        if ($vals == "")
+            return false;
+        if (strlen($vals) == 0) {
             return false;
         }
         $all_vals = explode(",", $vals);
-        if (count($all_vals) == 4)
+        if (count($all_vals) == 4) {
             return true;
+        }
         return false;
     }
 
@@ -304,8 +303,9 @@ class Helpers {
             "username" => "",
             "passsword" => "",
         );
-        if (self::haveConnectionDbIntels() == false)
+        if (self::haveConnectionDbIntels() == false) {
             return $res;
+        }
         $vals = $cf->getValueFromKeyConf($cf->getDbConfig(), "db");
         $all_vals = explode(",", $vals);
         $res['host'] = $all_vals[0];
@@ -537,7 +537,7 @@ class Helpers {
                 . "ALTER TABLE no_users ADD COLUMN ls_mod_uid int(11) NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN lname varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN fname varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
-                . "ALTER TABLE no_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE no_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
@@ -556,7 +556,7 @@ class Helpers {
                 . "ALTER TABLE su_users ADD COLUMN ls_mod_uid int(11) NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN lname varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN fname varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
-                . "ALTER TABLE su_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE su_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
@@ -874,13 +874,13 @@ class Helpers {
                     return self::getPathPage(array("KW"));
                 }
             }
-            if ($resStm['pathCss'] != null) {
+            if ($resStm['pathCss'] != NULL) {
                 $_SESSION['cssPath'] = self::getMainUrl() . $resStm['pathCss'];
             }
-            if ($resStm['pathJs'] != null) {
+            if ($resStm['pathJs'] != NULL) {
                 $_SESSION['jsPath'] = self::getMainUrl() . $resStm['pathJs'];
             }
-            if ($resStm['ico'] != null) {
+            if ($resStm['ico'] != NULL) {
                 $_SESSION['icoPage'] = self::getMainUrl() . $resStm['ico'];
             } else {
                 $_SESSION['icoPage'] = $cf->sys_getMainIco();
@@ -1124,7 +1124,7 @@ class Helpers {
         return false;
     }
 
-    public static function createSuAccount($pseudo, $email, $pwd):int {
+    public static function createSuAccount($pseudo, $email, $pwd, $lname, $fname):int {
         if (self::isEmailUsedInAccounts($email))
             return 0;
         global $db;
@@ -1133,15 +1133,26 @@ class Helpers {
             "cost" => 11
         ];
         $ctime = time();
-        $stm = $connect->prepare("INSERT INTO su_users (pseudo, email, password, cr_date, ls_mod, ls_con, ls_mod_uid) VALUES (?, ?, ?, ?, ?, ?, 0)");
+        $stm = $connect->prepare("INSERT INTO su_users (email, password, cr_date, ls_mod, ls_con, ls_mod_uid) VALUES (?, ?, ?, ?, ?, 0)");
         $stm->execute(array(
-            $pseudo,
             $email,
             password_hash($pwd,  PASSWORD_DEFAULT, $hash_opt),
             $ctime,
             $ctime,
             $ctime,
         ));
+        if (isset($pseudo)) {
+            $stm = $connect->prepare("UPDATE su_users SET pseudo=? WHERE email=?");
+            $stm->execute(array($pseudo, $email));
+        }
+        if (isset($lname)) {
+            $stm = $connect->prepare("UPDATE su_users SET lname=? WHERE email=?");
+            $stm->execute(array($lname, $email));
+        }
+        if (isset($fname)) {
+            $stm = $connect->prepare("UPDATE su_users SET fname=? WHERE email=?");
+            $stm->execute(array($fname, $email));
+        }
         $db->disconnect();
         if (self::isEmailUsedInAccounts($email)) {
             self::generateConfirmMail($email, 1);
@@ -1357,18 +1368,27 @@ class Helpers {
         $connect = $db->connect();
         $gpwd = password_hash($pwd, PASSWORD_DEFAULT, $hash_opt);
         $ctime = time();
-        $stm = $connect->prepare("INSERT INTO no_users (cr_date, ls_mod, ls_con, ls_mod_uid, pseudo, email, password, $lname, $fname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stm = $connect->prepare("INSERT INTO no_users (cr_date, ls_mod, ls_con, ls_mod_uid, email, password) VALUES (?, ?, ?, ?, ?, ?)");
         $stm->execute(array(
             $ctime,
             $ctime,
             $ctime,
             0,
-            $pseudo,
             $email,
             $gpwd,
-            $lname,
-            $fname
         ));
+        if (isset($pseudo)) {
+            $stm = $connect->prepare("UPDATE no_users SET pseudo=? WHERE email=?");
+            $stm->execute(array($pseudo, $email));
+        }
+        if (isset($lname)) {
+            $stm = $connect->prepare("UPDATE no_users SET lname=? WHERE email=?");
+            $stm->execute(array($lname, $email));
+        }
+        if (isset($fname)) {
+            $stm = $connect->prepare("UPDATE no_users SET fname=? WHERE email=?");
+            $stm->execute(array($fname, $email));
+        }
         $db->disconnect();
         if (self::isNoAccount($email, $pwd) == 1) {
             self::generateConfirmMail($email, 0);
@@ -1410,7 +1430,7 @@ class Helpers {
         if (self::isConnectedSu()) {
             $res = array();
             $connect = $db->connect();
-            $stm = $connect->prepare("SELECT * FROM su_users WHERE pseudo=?");
+            $stm = $connect->prepare("SELECT * FROM su_users WHERE email=?");
             $stm->execute(array($_SESSION['suemail']));
             $resStm = $stm->fetch();
             if ($resStm)

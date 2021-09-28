@@ -201,8 +201,17 @@
             "You've create an account",
             "An error occured while creating the account"
         );
+        $pseudoAdm = NULL;
+        $lnameAdm = NULL;
+        $fnameAdm = NULL;
+        if (isset($_POST['pseudoNewAdmin']))
+            $pseudoAdm = $_POST['pseudoNewAdmin'];
+        if (isset($_POST['lnameNewAdmin']))
+            $lnameAdm = $_POST['lnameNewAdmin'];
+        if (isset($_POST['fnameNewAdmin']))
+            $fnameAdm = $_POST['fnameNewAdmin'];
         if ($_POST['pwdNewAdmin'] == $_POST['confNewAdminPwd']) {
-            $resCheck = $hlp->createSuAccount($_POST['pseudoNewAdmin'], $_POST['emailNewAdmin'], $_POST['pwdNewAdmin']);
+            $resCheck = $hlp->createSuAccount($pseudoAdm, $_POST['emailNewAdmin'], $_POST['pwdNewAdmin'], $lnameAdm, $fnameAdm);
             if ($resCheck != 1) {
                 $_SESSION['addAdminError'] = $errorsCreateAdmin[$resCheck];
             }
@@ -211,6 +220,18 @@
         }
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
+
+    if (isset($_POST['saveCurrUrl'])) {
+        $cf->addValueFormKeyConf($cf->getFilesConfig(), "main_url", $_POST['currUrl']);
+        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+    }
+
+    $need_ids = false;
+    $need_pseudo = false;
+    if ($cf->strStartWith($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-ids"), "true"))
+        $need_ids = true;
+    if ($cf->strStartWith($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-pseudo"), "true"))
+        $need_pseudo = true;
 ?>
 <!DOCTYPE html>
 <html>
@@ -265,18 +286,90 @@
             <div class="contextMenu">
                 <div class="contextDev" id="dashboardContext">
                     <h1 class="titleContextDev">Dashboard</h1>
-                    <form class="contentContext" method="POST">
-                        <h2>URL</h2>
-                        <input value="<?=$hlp->getMainUrl()?>" readonly>  
-                        <input type="submit" value="Supprimer toues les pages" name="deleteAllPages">
-                        <input type="submit" value="Remettre le KW à zéro" name="toOKw">
-                        <input type="submit" value="Tout réinitialiser" name="reinitAll">
-                    </form>
+                    <table class="tableDashBoard">
+                        <thead>
+                            <tr>
+                                <th class="urlTd"><h3>Theoric url</h3></th>
+                                <th class="actionsTd"><h3>Actions</h3></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="urlTd">
+                                    <input id="currUrl" value="<?=$hlp->getMainUrl()?>" readonly>
+                                    <button id="modifCurrUrl" onclick="displayEditCurrUrl('modifCurrUrl', 'currUrl', 'currUrlEdit', 'saveCurrUrl')">Modify Value</button>
+                                    <form method="POST" class="modifUrlForm">
+                                        <input id="currUrlEdit" type="text" value="<?=$hlp->getMainUrl()?>" placeholder="current main url..." name="currUrl">
+                                        <input id="saveCurrUrl" type="submit" value="Sauvegarder" name="saveCurrUrl">
+                                    </form>
+                                </td>
+                                <td class="actionsTd">
+                                    <form method="POST" class="modifUrlForm">
+                                        <input type="submit" value="Supprimer toues les pages" name="deleteAllPages">
+                                        <input type="submit" value="Remettre le KW à zéro" name="toOKw">
+                                        <input type="submit" value="Tout réinitialiser" name="reinitAll">
+                                    </form>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <?php
                         if (count($myAccount) > 0) {
                     ?>
                         <h3>Votre compte :</h3>
-                        <p><?="Pseudo : " . $myAccount['pseudo']?></p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Nom</th>
+                                    <th>Prénom</th>
+                                    <th>Status</th>
+                                    <th>Mot de passe</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><?=$myAccount['email']?></td>
+                                    <td><?=$myAccount['lname']?></td>
+                                    <td><?=$myAccount['fname']?></td>
+                                    <td><?=$myAccount['status']?></td>
+                                    <td><?="******************"?></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td><?=" "?></td>
+                                    <td><?=" "?></td>
+                                    <td><?=" "?></td>
+                                    <td><?=" "?></td>
+                                    <td><?=" "?></td>
+                                    <td><?=" "?></td>
+                                </tr>
+                                <tr>
+                                    <form>
+                                        <td>
+                                            <input type="email" value="<?=$myAccount['email']?>" placeholder="Email...">
+                                        </td>
+                                        <td>
+                                            <input type="text" placeholder="Last name..." value="<?=$myAccount['lname']?>">
+                                        </td>
+                                        <td>
+                                            <input type="text" placeholder="First name..." value="<?=$myAccount['fname']?>">
+                                        </td>
+                                        <td></td>
+                                        <td>
+                                            <input type="password" placeholder="Current password...">
+                                            <input type="password" placeholder="New password...">
+                                            <input type="password" placeholder="Confirm new password...">
+                                        </td>
+                                        <td>
+                                            <input type="submit" value="save">
+                                            <input type="submit" value="delete your account">
+                                        </td>
+                                    </form>
+                                </tr>
+                            </tbody>
+                        </table>
                     <?php
                         } else {
                     ?>
@@ -384,8 +477,22 @@
                         </picture>
                         <h3>Créer un nouveau compte admin</h3>
                         <div class="whiteDiv">
-                            <input type="text" placeholder="Pseudo" name="pseudoNewAdmin" required>
+                            <?php
+                                if ($need_pseudo) {
+                            ?>
+                                <input type="text" placeholder="Pseudo..." name="pseudoNewAdmin" required>
+                            <?php
+                                }
+                            ?>
                             <input type="email" placeholder="Email..." name="emailNewAdmin" required>
+                            <?php
+                                if ($need_ids) {
+                            ?>
+                                <input type="text" placeholder="Nom..." name="lnameNewAdmin" required>
+                                <input type="text" placeholder="Prénom..." name="fnameNewAdmin" required>
+                            <?php
+                                }
+                            ?>
                             <input type="password" placeholder="Mot de passe.." name="pwdNewAdmin" required>
                             <input type="password" placeholder="Confirmez mot de passe..." name="confNewAdminPwd" required>
                             <input type="submit" value="créer" name="nawAdmin">

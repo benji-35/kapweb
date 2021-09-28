@@ -36,3 +36,10 @@ function displayContextMenu(name, btnName) {
     document.getElementById(btnName).classList.remove('btnNavMenu');
     document.getElementById(btnName).classList.add('btnSelected');
 }
+
+function displayEditCurrUrl(button, inputReadonly, inputedit, inputSend) {
+    document.getElementById(button).style.display = "none";
+    document.getElementById(inputReadonly).style.display = "none";
+    document.getElementById(inputedit).style.display = "block";
+    document.getElementById(inputSend).style.display = "block";
+}

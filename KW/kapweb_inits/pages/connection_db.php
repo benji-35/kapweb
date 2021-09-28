@@ -1,6 +1,6 @@
 <?php
     if (!isset($db)) {
-        echo "Database not initiated. Please go to the main page";
+        header("location: " . $hlp->getMainUrl());
         return;
     }
     if (!isset($_SESSION['stepDbConnection']))
@@ -24,9 +24,6 @@
         $_SESSION['stepDbConnection'] = 0;
     }
     if (isset($_POST['connect'])) {
-        if (isset($_POST['WebsiteName'])) {
-            $cf->addValueFormKeyConf($cf->getFilesConfig(), "website_name", $_POST['WebsiteName']);
-        }
         $_SESSION['tampDbCreation'] = $_POST['host'] . "," . $_POST['uname'] . "," . $_POST['pwd'];
         $_SESSION['stepDbConnection'] = 1;
         header("location: " . $hlp->getMainUrl());
@@ -57,6 +54,7 @@
                 $db->initDb($connArr);
                 $hlp->saveNewDb($connArr);
                 $hlp->generateTablesNeeded();
+                $cf->generateOtherSettings();
             }
             unset($_SESSION['stepDbConnection']);
             header("location: " . $hlp->getMainUrl() . "");
@@ -86,18 +84,6 @@
                 </picture>
                 <h3>PhpMyAdmin Intels</h3>
                 <div class="whiteInForm">
-                    <?php
-                        $valWebSiteName = $cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name");
-                        if (strlen($valWebSiteName) <= 0 || $valWebSiteName[0] == 0) {
-                    ?>
-                        <div class="headerLineBlack">
-                            <div class="lineBlack"></div>
-                            <h3>Website</h3>
-                        </div>
-                        <input type="text" placeholder="Website name..." name="WebsiteName">
-                    <?php
-                        }
-                    ?>
                     <div class="headerLineBlack">
                         <div class="lineBlack"></div>
                         <h3>Database</h3>

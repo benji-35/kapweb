@@ -1,7 +1,7 @@
 <?php
 	$arrfinal = array(
-		"css" => null,
-		"js" => null
+		"css" => NULL,
+		"js" => NULL
 	);
 	$pageExists = true;
 	if ($hlp->isConnectedSu() == false)
@@ -14,10 +14,10 @@
 		if (isset($_POST['save'])) {
 			$ntext = $_POST['phpEdit'];
 			$ep->saveHtmlEditable($_SESSION['urlEdit'], $ntext);
-			if ($cssJs['css'] != null) {
+			if ($cssJs['css'] != NULL) {
 				$arrfinal['css'] = $_POST['cssEdit'];
 			}
-			if ($cssJs['js'] != null) {
+			if ($cssJs['js'] != NULL) {
 				$arrfinal['js'] = $_POST['jsEdit'];
 			}
 			$ep->saveAllCssJsContent($_SESSION['urlEdit'], $arrfinal);
@@ -67,7 +67,7 @@
 				<div class="leftBackend">
 					<h3>CSS</h3>
 					<?php
-						if ($cssJs['css'] != null) {
+						if ($cssJs['css'] != NULL) {
 					?>
 						<textarea id="inputCss" class="cssEdit" name="cssEdit"><?=$cssJs['css']?></textarea>
 					<?php
@@ -81,7 +81,7 @@
 				<div class="rightBackend">
 					<h3>JS</h3>
 					<?php
-						if ($cssJs['js'] != null) {
+						if ($cssJs['js'] != NULL) {
 					?>
 						<textarea id="inputJs" class="jsEdit" name="jsEdit"><?=$cssJs['js']?></textarea>
 					<?php

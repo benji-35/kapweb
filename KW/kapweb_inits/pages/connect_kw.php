@@ -17,7 +17,19 @@
 
     if (isset($_POST['create'])) {
         unset($_SESSION['connectError']);
-        $resCheck = $hlp->createSuAccount($_POST['pseudoCreate'], $_POST['emailCreate'], $_POST['pwdCreate']);
+        $pseudo = NULL;
+        $fname = NULL;
+        $lname = NULL;
+        if (isset($_POST['pseudoCreate'])) {
+            $pseudo = $_POST['pseudoCreate'];
+        }
+        if (isset($_POST['lname'])) {
+            $lname = $_POST['lname'];
+        }
+        if (isset($_POST['fname'])) {
+            $fname = $_POST['fname'];
+        }
+        $resCheck = $hlp->createSuAccount($pseudo, $_POST['emailCreate'], $_POST['pwdCreate'], $lname, $fname);
         if ($resCheck == 1) {
             header("location: " . $hlp->getMainUrl() . "/KW");
         } else {
@@ -27,9 +39,9 @@
     }
     if (isset($_POST['connect'])) {
         unset($_SESSION['connectError']);
-        $resCheck = $hlp->isSuAccount($_POST['pseudo'], $_POST['pwd']);
+        $resCheck = $hlp->isSuAccount($_POST['email'], $_POST['pwd']);
         if ($resCheck == 1) {
-            $_SESSION['suemail'] = $_POST['pseudo'];
+            $_SESSION['suemail'] = $_POST['email'];
             $_SESSION['supwd'] = $_POST['pwd'];
             if (isset($_SESSION['pathAfterConnect'])) {
                 header("location: " . $_SESSION['pathAfterConnect']);
@@ -41,6 +53,12 @@
             header("location: " . $hlp->getMainUrl() . "/KW");
         }
     }
+    $need_ids = false;
+    $need_pseudo = false;
+    if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-ids") == "true")
+        $need_ids = true;
+    if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-pseudo") == "true")
+        $need_pseudo = true;
 ?>
 <!DOCTYPE html>
 <html>
@@ -75,7 +93,7 @@
                 </picture>
                 <h3>Connection Administrator</h3>
                 <div class="whiteInForm">
-                    <input type="email" placeholder="  email..." name="pseudo" required>
+                    <input type="email" placeholder="  email..." name="email" required>
                     <input type="password" placeholder="  password..." name="pwd" required>
                     <input type="submit" value="se connecter" name="connect">
                     <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Forgot your password ?</p></div></a>
@@ -97,8 +115,22 @@
                 <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
                 <h3>Create account Administrator</h3>
                 <div class="whiteInForm">
-                    <input type="text" placeholder="pseudo..." name="pseudoCreate" required>
-                    <input type="email" placeholder="email..." name="emailCreate" required>
+                    <?php
+                        if ($need_pseudo) {
+                    ?>
+                        <input type="text" placeholder="pseudo..." name="pseudoCreate" required>
+                    <?php
+                        }
+                    ?>
+                        <input type="email" placeholder="email..." name="emailCreate" required>
+                    <?php
+                        if ($need_ids) {
+                    ?>
+                        <input type="text" placeholder="nom..." name="lname" required>
+                        <input type="text" placeholder="prénom..." name="fname" required>
+                    <?php
+                        }
+                    ?>
                     <input type="password" placeholder="password" name="pwdCreate" required>
                     <input type="submit" value="Créer un compte" name="create">
                     <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Back to main page</p></div></a>

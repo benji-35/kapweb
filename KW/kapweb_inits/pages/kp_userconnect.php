@@ -52,9 +52,9 @@
     if (isset($_POST['create'])) {
         unset($_SESSION['c_errors']);
         if ($_POST['creationPwd'] == $_POST['confirmPwd']) {
-            $lname = "";
-            $fname = "";
-            $pseudo = "";
+            $lname = NULL;
+            $fname = NULL;
+            $pseudo = NULL;
             if (isset($_POST['creaetPseudoUser'])) {
                 $pseudo = $_POST['creaetPseudoUser'];
             }

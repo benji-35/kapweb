@@ -86,10 +86,13 @@ spl_autoload_register($autoloader_hlp);
 
 $db = new Application\Database();
 $db = new Database();
+
 $cf = new Application\ConfFiles();
 $cf = new ConfFiles();
+
 $ep = new Application\EditorPage();
 $ep = new EditorPage();
+
 $hlp = new Application\Helpers();
 $hlp = new Helpers();
 
@@ -98,7 +101,7 @@ $ep->initEditor($cf, $hlp);
 $db->initDb($hlp->getConnectionConfig());
 $canConnect = $db->canConnect();
 
-if (!$hlp->haveConnectionDbIntels() || $canConnect == false) {
+if ($hlp->haveConnectionDbIntels() == false || $canConnect == false) {
     require "KW/kapweb_inits/pages/connection_db.php";
 } else {
     if (!$hlp->mainPageExists()) {

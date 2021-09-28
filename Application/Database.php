@@ -11,16 +11,16 @@ class Database
     private static $dbUsername = "";
     private static $dbPassword = "";
 
-    private static $connection = null;
+    private static $connection = NULL;
 
     public function __construct() {}
 
     public static function connect() {
         if (self::canConnectSpecificsDb(self::$dbName) == false) {
-            self::$connection = null;
+            self::$connection = NULL;
             return self::$connection;
         }
-        if (self::$connection == null) {
+        if (self::$connection == NULL) {
             try {
                 self::$connection = new PDO("mysql:host=" . self::$dbHost . ";dbname=" . self::$dbName, self::$dbUsername, self::$dbPassword);
             } catch (PDOException $e) {
@@ -36,7 +36,7 @@ class Database
     }
 
     private static function impermanentConnectionDb($dbName) {
-        if (self::$connection == null) {
+        if (self::$connection == NULL) {
             try {
                 self::$connection = new PDO("mysql:host=" . self::$dbHost . ";dbname=" . $dbName, self::$dbUsername, self::$dbPassword);
             } catch (PDOException $e) {
@@ -48,7 +48,7 @@ class Database
     }
 
     public static function disconnect() {
-        self::$connection = null;
+        self::$connection = NULL;
     }
     
     public static function initDb(array $confSys) {
@@ -101,7 +101,7 @@ class Database
     }
 
     public static function canConnect(): bool {
-        $connection = null;
+        $connection = NULL;
         if (self::$dbHost == "" || self::$dbUsername == "")
             return false;
         try {
@@ -109,13 +109,13 @@ class Database
         } catch (PDOException $e) {
             return false;
         }
-        if ($connection != null)
+        if ($connection != NULL)
             return true;
         return false;
     }
 
     public static function canConnectSpecificsDb($dbName): bool {
-        $connection = null;
+        $connection = NULL;
         if (self::$dbHost == "" || $dbName == "" || self::$dbUsername == "")
             return false;
         try {
@@ -123,7 +123,7 @@ class Database
         } catch (PDOException $e) {
             return false;
         }
-        if ($connection != null)
+        if ($connection != NULL)
             return true;
         return false;
     }

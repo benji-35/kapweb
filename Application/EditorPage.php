@@ -28,20 +28,6 @@ class EditorPage {
         self::$hlp = $hlp;
     }
 
-    public static function smartDisplay($str) {
-        for ($i = 0; $i < strlen($str); $i++) {
-            $ch = $str[$i];
-            if ($ch == "\n") {
-                echo "\\<br>";
-            } else if ($ch == "\t") {
-                echo "[    ]";
-            } else {
-                echo "[" . $ch . "] ";
-            }
-        }
-        echo "<br>";
-    }
-
     public static function getHtmlEditable($path) {
         global $cf, $hlp;
         $res = "";
@@ -112,7 +98,6 @@ class EditorPage {
         $path = $hlp->getPathPageFromName($path);
         $head = self::getStartHtmlUneditable($path);
         if ($head == "") {
-            echo "back";
             return;
         }
         $lines = explode("\n", $input);
@@ -148,7 +133,7 @@ class EditorPage {
         $res = array("css"=>null, "js"=>null);
         $page = $hlp->getPageIntelsFromName($namePage);
         if (count($page) > 0) {
-            if (isset($page['pathCss']) && $page['pathCss'] != null && strlen($page['pathCss']) > 0) {
+            if (isset($page['pathCss']) && $page['pathCss'] != NULL && strlen($page['pathCss']) > 0) {
                 $cssPath = $hlp->getMainUrl() . $page['pathCss'];
                 $f = fopen($cssPath, "r");
                 $clearPathCss = $cf->rmFChars($page['pathCss'], 1);
@@ -160,7 +145,7 @@ class EditorPage {
                 }
                 fclose($f);
             }
-            if (isset($page['pathJs']) && $page['pathJs'] != null && strlen($page['pathJs']) > 0) {
+            if (isset($page['pathJs']) && $page['pathJs'] != NULL && strlen($page['pathJs']) > 0) {
                 $jsPath = $hlp->getMainUrl() . $page['pathJs'];
                 $f = fopen($jsPath, "r");
                 $clearPathCss = $cf->rmFChars($page['pathJs'], 1);
@@ -179,13 +164,13 @@ class EditorPage {
     public static function saveAllCssJsContent($name, array $arrIntels) {
         global $hlp, $cf;
         $page = $hlp->getPageIntelsFromName($name);
-        if ($arrIntels['css'] != null) {
+        if ($arrIntels['css'] != NULL) {
             $clearPathCss = $cf->rmFChars($page['pathCss'], 1);
             $f = fopen($clearPathCss, "w");
             fwrite($f, $arrIntels['css']);
             fclose($f);
         }
-        if ($arrIntels['js'] != null) {
+        if ($arrIntels['js'] != NULL) {
             $clearPathJs = $cf->rmFChars($page['pathJs'], 1);
             $f = fopen($clearPathJs, "w");
             fwrite($f, $arrIntels['js']);
