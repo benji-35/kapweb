@@ -9,9 +9,7 @@
         $displayChangePwd = true;
     }
     if ($displayConfirm == false && $displayChangePwd == false) {
-        $hdrTamp = "";
-        $mUrl = $hlp->getMainUrl();
-        $hdr = "location: " . $hdrTamp . "/pageNotFound";
+        $hdr = "location: " . $hlp->getMainUrl() . "/pageNotFound";
         header($hdr);
     }
     if (isset($_POST['validEmail'])) {
@@ -24,7 +22,7 @@
     }
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="<?=$_SESSION['lang']?>">
     <head>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>

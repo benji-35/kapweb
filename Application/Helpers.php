@@ -9,7 +9,7 @@ class Helpers {
     private static $db = NULL;
     private static $cf = NULL;
 
-    private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html>\n"
+    private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html lang=\"<?=\$_SESSION['lang']?>\">\n"
         . "\t<head>\n\t\t<title><?=\$_SESSION['titlePage']?></title>\n"
         . "\t\t<meta charset=\"utf-8\">\n"
         . "\t\t<?php\n"
@@ -61,6 +61,58 @@ class Helpers {
         . "\tpadding-top: 25px;\n"
         . "}\n";
     private static $jsBaseContent = "//welcome, this page is created for js for the page ";
+    private static $baseLang = array(
+        [
+            "short" => "en",
+            "name" => "English",
+            "en" => "English",
+        ],
+        [
+            "short" => "fr",
+            "name" => "Français",
+            "en" => "French",
+        ],
+        [
+            "short" => "de",
+            "name" => "Deutsch",
+            "en" => "German",
+        ],
+        [
+            "short" => "it",
+            "name" => "Italiano",
+            "en" => "Italian",
+        ],
+        [
+            "short" => "es",
+            "name" => "Español",
+            "en" => "Spanish",
+        ],
+        [
+            "short" => "da",
+            "name" => "Danish",
+            "en" => "Danish",
+        ],
+        [
+            "short" => "nl",
+            "name" => "Dutch",
+            "en" => "Dutch",
+        ],
+        [
+            "short" => "ru",
+            "name" => "Русский",
+            "en" => "Russian",
+        ],
+        [
+            "short" => "lb",
+            "name" => "Lëtzebuergesch",
+            "en" => "Luxembourgish",
+        ],
+        [
+            "short" => "zh",
+            "name" => "汉语",
+            "en" => "Chinese",
+        ],
+    );
 
     /*
             INITIALIZE HELPERS
@@ -239,6 +291,45 @@ class Helpers {
         return false;
     }
 
+    public static function getLanguageFromId(int $id) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_languages WHERE id=?");
+        $stm->execute(array($id));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return $resStm['name_en'];
+        }
+        return "Unknow";
+    }
+
+    public static function getLanguageShortFromId(int $id) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_languages WHERE id=?");
+        $stm->execute(array($id));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return $resStm['name_short'];
+        }
+        return "";
+    }
+
+    public static function getLanguageIdFromShort(string $short):int {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_languages WHERE name_short=?");
+        $stm->execute(array($short));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return $resStm['id'];
+        }
+        return 1;
+    }
+
     /*
             DATABSE CONNECTION
     */
@@ -365,9 +456,22 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
+        if (self::tabelExists("kp_languages") == false) {
+            $structure = ""
+                . "ALTER TABLE kp_languages ADD COLUMN name varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE kp_languages ADD COLUMN name_en varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE kp_languages ADD COLUMN name_short varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;";
+            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_languages (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
+            $stm->execute();
+            $stm = $connect->prepare($structure);
+            $stm->execute();
+            for ($i = 0; $i < count(self::$baseLang); $i++) {
+                $stm = $connect->prepare("INSERT INTO kp_languages (name, name_en, name_short) VALUES (?, ?, ?)");
+                $stm->execute(array(self::$baseLang[$i]['name'], self::$baseLang[$i]['en'], self::$baseLang[$i]['short']));
+            }
+        }
         if (self::tabelExists("pages") == false) {
-            //ALTER TABLE `test` ADD `test` INT NOT NULL AUTO_INCREMENT, ADD PRIMARY KEY (`test`);
-            //ALTER TABLE `test` ADD `oui` INT NOT NULL, ADD UNIQUE (`oui`); 
+            $id_en = self::getLanguageIdFromShort("en");
             $structure = ""
                 . "ALTER TABLE pages ADD COLUMN url varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE pages ADD COLUMN title varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
@@ -381,7 +485,8 @@ class Helpers {
                 . "ALTER TABLE pages ADD COLUMN pathJs varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE pages ADD COLUMN ico varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE pages ADD COLUMN needConnect tinyint(1) NOT NULL DEFAULT 0;"
-                . "ALTER TABLE pages ADD COLUMN needConnectSu tinyint(1) NOT NULL DEFAULT 0;";
+                . "ALTER TABLE pages ADD COLUMN needConnectSu tinyint(1) NOT NULL DEFAULT 0;"
+                . "ALTER TABLE pages ADD COLUMN language int(11) NOT NULL DEFAULT " . $id_en . ";";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS pages (name varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL UNIQUE)");
             $stm->execute();
             $stm = $connect->prepare($structure);
@@ -426,7 +531,7 @@ class Helpers {
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"
             ));
             $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "editPageKp",
                 "/KW/editPage",
@@ -594,9 +699,9 @@ class Helpers {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "pages",
-                14,
-                "int,varchar,varchar,varchar,varchar,tinyint,tinyint,tinyint,varchar,varchar,tinyint,varchar,tinyint,tinyint",
-                "pid,name,url,title,path,deleted,hided,editable,pathCss,pathJs,mainPage,ico,needConnect,needConnectSu",
+                15,
+                "int,varchar,varchar,varchar,varchar,tinyint,tinyint,tinyint,varchar,varchar,tinyint,varchar,tinyint,tinyint,int",
+                "pid,name,url,title,path,deleted,hided,editable,pathCss,pathJs,mainPage,ico,needConnect,needConnectSu,langauge",
                 1,
                 0,
                 0,
@@ -641,6 +746,17 @@ class Helpers {
                 6,
                 "varchar,varchar,int,tinyint,tinyint,tinyint",
                 "cid,email,uid,isSu,checked,changeMail",
+                1,
+                0,
+                0,
+                0
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "kp_languages",
+                3,
+                "int,varchar,varchar",
+                "id,name,name_short",
                 1,
                 0,
                 0,
@@ -856,6 +972,7 @@ class Helpers {
             $res = $resStm['path'];
             $nameGet = $resStm['name'];
             $_SESSION['titlePage'] =  $resStm['title'];
+            $_SESSION['lang'] = $resStm['language'];
 
             if ($resStm['needConnect']) {
                 unset($_SESSION['pathAfterConnect']); 
@@ -899,9 +1016,29 @@ class Helpers {
             }
         }
         $db->disconnect();
-        if ((count($url) >= 2 && ($url[1] == "dbConnect")) == false &&(count($url) >= 1 && ($url[0] == "pageNotFound" || $url[0] == "connect")) == false && (count($url) >= 1 && $url[0] == "KW") == false && self::neededPageFilesExists($nameGet) == false && $nameGet != "")
+        $haveToCr = self::haveToCreatePageFile($url);
+        $haveToCrB = "false";
+        if ($haveToCr == true)
+            $haveToCrB = "true";
+        if ($haveToCr == true && self::neededPageFilesExists($nameGet) == false && $nameGet != "") {
             self::createBasicsPagesFiles($nameGet);
+        }
         return $res;
+    }
+
+    public static function haveToCreatePageFile(array $url):bool {
+        if (count($url) >= 1 && $url[0] == "KW") {
+            return false;
+        }
+        if (count($url) >= 1 && $url[0] == "confirmEmail")
+            return false;
+        if (count($url) >= 2 && $url[1] == "dbConnect")
+            return false;
+        if (count($url) >= 1 && $url[0] == "pageNotFound")
+            return false;
+        if (count($url) >= 1 && $url[0] == "connect")
+            return false;
+        return true;
     }
 
     public static function deleteAllPages() {
@@ -1033,7 +1170,7 @@ class Helpers {
         fclose($f);
     }
 
-    public static function addPage(string $name, string $url, string $title, bool $mainPage):bool {
+    public static function addPage(string $name, string $url, string $title, bool $mainPage, int $lang):bool {
         global $db, $cf;
         if (self::pageExists($name))
             return false;
@@ -1049,7 +1186,7 @@ class Helpers {
         } else if ($mainPage == false) {
             $isMain = 0;
         }
-        $stm = $connect->prepare("INSERT INTO `pages` (`name`, `url`, `title`, `path`, `mainPage`, `pathCss`, `pathJs`, `ico`) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stm = $connect->prepare("INSERT INTO `pages` (`name`, `url`, `title`, `path`, `mainPage`, `pathCss`, `pathJs`, `ico`, language) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stm->execute(array(
             $name,
             $url,
@@ -1059,6 +1196,7 @@ class Helpers {
             "/KW/public/ressources/css/" . $name . ".css",
             "/KW/public/ressources/js/" . $name . ".js",
             "/" . $cf->sys_getMainIco(),
+            $lang,
         ));
         self::createBasicsPagesFiles($name);
         $db->disconnect();

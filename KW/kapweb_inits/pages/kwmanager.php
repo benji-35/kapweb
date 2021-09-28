@@ -11,10 +11,11 @@
     $users = $hlp->getUsers();
     $myAccount = $hlp->getMyAccountConnect();
     $cookies = $hlp->getCookies();
+    $languages = $hlp->getRowsTable("kp_languages");
 
     if (isset($_POST['createFirstPage'])) {
         unset($_SESSION['pageError']);
-        $resCheck = $hlp->addPage($_POST['nameFirstPage'], "/", $_POST['titleFirstPage'], true);
+        $resCheck = $hlp->addPage($_POST['nameFirstPage'], "/", $_POST['titleFirstPage'], true, $_POST['selectLangPageFirst']);
         if ($resCheck == false)
             $_SESSION['pageError'] = "An error occured while create your first page";
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
@@ -27,7 +28,7 @@
         $nurl = $_POST['newPageUrl'];
         if ($nurl[0] != '/')
             $nurl = "/" . $nurl;
-        $resCheck = $hlp->addPage($_POST['newPageName'], $nurl, $_POST['newTitlePage'], false);
+        $resCheck = $hlp->addPage($_POST['newPageName'], $nurl, $_POST['newTitlePage'], false, $_POST['selectLangPageCreation']);
         if ($resCheck == false)
             $_SESSION['pageError'] = "Page name already taken please get another name for your page";
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
@@ -613,7 +614,7 @@
                                 <th class="nameTablePage">Name</th>
                                 <th class="urlTablePage">Url</th>
                                 <th class="titleTablePage">Title</th>
-                                <th class="mainpageTablePage">Is main page</th>
+                                <th class="mainpageTablePage">Language</th>
                                 <th class="iconTablePage">icon</th>
                                 <th class="deleteTablePage">delete</th>
                                 <th class="connectTablePage">Connection type</th>
@@ -624,15 +625,13 @@
                     <?php
                             for ($i = 0; $i < count($pages); $i++) {
                                 $urlPageEdit = $hlp->getMainUrl() . "/KW/editPage/" . $pages[$i]['name'];
-                                $mainPageState = "no";
-                                if ($pages[$i]['mainPage'] == "1")
-                                    $mainPageState = "yes";
+                                $lang = $hlp->getLanguageFromId($pages[$i]['language']);
                     ?>
                         <tr>
                             <th class="nameTablePage"><?=$pages[$i]['name']?></th>
                             <th class="urlTablePage"><?=$hlp->getMainUrl() . $pages[$i]['url']?></th>
                             <th class="titleTablePage"><?=$pages[$i]['title']?></th>
-                            <th class="mainpageTablePage"><?=$mainPageState?></th>
+                            <th class="mainpageTablePage"><?=$lang?></th>
                             <th class="iconTablePage"><img src="<?=$hlp->getMainUrl() . $pages[$i]['ico']?>"></th>
                             <th class="deleteTablePage"><input type="submit" value="deleted" name="<?="deletePage-" . $pages[$i]['name']?>"></th>
                             <th class="connectTablePage">
@@ -690,6 +689,16 @@
                             <input type="text" placeholder="page name..." name="newPageName" required>
                             <input type="text" placeholder="url..." name="newPageUrl" required>
                             <input type="text" placeholder="title..." name="newTitlePage" required>
+                            <select name="selectLangPageCreation" required>
+                                <option value="1" hidden>Selctionner la langue</option>
+                                <?php
+                                    for ($i = 0; $i < count($languages); $i++) {
+                                ?>
+                                    <option value="<?=$languages[$i]['id']?>"><?=$languages[$i]['name_en']?></option>
+                                <?php
+                                    }
+                                ?>
+                            </select>
                             <input type="submit" value="créer" name="newPage">
                             <?php
                                 if (isset($_SESSION['pageError'])) {
@@ -712,6 +721,16 @@
                             <div class="whiteDiv">
                                 <input type="text" placeholder="nom de la page..." name="nameFirstPage" required>
                                 <input type="text" placeholder="titre de la page" name="titleFirstPage" required>
+                                <select name="selectLangPageFirst" required>
+                                    <option value="1" hidden>Selctionner la langue</option>
+                                    <?php
+                                        for ($i = 0; $i < count($languages); $i++) {
+                                    ?>
+                                        <option value="<?=$languages[$i]['id']?>"><?=$languages[$i]['name_en']?></option>
+                                    <?php
+                                        }
+                                    ?>
+                                </select>
                                 <input type="submit" value="créer" name="createFirstPage">
                                 <?php
                                     if (isset($_SESSION['pageError'])) {
