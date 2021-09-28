@@ -17,6 +17,7 @@ class ConfFiles {
         . "website_name=Coucou\n"
         . "#settings for sign-in\n"
         . "user-signin-ids=false\n"
+        . "user-age=false\n"
         . "user-signin-pseudo=false\n"
         . "#email that will use for sending confirm email\n"
         . "email-confirm-password=\n";
