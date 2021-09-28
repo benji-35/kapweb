@@ -61,7 +61,7 @@
         $need_pseudo = true;
 ?>
 <!DOCTYPE html>
-<html lang="<?=$_SESSION['lang']?>">
+<html  lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">
     <head>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>
