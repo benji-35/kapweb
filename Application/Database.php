@@ -97,7 +97,24 @@ class Database
             if ($all_db_nb[$i] == 0)
                 array_push($res, $all_dbs[$i]);
         }
+        self::disconnect();
         return $res;
+    }
+
+    public static function isDbExists(string $nameDb): bool {
+        $resRet = false;
+        $connect = self::impermanentConnectionDb("information_schema");
+        $stm = $connect->prepare("SELECT * FROM SCHEMATA WHERE 1");
+
+        $stm->execute();
+        while ($res = $stm->fetch()) {
+            if ($res['SCHEMA_NAME'] == $nameDb) {
+                $resRet = true;
+                break;
+            }
+        }
+        self::disconnect();
+        return $resRet;
     }
 
     public static function canConnect(): bool {

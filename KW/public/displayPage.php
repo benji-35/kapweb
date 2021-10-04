@@ -1,5 +1,5 @@
 <?php
-    $_SESSION['editName'] =  $_SESSION['titlePage'];
+    $_SESSION['editName'] =  $_SESSION['pageName'];
 ?>
 
 <!DOCTYPE html>
@@ -25,4 +25,7 @@
 			}
 		?>
 	</head>
+	<body>
+		<?=$ep->generateHtmlCode()?>
+	</body>
 </html>

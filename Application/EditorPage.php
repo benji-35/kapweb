@@ -28,154 +28,194 @@ class EditorPage {
         self::$hlp = $hlp;
     }
 
-    public static function getHtmlEditable($path) {
-        global $cf, $hlp;
-        $res = "";
-        $path = $hlp->getPathPageFromName($path);
-        $f = fopen($path, "r");
-        if ($f) {
-            $str = fread($f, filesize($path));
-            fclose($f);
-        } else {
-            fclose($f);
-            return $res;
-        }
-        $lines = explode("\n", $str);
-        $nlines = array();
-        $start = false;
+    public static function saveHtmlEditor() {
 
-        for ($i = 0; $i < count($lines); $i++) {
-            if ($start == false && $cf->strContains($lines[$i], "<body>") == true) {
-                $start = true;
-            } else if ($start == true && $cf->strContains($lines[$i], "</body>") == false) {
-                array_push($nlines, $cf->rmFChars($lines[$i], 2));
-            } else if ($cf->strContains($lines[$i], "</body>") == true) {
-                break;
-            }
-        }
-        for ($i = 0; $i < count($nlines); $i++) {
-            for ($x = 0; $x < count(self::$editorsConstantValues); $x++) {
-                $indexes = array_keys(self::$editorsConstantValues);
-                $index = $indexes[$x];
-                $phps = self::$editorsConstantValues;
-                if (strlen($nlines[$i]) >= strlen($phps[$index])) {
-                    $phpVal = $phps[$index];
-                    $editVal = self::$editorKey . $index;
-                    $nlines[$i] = str_replace($phpVal, $editVal, $nlines[$i]);
-                }
-            }
-            if (count($nlines) <= 0) {
-                $res = $nlines[$i];
-            } else {
-                $res .= "\n" . $nlines[$i];
-            }
-        }
-        $res = $cf->replaceStrStr($res, "\t", "    ");
-        return $res;
     }
 
-    private static function getStartHtmlUneditable($path):string {
+    private static function getElementsName():array {
+        if (!isset($_SESSION['editName'])) {
+            return array();
+        }
         global $cf;
+        $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
+        $elemReaded = preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, "elements"));
+        return explode(",", $elemReaded);
+    }
+
+    private static function genArrayElements($elemName):array {
+        global $cf;
+        if (!isset($_SESSION['editName'])) {
+            return array(
+                "name" => $elemName,
+                "type" => "",
+                "class" => "",
+                "parent" => "",
+                "children" => ""
+            );
+        }
+        $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
+        $res = array(
+            "name" => $elemName,
+            "type" => $cf->getValueFromKeyConf($path, $elemName),
+            "class" => $cf->getValueFromKeyConf($path, $elemName . "-class"),
+            "parent" => $cf->getValueFromKeyConf($path, $elemName . "-parent"),
+            "children" => $cf->getValueFromKeyConf($path, $elemName . "-children"),
+            "content" => $cf->getValueFromKeyConf($path, $elemName . "-content"),
+        );
+
+        if ($res['type'] == "img") {
+            $res = array_merge($res, array("src" => $cf->getValueFromKeyConf($path, $elemName . "-src")));
+        } else if ($res['type'] == "input") {
+
+        } else if ($res['type'] == "form") {
+
+        }
+
+        return $res;
+    }
+
+    public static function getHtmlEditor():array {
+        if (!isset($_SESSION['editName'])) {
+            return array();
+        }
+        $res = array();
+        $nameElems = self::getElementsName();
+        for ($i = 0; $i < count($nameElems); $i++) {
+            array_push($res, self::genArrayElements($nameElems[$i]));
+        }
+        return $res;
+    }
+
+    private static function isBaliseAutoClose($type):bool {
+        if ($type == "area" || $type == "br")
+            return true;
+        if ($type == "hr" || $type == "img")
+            return true;
+        if ($type == "input" || $type == "link")
+            return true;
+        if ($type == "meta" || $type == "param")
+            return true;
+        return false;
+    }
+
+    private static function getCmdExec($str):string {
+        global $cf, $hlp, $db;
         $res = "";
-        if (file_exists($path) == false)
-            return "";
-        $f = fopen($path, "r");
-        $str = fread($f, filesize($path));
-        fclose($f);
-        $lines = explode("\n", $str);
-        for ($i = 0; $i < count($lines); $i++) {
-            if ($cf->strContains($lines[$i], "<body>")) {
-                $res .= "\t<body>\n";
-                break;
+        $execs = explode("\$", $str);
+        if ($execs[0] == "")
+            unset($execs[0]);
+        if (count($execs) == 1) {
+            $args = explode("->", $execs[1]);
+            $cmd = $args[1];
+            $cmd = str_replace("()", "", $cmd);
+            $argsStr = "";
+            if ($cf->strContains($cmd, "(")) {
+                $argsCmd = explode("(", $cmd);
+                $argsCmd = explode(")", $argsCmd[1]);
+                $argsStr = $argsCmd[0];
             }
-            $res .= $lines[$i] . "\n";
+            if ($args[0] == "hlp") {
+                return $hlp->$cmd($argsStr);
+            } else if ($args[0] == "cf") {
+                return $cf->$cmd($argsStr);
+            } else if ($args[0] == "db") {
+                return $db->$cmd($argsStr);
+            }
+        } else {
+            $argsStr = "";
+            for ($i = count($execs); $i >= 2; $i--) {
+                if (isset($execs[$i])) {
+                    $execs[$i] = "\$" . $execs[$i];
+                }
+                if ($i > 1) {
+                    $args = explode(", ", $execs[$i]);
+                    for ($x = 0; $x < count($args); $x++) {
+                        if ($args[$x][0] == "\$") {
+                            $args[$x] = "\"" . self::getCmdExec($args[$x]) . "\"";
+                        } else {
+                            $args[$x] = str_replace("(", "", $args[$x]);
+                            $args[$x] = str_replace(")", "", $args[$x]);
+                        }
+                    }
+                    $execs[$i] = "";
+                    for ($x = 0; $x < count($args); $x++) {
+                        if ($execs[$i] == "") {
+                            $execs[$i] = $args[$x];
+                        } else {
+                            $execs[$i] .= ", " . $args[$x];
+                        }
+                    }
+                    if ($argsStr == "") {
+                        $argsStr .= $execs[$i];
+                    } else {
+                        $argsStr .= ", " . $execs[$i];
+                    }
+                }
+            }
+            $execs[1] = str_replace("(", "", $execs[1]);
+            $cmds = explode("->", $execs[1]);
+            $func = $cmds[1];
+            if ($cmds[0] == "hlp") {
+                $res = $hlp->$func($argsStr);
+            } else if ($cmds[0] == "cf") {
+                $res = $cf->$func($argsStr);
+            } else if ($cmds[0] == "db") {
+                $res = $db->$func($argsStr);
+            }
         }
         return $res;
     }
 
-    public static function saveHtmlEditable($path, $input) {
+    private static function getHtmlStringBalise($arr, $parent) {
+        global $cf, $hlp, $db;
+        $res = "";
+        for ($i = 0; $i < count($arr); $i++) {
+            $balise = $arr[$i];
+            if ($balise['parent'] == $parent) {
+                $res .= "<" . $balise['type'] . " id=\"" . $balise['name'] . "\"";
+                if ($balise['class'] != "") {
+                    $res .= " class=\"" . $balise['class'] . "\"";
+                }
+                if ($balise['type'] == "img") {
+                    $src = "";
+                    if ($cf->strStartWith($balise['src'], "<?=")) {
+                        $balise['src'] = $cf->getStrFromPos($balise['src'], 3);
+                        $balise['src'] = $cf->strRmChars($balise['src'], strlen($balise['src']) - 2, strlen($balise['src']));
+                        $execs = explode(" . ", $balise['src']);
+                        for ($x = 0; $x < count($execs); $x++) {
+                            if ($execs[$x][0] != "'" && $execs[$x][0] != "\"") {
+                                $src .= self::getCmdExec($execs[$x]);
+                            } else {
+                                $strSrc = $cf->getStrFromPos($execs[$x], 1);
+                                $strSrc = $cf->strRmChars($strSrc, strlen($strSrc) - 1, strlen($strSrc));
+                                $src .= $strSrc;
+                            }
+                        }
+                    } else {
+                        $src = $balise['src'];
+                    }
+                    $res .= " src=\"" . $src . "\"";
+                }
+                if (self::isBaliseAutoClose($balise['type'])) {
+                    $res .= ">";
+                } else {
+                    $res .= ">\n" . $balise['content'] . "\n" . self::getHtmlStringBalise($arr, $balise['name']) . "\n";
+                    $res .= "</" . $balise['type'] . ">\n";
+                }
+            }
+        }
+        return $res;
+    }
+
+    public static function generateHtmlCode():string {
         global $cf, $hlp;
-        $path = $hlp->getPathPageFromName($path);
-        $head = self::getStartHtmlUneditable($path);
-        if ($head == "") {
-            return;
+        if (!isset($_SESSION['editName'])) {
+            return "no text in this page";
         }
-        $lines = explode("\n", $input);
-        $input = "";
-        for ($i = 0; $i < count($lines); $i++) {
-            for ($x = 0; $x < count(self::$editorsConstantValues); $x++) {
-                $indexes = array_keys(self::$editorsConstantValues);
-                $index = $indexes[$x];
-                $phpVal = self::$editorsConstantValues[$index];
-                $to_replace = self::$editorKey . $index;
-                $lines[$i] = str_replace($to_replace, $phpVal, $lines[$i]);
-            }
-            if ($input == "") {
-                $input = $lines[$i];
-            } else {
-                $input .= "\n" . $lines[$i];
-            }
-        }
-        $input = $cf->replaceStrStr($input, "    ", "\t");
-        for ($i = 1; $i < strlen($input); $i++) {
-            if ($input[$i] == "\n") {
-                $input = $hlp->addStrinStrAtPos($input, "\t\t", $i+1);
-            }
-        }
-        $head .= "\t\t" . $input . "\n\t</body>\n</html>";
-        $f = fopen($path, "w");
-        fwrite($f, $head, strlen($head));
-        fclose($f);
-    }
-
-    public static function getAllCssJsContent($namePage):array {
-        global $hlp, $cf;
-        $res = array("css"=>null, "js"=>null);
-        $page = $hlp->getPageIntelsFromName($namePage);
-        if (count($page) > 0) {
-            if (isset($page['pathCss']) && $page['pathCss'] != NULL && strlen($page['pathCss']) > 0) {
-                $cssPath = $hlp->getMainUrl() . $page['pathCss'];
-                $f = fopen($cssPath, "r");
-                $clearPathCss = $cf->rmFChars($page['pathCss'], 1);
-                $size = filesize($clearPathCss);
-                if ($size > 0) {
-                    $res['css'] = fread($f, $size);
-                } else if (file_exists($cssPath)) {
-                    $res['css'] = "";
-                }
-                fclose($f);
-            }
-            if (isset($page['pathJs']) && $page['pathJs'] != NULL && strlen($page['pathJs']) > 0) {
-                $jsPath = $hlp->getMainUrl() . $page['pathJs'];
-                $f = fopen($jsPath, "r");
-                $clearPathCss = $cf->rmFChars($page['pathJs'], 1);
-                $size = filesize($clearPathCss);
-                if ($size > 0) {
-                    $res['js'] = fread($f, $size);
-                } else if (file_exists($jsPath)) {
-                    $res['js'] = "";
-                }
-                fclose($f);
-            }
-        }
+        $res = "";
+        $edit = self::getHtmlEditor();
+        $res .= self::getHtmlStringBalise($edit, "body");
         return $res;
     }
-
-    public static function saveAllCssJsContent($name, array $arrIntels) {
-        global $hlp, $cf;
-        $page = $hlp->getPageIntelsFromName($name);
-        if ($arrIntels['css'] != NULL) {
-            $clearPathCss = $cf->rmFChars($page['pathCss'], 1);
-            $f = fopen($clearPathCss, "w");
-            fwrite($f, $arrIntels['css']);
-            fclose($f);
-        }
-        if ($arrIntels['js'] != NULL) {
-            $clearPathJs = $cf->rmFChars($page['pathJs'], 1);
-            $f = fopen($clearPathJs, "w");
-            fwrite($f, $arrIntels['js']);
-            fclose($f);
-        }
-    } 
 }
 ?>

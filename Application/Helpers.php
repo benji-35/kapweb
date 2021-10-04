@@ -135,7 +135,7 @@ class Helpers {
         . "img-content=\n"
         . "img-parent=pict\n"
         . "img-children=\n"
-        . "img-src=<?=\$hlp->getMainUrl() . \"/\" . \$cf->getValueFromKeyConf(\$cf->getFilesConfig(), \"main_iconBlack\")?>\n"
+        . "img-src=<?=\$hlp->getMainUrl() . \"/KW/kapweb_inits/ressources/imgs/kwLogo.ico\"?>\n"
         . "div2=div\n"
         . "div2-class=whiteSpacing\n"
         . "div2-content=\n"
