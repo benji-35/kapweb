@@ -28,8 +28,218 @@ class EditorPage {
         self::$hlp = $hlp;
     }
 
-    public static function saveHtmlEditor() {
+    public static function addElement($name, $type, $parent="body", $class="", $content="") {
+        if (!isset($_SESSION['editName'])) {
+            return;
+        }
+        $elements = array();
+        $nameElems = self::getElementsName();
+        $to_write = "";
+        for ($i = 0; $i < count($nameElems); $i++) {
+            if ($to_write == "") {
+                $to_write = "elements=" . $nameElems[$i];
+            } else {
+                $to_write .= "," . $nameElems[$i];
+            }
+            array_push($elements, self::genArrayElements($nameElems[$i]));
+        }
+        $to_write .= "," . $name;
+        $to_write .= "\n";
+        for ($i = 0; $i < count($nameElems); $i++) {
+            $balise = $elements[$i];
+            $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
+            $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
+            $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
+            $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
+            $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
+            if ($balise['type'] == "input") {
+                $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
+                $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
+                $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
+                $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
+                $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
+            } else if ($balise['type'] == "img") {
+                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
+            } else if ($balise['type'] == "form") {
+                $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
+            } else if ($balise['type'] == "a") {
+                $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+            }
+        }
+        $to_write .= $name . "=" . $type . "\n";
+        $to_write .= $name . "-class=" . $class . "\n";
+        $to_write .= $name . "-content=" . $content . "\n";
+        $to_write .= $name . "-parent=" . $parent . "\n";
+        $to_write .= $name . "-child=\n";
+        if ($type == "a") {
+            $to_write .= $name . "-link=\n";
+        } else if ($type == "input") {
+            $to_write .= $name . "-itype=\n";
+            $to_write .= $name . "-readonly=\n";
+            $to_write .= $name . "-placeholder=\n";
+            $to_write .= $name . "-value=\n";
+            $to_write .= $name . "-iname=\n";
+        } else if ($type == "img") {
+            $to_write .= $name . "-src=\n";
+        } else if ($type == "form") {
+            $to_write .= $name . "-method=\n";
+        }
+        $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
+        $f = fopen($path, "w");
+        if ($f) {
+            fwrite($f, $to_write, strlen($to_write));
+        }
+        fclose($f);
+    }
 
+    private static function getDeletedStr($arr, $name):array {
+        if (!isset($_SESSION['editName'])) {
+            return array();
+        }
+        $children = "";
+        for ($i = 0; $i < count($arr); $i++) {
+            if ($arr[$i]['name'] == $name) {
+                $children = $arr[$i]['children'];
+                unset($arr[$i]);
+            }
+        }
+        if ($children != "") {
+            $arrChildren = explode(",", $children);
+            for ($i = 0; $i < count($arrChildren); $i++) {
+                $arr = self::getDeletedStr($arr, $arrChildren[$i]);
+            }
+        }
+        return $arr;
+    }
+
+    public static function deleteElement($name, $curr=0) {
+        if (!isset($_SESSION['editName'])) {
+            return;
+        }
+        $elements = array();
+        $nameElems = self::getElementsName();
+        $to_write = "";
+        
+        for ($i = 0; $i < count($nameElems); $i++) {
+            if ($nameElems[$i] != $name) {
+                array_push($elements, self::genArrayElements($nameElems[$i]));
+            }
+        }
+        $n_arr = self::getDeletedStr($elements, $name);
+
+        for ($i = 0; $i < count($n_arr); $i++) {
+            if (isset($n_arr[$i])) {
+                if ($to_write == "") {
+                    $to_write = $n_arr[$i]['name'];
+                } else {
+                    $to_write .= "," . $n_arr[$i]['name'];
+                }
+            }
+        }
+        $to_write .= $to_write . "\n";
+        for ($i = 0; $i < count($n_arr); $i++) {
+            $balise = $n_arr[$i];
+            $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
+            $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
+            $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
+            $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
+            $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
+            if ($balise['type'] == "input") {
+                $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
+                $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
+                $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
+                $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
+                $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
+            } else if ($balise['type'] == "img") {
+                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
+            } else if ($balise['type'] == "form") {
+                $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
+            } else if ($balise['type'] == "a") {
+                $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+            }
+        }
+
+        $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
+        $f = fopen($path, "w");
+        if ($f) {
+            fwrite($f, $to_write, strlen($to_write));
+        }
+        fclose($f);
+    }
+
+    public static function updateElement(string $name, array $arr) {
+        if (count($arr) <= 0)
+            return;
+        if (!isset($_SESSION['editName'])) {
+            return;
+        }
+        $elements = array();
+        $nameElems = self::getElementsName();
+        $to_write = "";
+
+        for ($i = 0; $i < count($nameElems); $i++) {
+            if ($nameElems[$i] != $name) {
+                array_push($elements, self::genArrayElements($nameElems[$i]));
+            }
+        }
+
+        for ($i = 0; $i < count($elements); $i++) {
+            if (isset($n_arr[$i])) {
+                if ($n_arr[$i]['name'] == $name) {
+                    $n_arr[$i]['name'] = $arr['name'];
+                }
+                if ($to_write == "") {
+                    $to_write = $n_arr[$i]['name'];
+                } else {
+                    $to_write .= "," . $n_arr[$i]['name'];
+                }
+            }
+        }
+        $to_write .= $to_write . "\n";
+        for ($i = 0; $i < count($elements); $i++) {
+            $balise = $elements[$i];
+            if ($balise['name'] == $name) {
+                $to_write .= $arr['name'] . "=" . $balise['type'] . "\n";
+                $to_write .= $arr['name'] . "-class=" . $arr['class'] . "\n";
+                $to_write .= $arr['name'] . "-content=" . $arr['content'] . "\n";
+                $to_write .= $arr['name'] . "-parent=" . $balise['parent'] . "\n";
+                $to_write .= $arr['name'] . "-children=" . $balise['children'] . "\n";
+                if ($balise['type'] == "input") {
+                    $to_write .= $arr['name'] . "-itype=" . $balise['itype'] . "\n";
+                    $to_write .= $arr['name'] . "-readonly=" . $arr['readonly'] . "\n";
+                    $to_write .= $arr['name'] . "-placeholder=" . $arr['placeholder'] . "\n";
+                    $to_write .= $arr['name'] . "-value=" . $arr['value'] . "\n";
+                    $to_write .= $arr['name'] . "-iname=" . $balise['iname'] . "\n";
+                } else if ($balise['type'] == "img") {
+                    $to_write .= $arr['name'] . "-src=" . $balise['src'] . "\n";
+                } else if ($balise['type'] == "form") {
+                    $to_write .= $arr['name'] . "-method=" . $balise['method'] . "\n";
+                } else if ($balise['type'] == "a") {
+                    $to_write .= $arr['name'] . "-link=" . $balise['link'] . "\n";
+                }
+            } else {
+                $balise = $elements[$i];
+                $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
+                $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
+                $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
+                $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
+                $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
+                if ($balise['type'] == "input") {
+                    $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
+                    $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
+                    $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
+                    $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
+                    $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
+                } else if ($balise['type'] == "img") {
+                    $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
+                } else if ($balise['type'] == "form") {
+                    $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
+                } else if ($balise['type'] == "a") {
+                    $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+                }
+            }
+        }
+        
     }
 
     public static function getAllCssJsContent($fileName):array {
