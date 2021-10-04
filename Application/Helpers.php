@@ -114,6 +114,54 @@ class Helpers {
         ],
     );
 
+    private static $confFileBase = "elements=body,bd,pict,img,div2,h1,p1,p2,p3\n"
+        . "body=div\n"
+        . "body-class=\n"
+        . "body-content=\n"
+        . "body-parent=\n"
+        . "body-children=bd\n"
+        . "bd=div\n"
+        . "bd-class=presentationPage\n"
+        . "bd-content=\n"
+        . "bd-parent=body\n"
+        . "bd-children=pict,div2\n"
+        . "pict=picture\n"
+        . "pict-class=\n"
+        . "pict-content=\n"
+        . "pict-parent=bd\n"
+        . "pict-children=img\n"
+        . "img=img\n"
+        . "img-class=\n"
+        . "img-content=\n"
+        . "img-parent=pict\n"
+        . "img-children=\n"
+        . "img-src=<?=\$hlp->getMainUrl() . \"/\" . \$cf->getValueFromKeyConf(\$cf->getFilesConfig(), \"main_iconBlack\")?>\n"
+        . "div2=div\n"
+        . "div2-class=whiteSpacing\n"
+        . "div2-content=\n"
+        . "div2-parent=bd\n"
+        . "div2-children=h1,p1,p2,p3\n"
+        . "h1=h1\n"
+        . "h1-class=\n"
+        . "h1-content=Nouvelle page <?=\" '\" . \$_SESSION['titlePage'] . \"'\"?>\n"
+        . "h1-parent=div2\n"
+        . "h1-children=\n"
+        . "p1=p\n"
+        . "p1-class=\n"
+        . "p1-content=Bravo, vous avez créé une nouvelle page pour votre site\n"
+        . "p1-parent=div2\n"
+        . "p1-children=\n"
+        . "p2=p\n"
+        . "p2-class=\n"
+        . "p2-content=Il vous est possible de la modifier dans votre espace de gestion du site\n"
+        . "p2-parent=div2\n"
+        . "p2-children=\n"
+        . "p3=p\n"
+        . "p3-class=\n"
+        . "p3-content=ou directement via les dossier\n"
+        . "p3-parent=div2\n"
+        . "p3-children=\n";
+
     /*
             INITIALIZE HELPERS
     */
@@ -486,14 +534,15 @@ class Helpers {
                 . "ALTER TABLE pages ADD COLUMN ico varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE pages ADD COLUMN needConnect tinyint(1) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE pages ADD COLUMN needConnectSu tinyint(1) NOT NULL DEFAULT 0;"
-                . "ALTER TABLE pages ADD COLUMN language int(11) NOT NULL DEFAULT " . $id_en . ";";
+                . "ALTER TABLE pages ADD COLUMN language int(11) NOT NULL DEFAULT " . $id_en . ";"
+                . "ALTER TABLE pages ADD COLUMN builtin tinyint(1) NOT NULL DEFAULT 0;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS pages (name varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL UNIQUE)");
             $stm->execute();
             $stm = $connect->prepare($structure);
             $stm->execute();
             //ajout des pages de base
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "connectKw",
                 "/KW",
@@ -502,10 +551,11 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kwconnect.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"
+                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "managerKw",
                 "/KW/manager",
@@ -516,10 +566,11 @@ class Helpers {
                 "/KW/kapweb_inits/ressources/css/kwmanager.css",
                 "/KW/kapweb_inits/ressources/js/kwmanager.js",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1,
                 1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "kwdbConnect",
                 "/KW/dbConnect",
@@ -528,10 +579,11 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kwdbconnect.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"
+                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "editPageKp",
                 "/KW/editPage",
@@ -542,10 +594,11 @@ class Helpers {
                 "/KW/kapweb_inits/ressources/css/kweditpage.css",
                 "/KW/kapweb_inits/ressources/js/kpeditpage.js",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1,
                 1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "kppageNotFound",
                 "/pageNotFound",
@@ -554,10 +607,11 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/pageNotFound.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"
+                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "connectUserKw",
                 "/connect",
@@ -567,10 +621,11 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kp_useraccount.css",
                 "/KW/kapweb_inits/ressources/js/kp_userconnect.js",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"
+                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "editContentTable",
                 "/KW/editContentTable",
@@ -580,10 +635,11 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/edit_content_table.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1,
                 1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "editStructureTable",
                 "/KW/editStructureTable",
@@ -593,10 +649,11 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/edit_structure_table.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                1,
                 1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "confirmEmail",
                 "/confirmEmail",
@@ -606,10 +663,11 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
-                0
+                0,
+                1
             ));
-            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu) VALUES " .
-                "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu, builtin) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "changePwd",
                 "/changePassword",
@@ -619,7 +677,8 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
                 "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
-                0
+                0,
+                1
             ));
         }
         if (self::tabelExists("kp_cookies") == false) {
@@ -699,9 +758,9 @@ class Helpers {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "pages",
-                15,
+                16,
                 "int,varchar,varchar,varchar,varchar,tinyint,tinyint,tinyint,varchar,varchar,tinyint,varchar,tinyint,tinyint,int",
-                "pid,name,url,title,path,deleted,hided,editable,pathCss,pathJs,mainPage,ico,needConnect,needConnectSu,langauge",
+                "pid,name,url,title,path,deleted,hided,editable,pathCss,pathJs,mainPage,ico,needConnect,needConnectSu,langauge,builtin",
                 1,
                 0,
                 0,
@@ -968,12 +1027,16 @@ class Helpers {
         unset($_SESSION['cssPath']);
         unset($_SESSION['jsPath']);
         unset($_SESSION['ico']);
+        $_SESSION['titlePage'] = "Unknow";
+        unset($_SESSION['pageName']);
         if ($resStm) {
             $res = $resStm['path'];
             $nameGet = $resStm['name'];
             $_SESSION['titlePage'] =  $resStm['title'];
             $_SESSION['lang'] = $resStm['language'];
-
+            if ($resStm['builtin'] == 0) {
+                $_SESSION['pageName'] = $resStm['name'];
+            }
             if ($resStm['needConnect']) {
                 unset($_SESSION['pathAfterConnect']); 
                 if (self::isConnected() == false) {
@@ -1149,12 +1212,18 @@ class Helpers {
     }
 
     private static function createBasicsPagesFiles(string $name) {
-        $pathPhp = "KW/public/pages/" . $name . ".php";
+        //$pathPhp = "KW/public/pages/" . $name . ".php";
+        $pathConf = "KW/public/pages/" . $name . ".conf";
         $pathCss = "KW/public/ressources/css/" . $name . ".css";
         $pathJs = "KW/public/ressources/js/" . $name . ".js";
-        $f = fopen($pathPhp, "w");
-        if ($f) {
+        //$f = fopen($pathPhp, "w");
+        /*if ($f) {
             fwrite($f, self::$phpBaseContent, strlen(self::$phpBaseContent));
+        }*/
+        //fclose($f);
+        $f = fopen($pathConf, "w");
+        if ($f) {
+            fwrite($f, self::$confFileBase, strlen(self::$confFileBase));
         }
         fclose($f);
         $f = fopen($pathCss, "w");
@@ -1191,7 +1260,7 @@ class Helpers {
             $name,
             $url,
             $title,
-            "KW/public/pages/" . $name . ".php",
+            "KW/public/displayPage.php",
             $isMAin,
             "/KW/public/ressources/css/" . $name . ".css",
             "/KW/public/ressources/js/" . $name . ".js",
