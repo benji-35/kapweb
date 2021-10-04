@@ -46,6 +46,18 @@ class EditorPage {
         $to_write .= "," . $name;
         $to_write .= "\n";
         for ($i = 0; $i < count($nameElems); $i++) {
+            if (isset($nameElems[$i]) && $nameElems[$i] == $parent) {
+                $children = $elements[$i]['children'];
+                if ($children == "") {
+                    $children = $name;
+                } else {
+                    $children .= "," . $name;
+                }
+                $elements[$i]['children'] = $children;
+                break;
+            }
+        }
+        for ($i = 0; $i < count($nameElems); $i++) {
             $balise = $elements[$i];
             $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
             $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
@@ -97,10 +109,13 @@ class EditorPage {
             return array();
         }
         $children = "";
-        for ($i = 0; $i < count($arr); $i++) {
-            if ($arr[$i]['name'] == $name) {
-                $children = $arr[$i]['children'];
-                unset($arr[$i]);
+        for ($i = 0; $i <= count($arr); $i++) {
+            if (isset($arr[$i])) {
+                if ($arr[$i]['name'] == $name) {
+                    $children = $arr[$i]['children'];
+                    unset($arr[$i]);
+                    break;
+                }
             }
         }
         if ($children != "") {
@@ -112,7 +127,7 @@ class EditorPage {
         return $arr;
     }
 
-    public static function deleteElement($name, $curr=0) {
+    public static function deleteElement($name) {
         if (!isset($_SESSION['editName'])) {
             return;
         }
@@ -130,7 +145,7 @@ class EditorPage {
         for ($i = 0; $i < count($n_arr); $i++) {
             if (isset($n_arr[$i])) {
                 if ($to_write == "") {
-                    $to_write = $n_arr[$i]['name'];
+                    $to_write = "elements=" . $n_arr[$i]['name'];
                 } else {
                     $to_write .= "," . $n_arr[$i]['name'];
                 }
@@ -159,6 +174,68 @@ class EditorPage {
             }
         }
 
+        $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
+        $f = fopen($path, "w");
+        if ($f) {
+            fwrite($f, $to_write, strlen($to_write));
+        }
+        fclose($f);
+    }
+
+    public static function resetElement($name) {
+        if (!isset($_SESSION['editName'])) {
+            return;
+        }
+        $elements = array();
+        $nameElems = self::getElementsName();
+        $to_write = "";
+        $children = "";
+
+        for ($i = 0; $i < count($nameElems); $i++) {
+            $arrGen = self::genArrayElements($nameElems[$i]);
+            if ($nameElems[$i] == $name) {
+                $children = $arrGen['children'];
+                $arrGen['children'] = "";
+            }
+            array_push($elements, $arrGen);
+        }
+        $arrChildren = explode(",", $children);
+        for ($i = 0; $i < count($arrChildren); $i++) {
+            $elements = self::getDeletedStr($elements, $arrChildren[$i]);
+        }
+        for ($i = 0; $i <= count($elements); $i++) {
+            if (isset($elements[$i])) {
+                if ($to_write == "") {
+                    $to_write = "elements=" . $elements[$i]['name'];
+                } else {
+                    $to_write .= "," . $elements[$i]['name'];
+                }
+            }
+        }
+        $to_write .= "\n";
+        for ($i = 0; $i <= count($elements); $i++) {
+            if (isset($elements[$i])) {
+                $balise = $elements[$i];
+                $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
+                $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
+                $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
+                $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
+                $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
+                if ($balise['type'] == "input") {
+                    $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
+                    $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
+                    $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
+                    $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
+                    $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
+                } else if ($balise['type'] == "img") {
+                    $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
+                } else if ($balise['type'] == "form") {
+                    $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
+                } else if ($balise['type'] == "a") {
+                    $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+                }
+            }
+        }
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
         $f = fopen($path, "w");
         if ($f) {

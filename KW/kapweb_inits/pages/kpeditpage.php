@@ -46,12 +46,7 @@
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
 		if (isset($_POST['reset-' . $balise['name']])) {
-			$children = explode(",", $balise['children']);
-			for ($x = 0; $x < count($children); $x++) {
-				if (isset($children[$x]) && $children[$x] != "") {
-					$ep->deleteElement($children[$x]);
-				}
-			}
+			$ep->resetElement($balise['name']);
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
 		if (isset($_POST['addChild-' . $balise['name']])) {
