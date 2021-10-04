@@ -5,12 +5,15 @@ body {
 }
 
 .editDiv {
-    width: 45%;
-    margin-left: 2.5%;
-    margin-right: 2.5%;
+    width: 98%;
     position: relative;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: rgb(236, 236, 236);
     margin-bottom: 20px;
+    margin-top: 15px;
+    padding: 10px;
+    border: 2px solid black;
 }
 
 .headerEdit {
@@ -22,8 +25,6 @@ body {
 }
 
 .footerEdit {
-    position: relative;
-    bottom: 0;
     width: 100%;
     background-color: rgb(167, 167, 167);
     display: flex;

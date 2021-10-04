@@ -102,57 +102,61 @@ class EditorPage {
         return $res;
     }
 
+    private static function getDivEditorBalise($arr, $name, $editable=true):string {
+        $res = "";
+        for ($i = 0; $i < count($arr); $i++) {
+            if ($arr[$i]['name'] == $name) {
+                $balise = $arr[$i];
+                $children = explode(",", $balise['children']);
+                
+                $res .= "<div class=\"editDiv\">\n";
+                $res .= "\t<div class=\"headerEdit\">\n";
+                $res .= "\t\t<h3>" . $balise['name'] . "</h3>\n";
+                $res .= "\t</div>\n";
+                $res .= "<h4>Type : " . $balise['type'] . "</h4>\n";
+                $res .= "<h4>Name :</h4>\n";
+                $res .= "<input type=\"text\" value=\"" . $balise['name'] . "\" name=\"name-" . $balise['name'] . "\">\n";
+                $res .= "<h4>Content :</h4>";
+                $res .= "<textarea class=\"contentEdit\">" . $balise['content'] . "</textarea>\n";
+                $res .= "<h4>Special Edit :</h4>\n";
+                if ($balise['type'] == "img") {
+                    $res .= "<input type=\"text\" placeholder=\"Source...\" value=\"" . str_replace("\"", "'", $balise['src']) . "\">\n";
+                } else if ($balise['type'] == "input") {
+
+                } else {
+                    $res .= "<p>No special edit</p>\n";
+                }
+                if ($editable == true) {
+                    $res .= "\t<div class=\"footerEdit\">\n";
+                    $res .= "\t\t<input type=\"submit\" value=\"Save\" name=\"save-" . $balise['name'] . "\">\n";
+                    $res .= "\t\t<input type=\"submit\" value=\"Delete\" name=\"delete-" . $balise['name'] . "\">\n";
+                    $res .= "\t</div>\n";
+                }
+                if (count($children) > 0 || $balise['children'] != "") {
+                    $res .= "<h3>Children :</h3>\n";
+                    for ($i = 0; $i < count($children); $i++) {
+                        if ($children[$i] != "") {
+                            $res .= self::getDivEditorBalise($arr, $children[$i], true);
+                        }
+                    }
+                }
+                $res .= "</div>\n";
+                break;
+            }
+        }
+        return $res;
+    }
+
     public static function getHtmlEditor():string {
         if (!isset($_SESSION['editName'])) {
             return array();
         }
-        $resStr = "";
         $res = array();
         $nameElems = self::getElementsName();
         for ($i = 0; $i < count($nameElems); $i++) {
             array_push($res, self::genArrayElements($nameElems[$i]));
         }
-        for ($i = 0; $i < count($res); $i++) {
-            $balise = $res[$i];
-            if ($balise['name'] != "body") {
-                $resStr .= "<div class=\"editDiv\">";
-                $resStr .= "\t<div class=\"headerEdit\">";
-                $resStr .= "\t\t<h3>" . $balise['name'] . "</h3>";
-                $resStr .= "\t</div>";
-                $resStr .= "\t<p>type : " . $balise['type'] . "</p>";
-                $resStr .= "\t<h4>Name :</h4>";
-                $resStr .= "\t<input type=\"text\" name=\"name-\"" . $balise['name'] . " value=\"" . $balise['name'] . "\">";
-                $resStr .= "\t<h4>Content :</h4>";
-                $resStr .= "\t<textarea class=\"contentEdit\">" . $balise['content'] . "</textarea>";
-                $resStr .= "\t<h4>Special Edit :</h4>";
-                if ($balise['type'] == "img") {
-                    $resStr .= "<h4>Src :</h4>";
-                    $src = str_replace("\"", "'", $balise['src']);
-                    $resStr .= "<input class=\"srcInputEdit\" type=\"text\" name=\"src-" . $balise['name'] . "\" value=\"" . $src . "\">";
-                } else if ($balise['type'] == "input") {
-                    $resStr .= "<h4>Type :</h4>";
-                    $resStr .= "<input class=\"srcInputEdit\" type=\"text\" name=\"itype-" . $balise['itype'] . "\" value=\"" . $balise['itype'] . "\">";
-                    $resStr .= "<h4>Placeholder :</h4>";
-                    $resStr .= "<input class=\"srcInputEdit\" type=\"text\" name=\"placeholder-" . $balise['placeholder'] . "\" value=\"" . $balise['placeholder'] . "\">";
-                    $resStr .= "<h4>Readonly :</h4>";
-                    $resStr .= "<input class=\"srcInputEdit\" type=\"checkbox\" name=\"readonly-" . $balise['readonly'] . "\" value=\"" . $balise['readonly'] . "\">";
-                    
-                } else if ($balise['type'] == "form") {
-                    $resStr .= "<select name=\"formType-" . $balise['name'] . "\">";
-                    $resStr .= "<option value=\"\">Form Type</option>";
-                    $resStr .= "<option value=\"POST\">Post</option>";
-                    $resStr .= "<option value=\"GET\">Get</option>";
-                    $resStr .= "</select>";
-                }
-                $resStr .= "\t<div class=\"footerEdit\">";
-                $resStr .= "\t\t<p>Footer</p>";
-                $resStr .= "\t\t<input type=\"submit\" value=\"Save\" name=\"save-" . $balise['name'] . "\">";
-                $resStr .= "\t\t<input type=\"submit\" value=\"Delete\" name=\"delete-" . $balise['name'] . "\">";
-                $resStr .= "\t</div>";
-                $resStr .= "</div>";
-            }
-        }
-        return $resStr;
+        return self::getDivEditorBalise($res, "body", false);
     }
 
     private static function isBaliseAutoClose($type):bool {
