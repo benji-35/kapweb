@@ -32,6 +32,24 @@ class EditorPage {
 
     }
 
+    public static function getAllCssJsContent($fileName):array {
+        $res = array(
+            "css" => "",
+            "js" => ""
+        );
+        $f = fopen("KW/public/ressources/css/" . $fileName . ".css", "r");
+        if ($f) {
+            $res['css'] = fread($f, filesize("KW/public/ressources/css/" . $fileName . ".css"));
+        }
+        fclose($f);
+        $f = fopen("KW/public/ressources/js/" . $fileName . ".js", "r");
+        if ($f) {
+            $res['js'] = fread($f, filesize("KW/public/ressources/js/" . $fileName . ".js"));
+        }
+        fclose($f);
+        return $res;
+    }
+
     private static function getElementsName():array {
         if (!isset($_SESSION['editName'])) {
             return array();
@@ -74,16 +92,57 @@ class EditorPage {
         return $res;
     }
 
-    public static function getHtmlEditor():array {
+    public static function getHtmlEditor():string {
         if (!isset($_SESSION['editName'])) {
             return array();
         }
+        $resStr = "";
         $res = array();
         $nameElems = self::getElementsName();
         for ($i = 0; $i < count($nameElems); $i++) {
             array_push($res, self::genArrayElements($nameElems[$i]));
         }
-        return $res;
+        for ($i = 0; $i < count($res); $i++) {
+            $balise = $res[$i];
+            if ($balise['name'] != "body") {
+                $resStr .= "<div class=\"editDiv\">";
+                $resStr .= "\t<div class=\"headerEdit\">";
+                $resStr .= "\t\t<h3>" . $balise['name'] . "</h3>";
+                $resStr .= "\t</div>";
+                $resStr .= "\t<p>type : " . $balise['type'] . "</p>";
+                $resStr .= "\t<h4>Name :</h4>";
+                $resStr .= "\t<input type=\"text\" name=\"name-\"" . $balise['name'] . " value=\"" . $balise['name'] . "\">";
+                $resStr .= "\t<h4>Content :</h4>";
+                $resStr .= "\t<textarea class=\"contentEdit\">" . $balise['content'] . "</textarea>";
+                $resStr .= "\t<h4>Special Edit :</h4>";
+                if ($balise['type'] == "img") {
+                    $resStr .= "<h4>Src :</h4>";
+                    $src = str_replace("\"", "'", $balise['src']);
+                    $resStr .= "<input class=\"srcInputEdit\" type=\"text\" name=\"src-" . $balise['name'] . "\" value=\"" . $src . "\">";
+                } else if ($balise['type'] == "input") {
+                    $resStr .= "<h4>Type :</h4>";
+                    $resStr .= "<input class=\"srcInputEdit\" type=\"text\" name=\"itype-" . $balise['itype'] . "\" value=\"" . $balise['itype'] . "\">";
+                    $resStr .= "<h4>Placeholder :</h4>";
+                    $resStr .= "<input class=\"srcInputEdit\" type=\"text\" name=\"placeholder-" . $balise['placeholder'] . "\" value=\"" . $balise['placeholder'] . "\">";
+                    $resStr .= "<h4>Readonly :</h4>";
+                    $resStr .= "<input class=\"srcInputEdit\" type=\"checkbox\" name=\"readonly-" . $balise['readonly'] . "\" value=\"" . $balise['readonly'] . "\">";
+                    
+                } else if ($balise['type'] == "form") {
+                    $resStr .= "<select name=\"formType-" . $balise['name'] . "\">";
+                    $resStr .= "<option value=\"\">Form Type</option>";
+                    $resStr .= "<option value=\"POST\">Post</option>";
+                    $resStr .= "<option value=\"GET\">Get</option>";
+                    $resStr .= "</select>";
+                }
+                $resStr .= "\t<div class=\"footerEdit\">";
+                $resStr .= "\t\t<p>Footer</p>";
+                $resStr .= "\t\t<input type=\"submit\" value=\"Save\" name=\"save-" . $balise['name'] . "\">";
+                $resStr .= "\t\t<input type=\"submit\" value=\"Delete\" name=\"delete-" . $balise['name'] . "\">";
+                $resStr .= "\t</div>";
+                $resStr .= "</div>";
+            }
+        }
+        return $resStr;
     }
 
     private static function isBaliseAutoClose($type):bool {
@@ -212,10 +271,14 @@ class EditorPage {
         if (!isset($_SESSION['editName'])) {
             return "no text in this page";
         }
-        $res = "";
-        $edit = self::getHtmlEditor();
-        $res .= self::getHtmlStringBalise($edit, "body");
-        return $res;
+        $resStr = "";
+        $res = array();
+        $nameElems = self::getElementsName();
+        for ($i = 0; $i < count($nameElems); $i++) {
+            array_push($res, self::genArrayElements($nameElems[$i]));
+        }
+        $resStr .= self::getHtmlStringBalise($res, "body");
+        return $resStr;
     }
 }
 ?>

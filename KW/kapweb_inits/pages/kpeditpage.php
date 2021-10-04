@@ -7,9 +7,9 @@
 	if ($hlp->isConnectedSu() == false)
 		header("location: " . $hlp->getMainUrl() . "/KW");
 	if (!isset($_SESSION['suemail']) || !isset($_SESSION['supwd']) || !isset($_SESSION['urlEdit']))
-		header("location: " . $hlp->getMainUrl() . "/KW");
+		header("location: " . $hlp->getMainUrl() . "/KW/manager");
 	if ($hlp->pageExists($_SESSION['urlEdit'])) {
-		$textToEdit = $ep->getHtmlEditable($_SESSION['urlEdit']);
+		$textToEdit = "";
 		$cssJs = $ep->getAllCssJsContent($_SESSION['urlEdit']);
 		if (isset($_POST['save'])) {
 			$ntext = $_POST['phpEdit'];
@@ -58,12 +58,11 @@
 		?>
 		<form method="POST">
 			<h1>Edition</h1>
-			<a class="fakeButtonA" href="<?=$hlp->getMainUrl() . "/KW/manager"?>"><div class="fakeButton"><p>Back to manager</p></div></a>
-			<div class="frontend">
-				<h3>HTML</h3>
-				<textarea id="inputHtml" class="phpEdit" name="phpEdit"><?=$textToEdit?></textarea>
+			<div class="content">
+				<?=$ep->getHtmlEditor()?>
 			</div>
 			<div class="backend">
+				<!--
 				<div class="leftBackend">
 					<h3>CSS</h3>
 					<?php
@@ -92,17 +91,14 @@
 						}
 					?>
 				</div>
-			</div>
-			<div class="frontend">
-				<input type="submit" name="save" value="Save Changes">
-				<a class="fakeButtonA" target="_blank" href="<?=$hlp->getMainUrl() . $hlp->getUrlFromName($_SESSION['urlEdit'])?>"><div class="fakeButton"><p>View Page</p></div></a>
+				-->
 			</div>
 		</form>
 		<?php
 			} else {
 		?>
 			<h1>Page does not exists</h1>
-			<a href="<?=$hlp->getMainUrl()?>">Back to main page</a>
+			<a href="<?=$hlp->getMainUrl() . "/KW/manager"?>">Back to main page</a>
 		<?php
 			}
 		?>

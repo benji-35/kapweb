@@ -2,76 +2,62 @@ body {
     padding: 0;
     margin: 0;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
-    background-color: rgb(88, 88, 88);
 }
 
-.phpEdit {
-    width: 100%;
-    height: 500px;
-}
-
-.frontend {
+.editDiv {
+    width: 45%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
     position: relative;
-    left: 50%;
-    transform: translate(-50%);
-    text-align: center;
-    width: 80%;
+    background-color: rgb(236, 236, 236);
+    margin-bottom: 20px;
 }
 
-.backend {
+.headerEdit {
+    background-color: rgb(126, 126, 126);
     width: 100%;
+    text-align: center;
+    position: relative;
+    top: -20px;
+}
+
+.footerEdit {
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    background-color: rgb(167, 167, 167);
     display: flex;
     flex-wrap: wrap;
-    text-align: center;
 }
 
-.leftBackend {
-    float: left;
-    width: 48%;
-    margin-left: 1%;
-    margin-right: 1%;
+.contentEdit {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 98%;
+    height: 40px;
+    resize: none;
 }
 
-.rightBackend {
-    float: right;
-    width: 48%;
-    margin-left: 1%;
-    margin-right: 1%;
-}
-
-.cssEdit {
-    width: 100%;
-    height: 250px;
-}
-
-.jsEdit {
-    width: 100%;
-    height: 250px;
-}
-
-.fakeButtonA {
-    text-decoration: none;
-    color: black;
-}
-
-.fakeButtonA:hover {
-    cursor: default;
-}
-
-.fakeButtonA:hover .fakeButton {
-    background-color: #d6d6d6;
-}
-
-.fakeButton {
-    border: 1px solid gray;
-    text-align: center;
-    border-radius: 4px;
-    background-color: #e9e9ed;
+.footerEdit input {
+    width: 150px;
+    height: 50px;
     margin: 10px;
-    width: 10%;
+    position: relative;
+    top: 50%;
 }
 
-textarea {
-    border: 5px solid green;
-    border-radius: 5px;
+.content {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.srcInputEdit {
+    width: 80%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
 }

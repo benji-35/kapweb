@@ -21,7 +21,8 @@
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
     if (isset($_POST['disconnect'])) {
-        header("location: " . $hlp->getMainUrl() . "/KW");
+        $hlp->disconnectSelf();
+        header("location: " . $hlp->getMainUrl());
     }
     if (isset($_POST['newPage'])) {
         unset($_SESSION['pageError']);
