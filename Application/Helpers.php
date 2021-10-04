@@ -959,7 +959,7 @@ class Helpers {
 
     private static function neededPageFilesExists($name):bool {
         $res = true;
-        $pathPhp = "KW/public/pages/" . $name . ".php";
+        $pathPhp = "KW/public/pages/" . $name . ".conf";
         $pathCss = "KW/public/ressources/css/" . $name . ".css";
         $pathJs = "KW/public/ressources/js/" . $name . ".js";
         $res = file_exists($pathPhp);
