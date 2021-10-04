@@ -107,6 +107,7 @@
 		}
 	}
 ?>
+
 <!DOCTYPE html>
 <html  lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">
     <head>
