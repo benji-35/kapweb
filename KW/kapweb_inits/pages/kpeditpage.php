@@ -59,7 +59,71 @@
 		<form method="POST">
 			<h1>Edition</h1>
 			<div class="content">
-				<?=$ep->getHtmlEditor()?>
+				<table id="tblStocks" class="tablePage">
+					<caption><h2>Page Elements</h2></caption>
+					<thead>
+						<tr>
+							<th><p>Name (editable)</p></th>
+							<th><p>Type</p></th>
+							<th><p>Parent</p></th>
+							<th><p>Content (editable)</p></th>
+							<th><p>Special Edit (editable)</p></th>
+							<th><p>Add Child</p></th>
+							<th><p>Changes</p></th>
+						</tr>
+					</thead>
+					<tbody id="bodyTableEdit">
+						<?php
+							$elems = $ep->getHtmlEditor();
+							for ($i = 0; $i < count($elems); $i++) {
+								$balise = $elems[$i];
+						?>
+							<tr>
+								<td><input type="text" value="<?=$balise['name']?>" name="<?="name-" . $balise['name']?>"></td>
+								<td><input type="text" value="<?=$balise['type']?>" readonly></td>
+								<td><input type="text" value="<?=$balise['parent']?>" readonly></td>
+								<td><textarea><?=$balise['content']?></textarea></td>
+								<td>
+									<?php
+										if ($balise['type'] == "input") {
+									?>
+										<label>Readonly :</label>
+										<input type="checkbox" name="<?="readonly-" . $balise['name']?>">
+										<input type="text" placeholder="Placeholder..." value="<?=$balise['placeholder']?>">
+										<?php
+										
+										?>
+										<?php
+										
+										?>
+										<input type="text" placeholder="Value..." value="<?=$balise['value']?>">
+									<?php
+										}
+									?>
+								</td>
+								<td>
+									<select name="<?="typeAddChild-" . $balise['name']?>">
+										<?=$ep->getSelectAdded($balise['type'])?>
+									</select>
+									<input type="submit" value="Add Child" name="<?="addChild-" . $balise['name']?>">
+								</td>
+								<td>
+									<input type="submit" value="Save" name="<?="save-" . $balise['name']?>">
+									<?php
+										if ($balise['name'] != "body") {
+									?>
+										<input type="submit" value="Delete" name="<?="delete-" . $balise['name']?>">
+									<?php
+										}
+									?>
+									<input type="submit" value="Reset" name="<?="reset-" . $balise['name']?>">
+								</td>
+							</tr>
+						<?php
+							}
+						?>
+					</tbody>
+				</table>
 			</div>
 			<div class="backend">
 				<!--
@@ -94,6 +158,31 @@
 				-->
 			</div>
 		</form>
+		<form class="formCreatePage" method="POST">
+            <picture>
+                <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
+            </picture>
+            <h3>Create new element</h3>
+            <div class="whiteDiv">
+                <input type="text" placeholder="Name element..." name="newName" required>
+				<input type="text" placeholder="Class name..." name="newClass" required>
+				<input type="text" placeholder="Content..." name="newContent">
+                <select name="selectTypeElement" required>
+                    <?php
+                        echo $ep->getSelectAdded("div");
+                    ?>
+                </select>
+                <input type="submit" value="Create" name="newElement">
+                <?php
+                    if (isset($_SESSION['newElementError'])) {
+                ?>
+                    <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);"><?=$_SESSION['newElementError']?></p>
+                <?php
+                    }
+                ?>
+            </div>
+            <p>Vous pouvez créer d'autres pages internet en remplissant ce formulaire</p>
+        </form>
 		<?php
 			} else {
 		?>

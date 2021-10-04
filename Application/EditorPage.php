@@ -60,7 +60,7 @@ class EditorPage {
         return explode(",", $elemReaded);
     }
 
-    private static function genArrayElements($elemName):array {
+    public static function genArrayElements($elemName):array {
         global $cf;
         if (!isset($_SESSION['editName'])) {
             return array(
@@ -102,6 +102,61 @@ class EditorPage {
         return $res;
     }
 
+    private static function getElementCanBeAdded($type):array {
+        $res = array();
+        if ($type == "form") {
+
+        }
+        return $res;
+    }
+
+    public static function getSelectAdded($type):string {
+        $res = "";
+        $res .= "<optgroup label=\"HTML Basics\">";
+        $res .= "<optgroup label=\"Text\">";
+        $res .= "<option value=\"h1\">H1</option>";
+        $res .= "<option value=\"h2\">H2</option>";
+        $res .= "<option value=\"h3\">H3</option>";
+        $res .= "<option value=\"h4\">H4</option>";
+        $res .= "<option value=\"h5\">H5</option>";
+        $res .= "<option value=\"h6\">H6</option>";
+        $res .= "<option value=\"p\">P</option>";
+        $res .= "</optgroup>";
+        $res .= "<optgroup label=\"Action\">";
+        $res .= "<option value=\"a\">A</option>";
+        $res .= "<option value=\"button\">Button</option>";
+        if ($type != "form") {
+            $res .= "<option value=\"form\">Form</option>";
+        }
+        $res .= "</optgroup>";
+        $res .= "<optgroup label=\"Media\">";
+        $res .= "<option value=\"source\">Source</option>";
+        $res .= "<option value=\"picture\">Picture</option>";
+        $res .= "</optgroup>";
+        $res .= "<optgroup label=\"Navigation\">";
+        $res .= "<option value=\"table\">Table</option>";
+        $res .= "<option value=\"nav\">Nav</option>";
+        $res .= "<option value=\"div\">Div</option>";
+        $res .= "</optgroup>";
+        $res .= "</optgroup>";
+        if ($type == "form" || $type == "select" || $type == "nav" || $type == "source" || $type == "picture") {
+            $res .= "<optgroup label=\"====\">";
+            $res .= "</optgroup>";
+            $res .= "<optgroup label=\"Specific\">";
+            if ($type == "form") {
+                $res .= "<option value=\"input\">Input</option>";
+                $res .= "<option value=\"select\">Select</option>";
+                $res .= "<option value=\"label\">Label</option>";
+            }
+            if ($type == "select") {
+                $res .= "<option value=\"optgroup\">Optgroup</option>";
+                $res .= "<option value=\"option\">Option</option>";
+            }
+            $res .= "</optgroup>";
+        }
+        return $res;
+    }
+
     private static function getDivEditorBalise($arr, $name, $editable=true):string {
         $res = "";
         for ($i = 0; $i < count($arr); $i++) {
@@ -126,12 +181,15 @@ class EditorPage {
                 } else {
                     $res .= "<p>No special edit</p>\n";
                 }
+                $res .= "\t<div class=\"footerEdit\">\n";
                 if ($editable == true) {
-                    $res .= "\t<div class=\"footerEdit\">\n";
                     $res .= "\t\t<input type=\"submit\" value=\"Save\" name=\"save-" . $balise['name'] . "\">\n";
                     $res .= "\t\t<input type=\"submit\" value=\"Delete\" name=\"delete-" . $balise['name'] . "\">\n";
-                    $res .= "\t</div>\n";
                 }
+                $res .= "\t\t<select name=\"addElement-" . $balise['name'] . "\">";
+                $res .= self::getSelectAdded($balise['type']);
+                $res .= "\t\t</select>";
+                $res .= "\t</div>\n";
                 if (count($children) > 0 || $balise['children'] != "") {
                     $res .= "<h3>Children :</h3>\n";
                     for ($i = 0; $i < count($children); $i++) {
@@ -147,7 +205,7 @@ class EditorPage {
         return $res;
     }
 
-    public static function getHtmlEditor():string {
+    public static function getHtmlEditor():array {
         if (!isset($_SESSION['editName'])) {
             return array();
         }
@@ -156,7 +214,7 @@ class EditorPage {
         for ($i = 0; $i < count($nameElems); $i++) {
             array_push($res, self::genArrayElements($nameElems[$i]));
         }
-        return self::getDivEditorBalise($res, "body", false);
+        return $res;
     }
 
     private static function isBaliseAutoClose($type):bool {
