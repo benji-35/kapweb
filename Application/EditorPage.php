@@ -74,19 +74,29 @@ class EditorPage {
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
         $res = array(
             "name" => $elemName,
-            "type" => $cf->getValueFromKeyConf($path, $elemName),
-            "class" => $cf->getValueFromKeyConf($path, $elemName . "-class"),
-            "parent" => $cf->getValueFromKeyConf($path, $elemName . "-parent"),
-            "children" => $cf->getValueFromKeyConf($path, $elemName . "-children"),
-            "content" => $cf->getValueFromKeyConf($path, $elemName . "-content"),
+            "type" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName)),
+            "class" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-class")),
+            "parent" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-parent")),
+            "children" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-children")),
+            "content" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-content")),
         );
 
         if ($res['type'] == "img") {
             $res = array_merge($res, array("src" => $cf->getValueFromKeyConf($path, $elemName . "-src")));
         } else if ($res['type'] == "input") {
-
+            $inputArray = array(
+                "itype" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-itype")),
+                "placeholder" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-placeholder")),
+                "readonly" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-readonly")),
+                "value" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-value")),
+                "iname" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-iname")),
+            );
+            $res = array_merge($res, $inputArray);
         } else if ($res['type'] == "form") {
-
+            $formArray = array(
+                "method" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-method")),
+            );
+            $res = array_merge($res, $formArray);
         }
 
         return $res;
@@ -225,41 +235,117 @@ class EditorPage {
         return $res;
     }
 
+    private static function getBaliseFromName($arr, $name):array {
+        for ($i = 0; $i < count($arr); $i++) {
+            if ($arr[$i]['name'] == $name) {
+                return $arr[$i];
+            }
+        }
+        return array();
+    }
+
+    private static function isInType($arr, $parent, $type):bool {
+        if ($parent == "") {
+            return false;
+        } else {
+            $balise = self::getBaliseFromName($arr, $parent);
+            if (count($balise) == 0)
+                return false;
+            if ($balise['type'] == $type) {
+                return true;
+            }
+            return self::isInType($arr, $balise['parent'], $type);
+        }
+        return false;
+    }
+
+    private static function canBeDisplay($arr, $balise):bool {
+        if ($balise['type'] == "input") {
+            if (self::isInType($arr, $balise['parent'], "form")) {
+                return true;
+            }
+            return false;
+        }
+        if ($balise['type'] == "label") {
+            if (self::isInType($arr, $balise['parent'], "form")) {
+                return true;
+            }
+            return false;
+        }
+        if ($balise['type'] == "select") {
+            if (self::isInType($arr, $balise['parent'], "form")) {
+                return true;
+            }
+            return false;
+        }
+        if ($balise['type'] == "option") {
+            if (self::isInType($arr, $balise['parent'], "select")) {
+                return true;
+            }
+            return false;
+        }
+        if ($balise['type'] == "fieldset") {
+            if (self::isInType($arr, $balise['parent'], "form")) {
+                return true;
+            }
+            return false;
+        }
+        if ($balise['type'] == "legend") {
+            if (self::isInType($arr, $balise['parent'], "fieldset")) {
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+
     private static function getHtmlStringBalise($arr, $parent) {
         global $cf, $hlp, $db;
         $res = "";
         for ($i = 0; $i < count($arr); $i++) {
             $balise = $arr[$i];
-            if ($balise['parent'] == $parent) {
-                $res .= "<" . $balise['type'] . " id=\"" . $balise['name'] . "\"";
-                if ($balise['class'] != "") {
-                    $res .= " class=\"" . $balise['class'] . "\"";
-                }
-                if ($balise['type'] == "img") {
-                    $src = "";
-                    if ($cf->strStartWith($balise['src'], "<?=")) {
-                        $balise['src'] = $cf->getStrFromPos($balise['src'], 3);
-                        $balise['src'] = $cf->strRmChars($balise['src'], strlen($balise['src']) - 2, strlen($balise['src']));
-                        $execs = explode(" . ", $balise['src']);
-                        for ($x = 0; $x < count($execs); $x++) {
-                            if ($execs[$x][0] != "'" && $execs[$x][0] != "\"") {
-                                $src .= self::getCmdExec($execs[$x]);
-                            } else {
-                                $strSrc = $cf->getStrFromPos($execs[$x], 1);
-                                $strSrc = $cf->strRmChars($strSrc, strlen($strSrc) - 1, strlen($strSrc));
-                                $src .= $strSrc;
-                            }
-                        }
-                    } else {
-                        $src = $balise['src'];
+            if (self::canBeDisplay($arr, $balise) == true) {
+                if ($balise['parent'] == $parent) {
+                    $res .= "<" . $balise['type'] . " id=\"" . $balise['name'] . "\"";
+                    if ($balise['class'] != "") {
+                        $res .= " class=\"" . $balise['class'] . "\"";
                     }
-                    $res .= " src=\"" . $src . "\"";
-                }
-                if (self::isBaliseAutoClose($balise['type'])) {
-                    $res .= ">";
-                } else {
-                    $res .= ">\n" . $balise['content'] . "\n" . self::getHtmlStringBalise($arr, $balise['name']) . "\n";
-                    $res .= "</" . $balise['type'] . ">\n";
+                    if ($balise['type'] == "img") {
+                        $src = "";
+                        if ($cf->strStartWith($balise['src'], "<?=")) {
+                            $balise['src'] = $cf->getStrFromPos($balise['src'], 3);
+                            $balise['src'] = $cf->strRmChars($balise['src'], strlen($balise['src']) - 2, strlen($balise['src']));
+                            $execs = explode(" . ", $balise['src']);
+                            for ($x = 0; $x < count($execs); $x++) {
+                                if ($execs[$x][0] != "'" && $execs[$x][0] != "\"") {
+                                    $src .= self::getCmdExec($execs[$x]);
+                                } else {
+                                    $strSrc = $cf->getStrFromPos($execs[$x], 1);
+                                    $strSrc = $cf->strRmChars($strSrc, strlen($strSrc) - 1, strlen($strSrc));
+                                    $src .= $strSrc;
+                                }
+                            }
+                        } else {
+                            $src = $balise['src'];
+                        }
+                        $res .= " src=\"" . $src . "\"";
+                    }
+                    if ($balise['type'] == "input") {
+                        $res .= " type=\"" . $balise['itype'] . "\"";
+                        $res .= " placeholder=\"" . $balise['placeholder'] . "\"";
+                        $res .= " value=\"" . $balise['value'] . "\"";
+                        $res .= " name=\"" . $balise['iname'] . "\"";
+                        $res .= " readonly=\"" . $balise['readonly'] . "\"";
+                    }
+                    if ($balise['type'] == "form") {
+                        $res .= " method=\"" . $balise['method'] . "\"";
+                    }
+                    if (self::isBaliseAutoClose($balise['type'])) {
+                        $res .= ">";
+                    } else {
+                        $res .= ">\n" . $balise['content'] . "\n" . self::getHtmlStringBalise($arr, $balise['name']) . "\n";
+                        $res .= "</" . $balise['type'] . ">\n";
+                    }
                 }
             }
         }
