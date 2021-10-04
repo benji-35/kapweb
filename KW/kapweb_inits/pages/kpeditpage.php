@@ -26,6 +26,86 @@
 	} else {
 		$pageExists = false;
 	}
+	$elems = $ep->getHtmlEditor();
+	if (isset($_POST['newElement'])) {
+		$content = "";
+		$class = "";
+		if (isset($_POST['newContent'])) {
+			$content = $_POST['newContent'];
+		}
+		if (isset($_POST['newClass'])) {
+			$class = $_POST['newClass'];
+		}
+		$ep->addElement($_POST['newName'], $_POST['selectTypeElement'], "body", $class, $content);
+		header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
+	}
+	for ($i = 0; $i < count($elems); $i++) {
+		$balise = $elems[$i];
+		if (isset($_POST['delete-' . $balise['name']])) {
+			$ep->deleteElement($balise['name']);
+			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
+		}
+		if (isset($_POST['reset-' . $balise['name']])) {
+			$children = explode(",", $balise['children']);
+			for ($x = 0; $x < count($children); $x++) {
+				if (isset($children[$x]) && $children[$x] != "") {
+					$ep->deleteElement($children[$x]);
+				}
+			}
+			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
+		}
+		if (isset($_POST['addChild-' . $balise['name']])) {
+			if (isset($_POST['addChildName-' . $balise['name']]) && isset($_POST['typeAddChild-' . $balise['name']])) {
+				$ep->addElement($_POST['addChildName-' . $balise['name']], $_POST['typeAddChild-' . $balise['name']], $balise['name']);
+				header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
+			}
+		}
+		if (isset($_POST['save-' . $balise['name']])) {
+			$contentChg = $balise['content'];
+			$class = $balise['class'];
+			$name = $balise['name'];
+			$ph = "";
+			$ival = "";
+			$ireado = "";
+			if (isset($_POST["chgContent-" . $balise['name']])) {
+				$contentChg = $_POST["chgContent-" . $balise['name']];
+			}
+			if (isset($_POST["chgClass-" . $balise['name']])) {
+				$class = $_POST["chgClass-" . $balise['name']];
+			}
+			if (isset($_POST['name-' . $balise['name']])) {
+				$name = $_POST['name-' . $balise['name']];
+			}
+			if ($balise['type'] == "input") {
+				if (isset($_POST['chgPh-' . $balise['name']])) {
+					$ph = $_POST['chgPh-' . $balise['name']];
+				} else {
+					$ph = $balise['placeholder'];
+				}
+				if (isset($_POST['readonly-' . $balise['name']])) {
+					$ireado = $_POST['readonly-' . $balise['name']];
+				} else {
+					$ph = $balise['placeholder'];
+				}
+				if (isset($_POST['chgIVal-' . $balise['name']])) {
+					$ival = $_POST['chgIVal-' . $balise['name']];
+				} else {
+					$ph = $balise['placeholder'];
+				}
+			}
+			$arrUpdate = array(
+				"name" => $name,
+				"type" => $balise['type'],
+				"content" => $contentChg,
+				"class" => $class,
+				"readonly" => $ireado,
+				"placeholder" => $ph,
+				"value" => $ival,
+			);
+			$ep->updateElement($balise['name'], $arrUpdate);
+			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
+		}
+	}
 ?>
 <!DOCTYPE html>
 <html  lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">
@@ -66,6 +146,7 @@
 							<th><p>Name (editable)</p></th>
 							<th><p>Type</p></th>
 							<th><p>Parent</p></th>
+							<th><p>Class</p></th>
 							<th><p>Content (editable)</p></th>
 							<th><p>Special Edit (editable)</p></th>
 							<th><p>Add Child</p></th>
@@ -74,7 +155,6 @@
 					</thead>
 					<tbody id="bodyTableEdit">
 						<?php
-							$elems = $ep->getHtmlEditor();
 							for ($i = 0; $i < count($elems); $i++) {
 								$balise = $elems[$i];
 						?>
@@ -82,26 +162,28 @@
 								<td><input type="text" value="<?=$balise['name']?>" name="<?="name-" . $balise['name']?>"></td>
 								<td><input type="text" value="<?=$balise['type']?>" readonly></td>
 								<td><input type="text" value="<?=$balise['parent']?>" readonly></td>
-								<td><textarea><?=$balise['content']?></textarea></td>
+								<td><input type="text" value="<?=$balise['class']?>" name="<?="chgClass-" . $balise['name']?>"></td>
+								<td><textarea name="<?="chgContent-" . $balise['name']?>"><?=$balise['content']?></textarea></td>
 								<td>
 									<?php
 										if ($balise['type'] == "input") {
 									?>
 										<label>Readonly :</label>
 										<input type="checkbox" name="<?="readonly-" . $balise['name']?>">
-										<input type="text" placeholder="Placeholder..." value="<?=$balise['placeholder']?>">
+										<input type="text" placeholder="Placeholder..." value="<?=$balise['placeholder']?>" name="<?="chgPh-" . $balise['name']?>">
 										<?php
 										
 										?>
 										<?php
 										
 										?>
-										<input type="text" placeholder="Value..." value="<?=$balise['value']?>">
+										<input type="text" placeholder="Value..." value="<?=$balise['value']?>" name="<?="chgIVal-" . $balise['name']?>">
 									<?php
 										}
 									?>
 								</td>
 								<td>
+									<input type="text" placeholder="Name..." name="<?="addChildName-" . $balise['name']?>">
 									<select name="<?="typeAddChild-" . $balise['name']?>">
 										<?=$ep->getSelectAdded($balise['type'])?>
 									</select>
@@ -165,7 +247,7 @@
             <h3>Create new element</h3>
             <div class="whiteDiv">
                 <input type="text" placeholder="Name element..." name="newName" required>
-				<input type="text" placeholder="Class name..." name="newClass" required>
+				<input type="text" placeholder="Class name..." name="newClass">
 				<input type="text" placeholder="Content..." name="newContent">
                 <select name="selectTypeElement" required>
                     <?php
