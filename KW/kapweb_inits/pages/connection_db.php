@@ -17,18 +17,20 @@
             $db->initDb($connArr);
         } else {
             $_SESSION['stepDbConnection'] = 0;
-            header("location: " . $hlp->getMainUrl() . "/KW/kapweb_inits/pages/connection_db.php");
+            header("location: " . $hlp->getMainUrl());
         }
     }
     if ($_SESSION['stepDbConnection'] >= 3) {
         $_SESSION['stepDbConnection'] = 0;
     }
     if (isset($_POST['connect'])) {
+        unset($_SESSION['c_errors']);
         $_SESSION['tampDbCreation'] = $_POST['host'] . "," . $_POST['uname'] . "," . $_POST['pwd'];
         $_SESSION['stepDbConnection'] = 1;
         header("location: " . $hlp->getMainUrl());
     }
     if (isset($_POST['finalizeDb'])) {
+        unset($_SESSION['c_errors']);
         if ($_POST['selectMethod'] == "1" && $_POST['dbSelector'] != "-1") {
             $gerArr = explode(",", $_SESSION['tampDbCreation']);
             $connArr = array(
@@ -43,23 +45,28 @@
             unset($_SESSION['stepDbConnection']);
             header("location: " . $hlp->getMainUrl() . "");
         } else if ($_POST['selectMethod'] == "2") {
-            $gerArr = explode(",", $_SESSION['tampDbCreation']);
-            $connArr = array(
-                "host" => $gerArr[0],
-                "dbName" => $_POST['dbName'],
-                "username" => $gerArr[1],
-                "passsword" => $gerArr[2],
-            );
-            if ($db->createNewDb($_POST['dbName']) == true) {
-                $db->initDb($connArr);
-                $hlp->saveNewDb($connArr);
-                $hlp->generateTablesNeeded();
-                $cf->generateOtherSettings();
+            if ($db->isDbExists($_POST['dbName']) == true) {
+                $_SESSION['c_errors'] = "";
+                header("location: " . $hlp->getMainUrl());
+            } else {
+                $gerArr = explode(",", $_SESSION['tampDbCreation']);
+                $connArr = array(
+                    "host" => $gerArr[0],
+                    "dbName" => $_POST['dbName'],
+                    "username" => $gerArr[1],
+                    "passsword" => $gerArr[2],
+                );
+                if ($db->createNewDb($_POST['dbName']) == true) {
+                    $db->initDb($connArr);
+                    $hlp->saveNewDb($connArr);
+                    $hlp->generateTablesNeeded();
+                    $cf->generateOtherSettings();
+                }
+                unset($_SESSION['stepDbConnection']);
+                header("location: " . $hlp->getMainUrl() . "");
             }
-            unset($_SESSION['stepDbConnection']);
-            header("location: " . $hlp->getMainUrl() . "");
         } else {
-            header("location: " . $hlp->getMainUrl() . "/KW/kapweb_inits/pages/connection_db.php&nothing");
+            header("location: " . $hlp->getMainUrl());
         }
     }
     if (isset($_POST['cancelSteptwo'])) {
@@ -92,6 +99,13 @@
                     <input type="text" placeholder="username..." name="uname">
                     <input type="password" placeholder="password..." name="pwd">
                     <input type="submit" value="Se connecter" name="connect">
+                    <?php
+                        if (isset($_SESSION['c_errors'])) {
+                    ?>
+                        <p class="errors"><?=$_SESSION['c_errors']?></p>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <p>Toutes les étapes qui vont suivre sont obligatoire pour utiliser cette interface.Si vous n'avez pas phpMyAdmin on vous demande de l'installer</p>
             </form>
@@ -139,6 +153,13 @@
                     </div>
                     <input type="submit" name="finalizeDb">
                     <input type="submit" value="cancel" name="cancelSteptwo">
+                    <?php
+                        if (isset($_SESSION['c_errors'])) {
+                    ?>
+                        <p class="errors"><?=$_SESSION['c_errors']?></p>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <p>Cette étape une fois terminé, vous redirigera vers la création de votre compte super utilisateur</p>
             </form>

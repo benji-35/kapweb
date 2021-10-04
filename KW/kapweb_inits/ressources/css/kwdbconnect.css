@@ -81,3 +81,8 @@ select {
     transform: translate(4em, -1.8em);
     width: 5em;
 }
+
+.errors {
+    background-color: rgba(255, 0, 0, 0.671);
+    width: 100%;
+}
