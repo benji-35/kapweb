@@ -101,6 +101,14 @@
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
 	}
+	if (isset($_POST['saveCssJs'])) {
+		$arr = array(
+			"css" => $_POST['cssEdit'],
+			"js" => $_POST['jsEdit']
+		);
+		$ep->saveCssJs($arr);
+		header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
+	}
 ?>
 
 <!DOCTYPE html>
@@ -203,8 +211,34 @@
 					</tbody>
 				</table>
 			</div>
-			<div class="backend">
-				<!--
+		</form>
+		<form class="formCreatePage" method="POST">
+            <picture>
+                <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
+            </picture>
+            <h3>Create new element</h3>
+            <div class="whiteDiv">
+                <input type="text" placeholder="Name element..." name="newName" required>
+				<input type="text" placeholder="Class name..." name="newClass">
+				<input type="text" placeholder="Content..." name="newContent">
+                <select name="selectTypeElement" required>
+                    <?php
+                        echo $ep->getSelectAdded("div");
+                    ?>
+                </select>
+                <input type="submit" value="Create" name="newElement">
+                <?php
+                    if (isset($_SESSION['newElementError'])) {
+                ?>
+                    <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);"><?=$_SESSION['newElementError']?></p>
+                <?php
+                    }
+                ?>
+            </div>
+            <p>Vous pouvez créer d'autres pages internet en remplissant ce formulaire</p>
+        </form>
+		<div class="backend">
+			<form method="POST">
 				<div class="leftBackend">
 					<h3>CSS</h3>
 					<?php
@@ -233,34 +267,9 @@
 						}
 					?>
 				</div>
-				-->
-			</div>
-		</form>
-		<form class="formCreatePage" method="POST">
-            <picture>
-                <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
-            </picture>
-            <h3>Create new element</h3>
-            <div class="whiteDiv">
-                <input type="text" placeholder="Name element..." name="newName" required>
-				<input type="text" placeholder="Class name..." name="newClass">
-				<input type="text" placeholder="Content..." name="newContent">
-                <select name="selectTypeElement" required>
-                    <?php
-                        echo $ep->getSelectAdded("div");
-                    ?>
-                </select>
-                <input type="submit" value="Create" name="newElement">
-                <?php
-                    if (isset($_SESSION['newElementError'])) {
-                ?>
-                    <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);"><?=$_SESSION['newElementError']?></p>
-                <?php
-                    }
-                ?>
-            </div>
-            <p>Vous pouvez créer d'autres pages internet en remplissant ce formulaire</p>
-        </form>
+				<input type="submit" value="Save CSS JS" name="saveCssJs">
+			</form>
+		</div>
 		<?php
 			} else {
 		?>

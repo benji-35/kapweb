@@ -710,5 +710,35 @@ class EditorPage {
         $resStr .= self::getHtmlStringBalise($res, "body");
         return $resStr;
     }
+
+    public static function saveCssJs(array $inputs) {
+        if (!isset($_SESSION['editName'])) {
+            return;
+        }
+        $css= "";
+        $js = "";
+        if (isset($inputs['css'])) {
+            $css = $inputs['css'];
+        }
+        if (isset($inputs['js'])) {
+            $js = $inputs['js'];
+        }
+        if ($css != "") {
+            $path = "KW/public/ressources/css/" . $_SESSION['editName'] . ".css";
+            $f = fopen($path, "w");
+            if ($f) {
+                fwrite($f, $css, strlen($css));
+            }
+            fclose($f);
+        }
+        if ($js != "") {
+            $path = "KW/public/ressources/js/" . $_SESSION['editName'] . ".js";
+            $f = fopen($path, "w");
+            if ($f) {
+                fwrite($f, $js, strlen($js));
+            }
+            fclose($f);
+        }
+    }
 }
 ?>
