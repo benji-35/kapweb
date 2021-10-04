@@ -194,10 +194,10 @@
 									<input type="submit" value="Add Child" name="<?="addChild-" . $balise['name']?>">
 								</td>
 								<td>
-									<input type="submit" value="Save" name="<?="save-" . $balise['name']?>">
 									<?php
 										if ($balise['name'] != "body") {
 									?>
+										<input type="submit" value="Save" name="<?="save-" . $balise['name']?>">
 										<input type="submit" value="Delete" name="<?="delete-" . $balise['name']?>">
 									<?php
 										}
