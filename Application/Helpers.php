@@ -1106,24 +1106,17 @@ class Helpers {
 
     public static function deleteAllPages() {
         global $db;
-        $allPagesNeeded = array(
-            "connectKw",
-            "managerKw",
-            "kwdbConnect",
-            "editPageKp",
-            "kppageNotFound",
-            "editStructureTable",
-            "editContentTable",
-            "connectUser"
-        );
         $connect = $db->connect();
         $stm = $connect->prepare("SELECT * FROM pages WHERE 1");
         $stm->execute();
         while ($resStm = $stm->fetch()) {
             $resName = $resStm['name'];
-            if ($resName != $allPagesNeeded[0] && $resName != $allPagesNeeded[1] && $resName != $allPagesNeeded[2] && $resName != $allPagesNeeded[3] && $resName != $allPagesNeeded[4] && $resName != $allPagesNeeded[5] && $resName != $allPagesNeeded[6] && $resName != $allPagesNeeded[7]) {
+            if ($resStm['builtin'] == "0") {
                 $stm = $connect->prepare("DELETE FROM pages WHERE name = ?");
                 $stm->execute(array($resName));
+                unlink("KW/public/pages/" . $resName . ".conf");
+                unlink("KW/public/ressources/css/" . $resName . ".css");
+                unlink("KW/public/ressources/js/" . $resName . ".js");
             }
         }
         $db->disconnect();
