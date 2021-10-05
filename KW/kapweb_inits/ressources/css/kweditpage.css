@@ -145,3 +145,16 @@ body {
     width: 90%;
     height: 150px;
 }
+
+.backButton {
+    padding-left: 10px;
+    padding-right: 10px;
+    color: orange;
+    text-decoration: none;
+}
+
+.backButton i {
+    padding-left: 10px;
+    padding-right: 10px;
+    font-weight: bold;
+}

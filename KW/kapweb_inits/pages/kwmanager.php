@@ -673,7 +673,7 @@
                                 </select>
                                 <input type="submit" value="Save" name="<?="savePage-" . $pages[$i]['name']?>">
                             </th>
-                            <th class="editTablePage"><a class="editPageUrl" href="<?=$urlPageEdit?>"><div class="dEditPageLink"><p>edit</p></div></a></th>
+                            <th class="editTablePage"><a class="editPageUrl" href="<?=$urlPageEdit?>"><div class="dEditPageLink"><i class="far fa-edit"></i></div></a></th>
                         </tr>
                     <?php
                             }

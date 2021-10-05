@@ -129,7 +129,7 @@
 <!DOCTYPE html>
 <html  lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">
     <head>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>
@@ -156,7 +156,7 @@
 			if ($pageExists == true) {
 		?>
 		<form method="POST">
-			<h1>Edition</h1>
+			<h1><a class="backButton" href="<?=$hlp->getMainUrl() . "/KW/manager"?>"><i class="far fa-caret-square-left"></i></a>Edition</h1>
 			<div class="content">
 				<table id="tblStocks" class="tablePage">
 					<caption><h2>Page Elements</h2></caption>
