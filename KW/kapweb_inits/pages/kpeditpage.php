@@ -62,6 +62,18 @@
 			$ph = "";
 			$ival = "";
 			$ireado = "";
+			$src = "";
+			$link = "";
+			$target = "";
+			if (isset($_POST['imgSrc-' . $balise['name']])) {
+				$src = $_POST['imgSrc-' . $balise['name']];
+			}
+			if (isset($_POST['chgLink-' . $balise['name']])) {
+				$link = $_POST['chgLink-' . $balise['name']];
+			}
+			if (isset($_POST["chgTarget-" . $balise['name']])) {
+				$target = $_POST["chgTarget-" . $balise['name']];
+			}
 			if (isset($_POST["chgContent-" . $balise['name']])) {
 				$contentChg = $_POST["chgContent-" . $balise['name']];
 			}
@@ -96,6 +108,9 @@
 				"readonly" => $ireado,
 				"placeholder" => $ph,
 				"value" => $ival,
+				"src" => $src,
+				"link" => $link,
+				"target" => $target,
 			);
 			$ep->updateElement($balise['name'], $arrUpdate);
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
@@ -175,23 +190,36 @@
 										<label>Readonly :</label>
 										<input type="checkbox" name="<?="readonly-" . $balise['name']?>">
 										<input type="text" placeholder="Placeholder..." value="<?=$balise['placeholder']?>" name="<?="chgPh-" . $balise['name']?>">
-										<?php
-										
-										?>
-										<?php
-										
-										?>
 										<input type="text" placeholder="Value..." value="<?=$balise['value']?>" name="<?="chgIVal-" . $balise['name']?>">
+									<?php
+										} else if ($balise['type'] == "img") {
+									?>
+										<input type="text" placeholder="Source of image..." value="<?=str_replace("\"", "'", $balise['src'])?>" name="<?="imgSrc-" . $balise['name']?>">
+									<?php
+										} else if ($balise['type'] == "source") {
+									?>
+										<input type="text" placeholder="Source..." value="<?=str_replace("\"", "'", $balise['src'])?>" name="<?="imgSrc-" . $balise['name']?>">
+									<?php
+										}else if ($balise['type'] == "a") {
+									?>
+										<input type="text" placeholder="Link..." value="<?=str_replace("\"", "'", $balise['link'])?>" name="<?="chgLink-" . $balise['name']?>">
+										<input type="text" placeholder="Target..." value="<?=str_replace("\"", "'", $balise['target'])?>" name="<?="chgTarget-" . $balise['name']?>">
 									<?php
 										}
 									?>
 								</td>
 								<td>
+									<?php
+										if ($ep->isBaliseAutoClose($balise['type']) == false) {
+									?>
 									<input type="text" placeholder="Name..." name="<?="addChildName-" . $balise['name']?>">
 									<select name="<?="typeAddChild-" . $balise['name']?>">
 										<?=$ep->getSelectAdded($balise['type'])?>
 									</select>
 									<input type="submit" value="Add Child" name="<?="addChild-" . $balise['name']?>">
+									<?php
+										}
+									?>
 								</td>
 								<td>
 									<?php

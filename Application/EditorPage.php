@@ -28,23 +28,57 @@ class EditorPage {
         self::$hlp = $hlp;
     }
 
+    private static function stringOfElemsArr(array $arr, array $names):string {
+        if (count($arr) <= 0)
+            return "";
+        $to_write = "";
+        for ($i = 0; $i < count($names); $i++) {
+            if (isset($names[$i])) {
+                if ($to_write == "") {
+                    $to_write = "elements=" . $names[$i];
+                } else {
+                    $to_write .= "," . $names[$i];
+                }
+            }
+        }
+        $to_write .= "\n";
+        for ($i = 0; $i < count($arr); $i++) {
+            if (isset($arr[$i])) {
+                $balise = $arr[$i];
+                $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
+                $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
+                $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
+                $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
+                $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
+                if ($balise['type'] == "input") {
+                    $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
+                    $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
+                    $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
+                    $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
+                    $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
+                } else if ($balise['type'] == "img") {
+                    $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
+                } else if ($balise['type'] == "form") {
+                    $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
+                } else if ($balise['type'] == "a") {
+                    $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+                    $to_write .= $balise['name'] . "-target=" . $balise['target'] . "\n";
+                }
+            }
+        }
+        return $to_write;
+    }
+
     public static function addElement($name, $type, $parent="body", $class="", $content="") {
         if (!isset($_SESSION['editName'])) {
             return;
         }
         $elements = array();
         $nameElems = self::getElementsName();
-        $to_write = "";
         for ($i = 0; $i < count($nameElems); $i++) {
-            if ($to_write == "") {
-                $to_write = "elements=" . $nameElems[$i];
-            } else {
-                $to_write .= "," . $nameElems[$i];
-            }
             array_push($elements, self::genArrayElements($nameElems[$i]));
         }
-        $to_write .= "," . $name;
-        $to_write .= "\n";
+        array_push($nameElems, $name);
         for ($i = 0; $i < count($nameElems); $i++) {
             if (isset($nameElems[$i]) && $nameElems[$i] == $parent) {
                 $children = $elements[$i]['children'];
@@ -57,34 +91,15 @@ class EditorPage {
                 break;
             }
         }
-        for ($i = 0; $i < count($nameElems); $i++) {
-            $balise = $elements[$i];
-            $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
-            $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
-            $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
-            $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
-            $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
-            if ($balise['type'] == "input") {
-                $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
-                $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
-                $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
-                $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
-                $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
-            } else if ($balise['type'] == "img") {
-                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
-            } else if ($balise['type'] == "form") {
-                $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
-            } else if ($balise['type'] == "a") {
-                $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
-            }
-        }
+        $to_write = self::stringOfElemsArr($elements, $nameElems);
         $to_write .= $name . "=" . $type . "\n";
         $to_write .= $name . "-class=" . $class . "\n";
         $to_write .= $name . "-content=" . $content . "\n";
         $to_write .= $name . "-parent=" . $parent . "\n";
-        $to_write .= $name . "-child=\n";
+        $to_write .= $name . "-children=\n";
         if ($type == "a") {
             $to_write .= $name . "-link=\n";
+            $to_write .= $name . "-target=\n";
         } else if ($type == "input") {
             $to_write .= $name . "-itype=\n";
             $to_write .= $name . "-readonly=\n";
@@ -133,46 +148,17 @@ class EditorPage {
         }
         $elements = array();
         $nameElems = self::getElementsName();
-        $to_write = "";
+        
         
         for ($i = 0; $i < count($nameElems); $i++) {
             if ($nameElems[$i] != $name) {
                 array_push($elements, self::genArrayElements($nameElems[$i]));
+            } else {
+                unset($nameElems[$i]);
             }
         }
         $n_arr = self::getDeletedStr($elements, $name);
-
-        for ($i = 0; $i < count($n_arr); $i++) {
-            if (isset($n_arr[$i])) {
-                if ($to_write == "") {
-                    $to_write = "elements=" . $n_arr[$i]['name'];
-                } else {
-                    $to_write .= "," . $n_arr[$i]['name'];
-                }
-            }
-        }
-        $to_write .= $to_write . "\n";
-        for ($i = 0; $i < count($n_arr); $i++) {
-            $balise = $n_arr[$i];
-            $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
-            $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
-            $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
-            $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
-            $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
-            if ($balise['type'] == "input") {
-                $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
-                $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
-                $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
-                $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
-                $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
-            } else if ($balise['type'] == "img") {
-                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
-            } else if ($balise['type'] == "form") {
-                $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
-            } else if ($balise['type'] == "a") {
-                $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
-            }
-        }
+        $to_write = self::stringOfElemsArr($n_arr, $nameElems);
 
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
         $f = fopen($path, "w");
@@ -233,6 +219,7 @@ class EditorPage {
                     $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
                 } else if ($balise['type'] == "a") {
                     $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+                    $to_write .= $balise['name'] . "-target=" . $balise['target'] . "\n";
                 }
             }
         }
@@ -271,6 +258,9 @@ class EditorPage {
                 $arrGet['readonly'] = $arr['readonly'];
                 $arrGet['placeholder'] = $arr['placeholder'];
                 $arrGet['value'] = $arr['value'];
+                $arrGet['src'] = $arr['src'];
+                $arrGet['link'] = $arr['link'];
+                $arrGet['target'] = $arr['target'];
                 array_push($elements, $arrGet);
             }
         }
@@ -304,6 +294,9 @@ class EditorPage {
                 $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
             } else if ($balise['type'] == "a") {
                 $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
+                $to_write .= $balise['name'] . "-target=" . $balise['target'] . "\n";
+            } else if ($balise['type'] == "source") {
+                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
             }
         }
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
@@ -379,6 +372,11 @@ class EditorPage {
                 "method" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-method")),
             );
             $res = array_merge($res, $formArray);
+        } else if ($res['type'] == "source") {
+            $res = array_merge($res, array("src" => $cf->getValueFromKeyConf($path, $elemName . "-src")));
+        } else if ($res['type'] == "a") {
+            $res = array_merge($res, array("link" => $cf->getValueFromKeyConf($path, $elemName . "-link")));
+            $res = array_merge($res, array("target" => $cf->getValueFromKeyConf($path, $elemName . "-target")));
         }
 
         return $res;
@@ -412,8 +410,10 @@ class EditorPage {
         }
         $res .= "</optgroup>";
         $res .= "<optgroup label=\"Media\">";
-        $res .= "<option value=\"source\">Source</option>";
         $res .= "<option value=\"picture\">Picture</option>";
+        $res .= "<option value=\"img\">Image</option>";
+        $res .= "<option value=\"audio\">Audio</option>";
+        $res .= "<option value=\"video\">Video</option>";
         $res .= "</optgroup>";
         $res .= "<optgroup label=\"Navigation\">";
         $res .= "<option value=\"table\">Table</option>";
@@ -421,7 +421,7 @@ class EditorPage {
         $res .= "<option value=\"div\">Div</option>";
         $res .= "</optgroup>";
         $res .= "</optgroup>";
-        if ($type == "form" || $type == "select" || $type == "nav" || $type == "source" || $type == "picture") {
+        if ($type == "form" || $type == "select" || $type == "nav" || $type == "audio" || $type == "video" || $type == "picture") {
             $res .= "<optgroup label=\"====\">";
             $res .= "</optgroup>";
             $res .= "<optgroup label=\"Specific\">";
@@ -433,6 +433,9 @@ class EditorPage {
             if ($type == "select") {
                 $res .= "<option value=\"optgroup\">Optgroup</option>";
                 $res .= "<option value=\"option\">Option</option>";
+            }
+            if ($type == "audio" || $type == "video" || $type == "picture") {
+                $res .= "<option value=\"source\">Source</option>";
             }
             $res .= "</optgroup>";
         }
@@ -499,7 +502,7 @@ class EditorPage {
         return $res;
     }
 
-    private static function isBaliseAutoClose($type):bool {
+    public static function isBaliseAutoClose($type):bool {
         if ($type == "area" || $type == "br")
             return true;
         if ($type == "hr" || $type == "img")
@@ -683,6 +686,10 @@ class EditorPage {
                     }
                     if ($balise['type'] == "form") {
                         $res .= " method=\"" . $balise['method'] . "\"";
+                    }
+                    if ($balise['type'] == "a") {
+                        $res .= " target=\"" . $balise['target'] . "\"";
+                        $res .= " href=\"" . $balise['link'] . "\"";
                     }
                     if (self::isBaliseAutoClose($balise['type'])) {
                         $res .= ">";
