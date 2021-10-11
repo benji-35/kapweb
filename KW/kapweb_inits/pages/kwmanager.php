@@ -206,6 +206,11 @@
         $pseudoAdm = NULL;
         $lnameAdm = NULL;
         $fnameAdm = NULL;
+        $accesNAdmin = 0;
+        if ($_POST['accessNewAdmin'] <= 0) {
+            $_SESSION['addAdminError'] = "Please select an access for the new administrator";
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
         if (isset($_POST['pseudoNewAdmin']))
             $pseudoAdm = $_POST['pseudoNewAdmin'];
         if (isset($_POST['lnameNewAdmin']))
@@ -213,7 +218,7 @@
         if (isset($_POST['fnameNewAdmin']))
             $fnameAdm = $_POST['fnameNewAdmin'];
         if ($_POST['pwdNewAdmin'] == $_POST['confNewAdminPwd']) {
-            $resCheck = $hlp->createSuAccount($pseudoAdm, $_POST['emailNewAdmin'], $_POST['pwdNewAdmin'], $lnameAdm, $fnameAdm);
+            $resCheck = $hlp->createSuAccount($pseudoAdm, $_POST['emailNewAdmin'], $_POST['pwdNewAdmin'], $lnameAdm, $fnameAdm, $_POST['accessNewAdmin']);
             if ($resCheck != 1) {
                 $_SESSION['addAdminError'] = $errorsCreateAdmin[$resCheck];
             }
@@ -234,6 +239,7 @@
         $need_ids = true;
     if ($cf->strStartWith($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-pseudo"), "true"))
         $need_pseudo = true;
+    $listAccess = $hlp->getAccessList();
 ?>
 <!DOCTYPE html>
 <html>
@@ -264,22 +270,67 @@
         <div class="content" id="maincontent">
             <div class="navMenu">
                 <h3>Menu de navigation</h3>
-                <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class="fa fa-house-user"></i><?=" Dashboard"?></button>
+                <?php
+                    if ($hlp->haveAccesTo("Dashboard")) {
+                ?>
+                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class="fa fa-house-user"></i><?=" Dashboard"?></button>
+                <?php
+                    }
+                ?>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i id="iconAdmin" class="far fa-arrow-alt-circle-down"></i><?=" Admin"?></button>
                 <div class="closeMenuNav" id="navMenuAdmin">
-                    <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class="fas fa-users-cog"></i><?=" Administrateurs"?></button>    
-                    <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="fa fa-users"></i><?=" Utilisateur"?></button>
+                    <?php
+                        if ($hlp->haveAccesTo("Administrors")) {
+                    ?>
+                        <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class="fas fa-users-cog"></i><?=" Administrateurs"?></button>    
+                    <?php
+                        }
+                        if ($hlp->haveAccesTo("Users")) {
+                    ?>
+                        <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="fa fa-users"></i><?=" Utilisateur"?></button>
+                    <?php
+                        }
+                        if ($hlp->haveAccesTo("Access")) {
+                    ?>
+                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="fa fa-users"></i><?=" Accès"?></button>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i id="iconWebsite" class="far fa-arrow-alt-circle-down"></i><?=" Site Web"?></button>
                 <div class="closeMenuNav" id="navMenuWebsite">
-                    <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="fa fa-file-word"></i><?=" Pages"?></button>
-                    <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt"></i><?=" Deleted Pages"?></button>
+                    <?php
+                        if ($hlp->haveAccesTo("Pages")) {
+                    ?>
+                        <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="fa fa-file-word"></i><?=" Pages"?></button>
+                    <?php
+                        }
+                        if ($hlp->haveAccesTo("Deleted Pages")) {
+                    ?>
+                        <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt"></i><?=" Deleted Pages"?></button>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i id="iconFiles" class="far fa-arrow-alt-circle-down"></i><?=" Fichiers"?></button>
                 <div class="closeMenuNav" id="navMenuFiles">
-                    <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="fas fa-save"></i><?=" Cookies"?></button>
-                    <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="fas fa-database"></i><?=" Database"?></button>
-                    <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt"></i><?=" Deleted Database"?></button>
+                    <?php
+                        if ($hlp->haveAccesTo("Cookies")) {
+                    ?>
+                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="fas fa-save"></i><?=" Cookies"?></button>
+                    <?php
+                        }
+                        if ($hlp->haveAccesTo("Database")) {
+                    ?>
+                        <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="fas fa-database"></i><?=" Database"?></button>
+                    <?php
+                        }
+                        if ($hlp->haveAccesTo("Deleted Database")) {
+                    ?>
+                        <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt"></i><?=" Deleted Database"?></button>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <form class="deconnectForm" method="POST">
                     <input type="submit" value="disconnect" name="disconnect">
@@ -291,8 +342,8 @@
                     <table class="tableDashBoard">
                         <thead>
                             <tr>
-                                <th class="urlTd"><h3>Theoric url</h3></th>
-                                <th class="actionsTd"><h3>Actions</h3></th>
+                                <th class="urlTd">Theoric url</th>
+                                <th class="actionsTd">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -497,6 +548,16 @@
                             ?>
                             <input type="password" placeholder="Mot de passe.." name="pwdNewAdmin" required>
                             <input type="password" placeholder="Confirmez mot de passe..." name="confNewAdminPwd" required>
+                            <select name="accessNewAdmin">
+                                <option value="0" hidden>Select administrator access</option>
+                                <?php
+                                    for ($i = 0; $i < count($listAccess); $i++) {
+                                ?>
+                                    <option value="<?=$i+1?>"><?=$listAccess[$i]?></option>
+                                <?php
+                                    }
+                                ?>
+                            </select>
                             <input type="submit" value="créer" name="nawAdmin">
                             <?php
                                 if (isset($_SESSION['addAdminError'])) {
@@ -1005,6 +1066,20 @@
                             </tbody>
                         </table>
                     </form>
+                </div>
+                <div class="contextDev" id="access">
+                    <table class="tablePages">
+                        <caption><h1>All access types</h1></caption>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Tables acces</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

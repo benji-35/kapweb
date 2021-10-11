@@ -29,7 +29,7 @@
         if (isset($_POST['fname'])) {
             $fname = $_POST['fname'];
         }
-        $resCheck = $hlp->createSuAccount($pseudo, $_POST['emailCreate'], $_POST['pwdCreate'], $lname, $fname);
+        $resCheck = $hlp->createSuAccount($pseudo, $_POST['emailCreate'], $_POST['pwdCreate'], $lname, $fname, 1);
         if ($resCheck == 1) {
             header("location: " . $hlp->getMainUrl() . "/KW");
         } else {

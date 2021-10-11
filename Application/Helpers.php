@@ -724,6 +724,7 @@ class Helpers {
                 . "ALTER TABLE su_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
+                . "ALTER TABLE su_users ADD COLUMN access int(11) NOT NULL DEFAULT 1;"
                 . "ALTER TABLE su_users ADD COLUMN baned tinyint(1) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE su_users ADD COLUMN deleted tinyint(1) NOT NULL DEFAULT 0;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS su_users (uid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
@@ -743,6 +744,90 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
+        if (self::tabelExists("kp_acces") == false) {
+            $structure = ""
+                . "ALTER TABLE kp_access ADD COLUMN name varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_access ADD COLUMN tableAcces text NOT NULL;";
+            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_access (aid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
+            $stm->execute();
+            $stm = $connect->prepare($structure);
+            $stm->execute();
+            $stm = $connect->prepare("INSERT INTO kp_access (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Super Admin",
+                "*",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_access (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "restricted",
+                "",
+            ));
+        }
+        if (self::tabelExists("kp_tableacces") == false) {
+            $structure = ""
+                . "ALTER TABLE kp_tableacces ADD COLUMN name varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_tableacces ADD COLUMN description text NOT NULL;";
+            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_tableacces (tid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
+            $stm->execute();
+            $stm = $connect->prepare($structure);
+            $stm->execute();
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Dashboard",
+                "Managing reseting of website",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Administrors",
+                "Managing all admins",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Users",
+                "Managing all users",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Pages",
+                "Managing all undeleted pages",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Deleted Pages",
+                "Managing all deleted pages",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Cookies",
+                "Managing all cookies",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Database",
+                "Managing all undeleted db",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Deleted Database",
+                "Managing all deleted db",
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
+                "(?, ?)");
+            $stm->execute(array(
+                "Access",
+                "Managing all access",
+            ));
+        }
         if ($add_kp_tables == true) {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
@@ -759,7 +844,7 @@ class Helpers {
             $stm->execute(array(
                 "pages",
                 16,
-                "int,varchar,varchar,varchar,varchar,tinyint,tinyint,tinyint,varchar,varchar,tinyint,varchar,tinyint,tinyint,int",
+                "int,varchar,varchar,varchar,varchar,tinyint,tinyint,tinyint,varchar,varchar,tinyint,varchar,tinyint,tinyint,int,tinyint",
                 "pid,name,url,title,path,deleted,hided,editable,pathCss,pathJs,mainPage,ico,needConnect,needConnectSu,langauge,builtin",
                 1,
                 0,
@@ -791,9 +876,9 @@ class Helpers {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "su_users",
-                13,
-                "int,int,int,int,int,varchar,varchar,varchar,varchar,varchar,int,tinyint,tinyint",
-                "uid,cr_date,ls_mod,ls_con,ls_mod_uid,lname,fname,pseudo,email,password,status,banned,deleted",
+                14,
+                "int,int,int,int,int,varchar,varchar,varchar,varchar,varchar,int,int,tinyint,tinyint",
+                "uid,cr_date,ls_mod,ls_con,ls_mod_uid,lname,fname,pseudo,email,password,status,access,banned,deleted",
                 1,
                 0,
                 0,
@@ -821,8 +906,72 @@ class Helpers {
                 0,
                 0
             ));
+            $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "kp_access",
+                3,
+                "int,varchar,text",
+                "aid,name,tableAcces",
+                1,
+                0,
+                0,
+                0
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "kp_tableacces",
+                3,
+                "int,varchar,text",
+                "aid,name,description",
+                1,
+                0,
+                0,
+                0
+            ));
         }
         $db->disconnect();
+    }
+
+    public static function getAccessList():array {
+        global $db;
+        $res = array();
+
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_access WHERE 1");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm['name']);
+        }
+        $db->disconnect();
+
+        return $res;
+    }
+
+    public static function haveAccesTo(string $nameTable):bool {
+        if (self::isConnectedSu() == false)
+            return false;
+        global $db;
+        $access = "";
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM su_users WHERE email=?");
+        $stm->execute(array($_SESSION['suemail']));
+        $resStm = $stm->fetch();
+        $access = $resStm['access'];
+        $stm = $connect->prepare("SELECT * FROM kp_access WHERE aid=?");
+        $stm->execute(array($access));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        $access = $resStm['tableAcces'];
+        if ($access == "*")
+                return true;
+        $accesArr = explode(",", $access);
+        for ($i = 0; $i < count($accesArr); $i++) {
+            if ($accesArr[$i] == "*")
+                return true;
+            if ($accesArr[$i] == $nameTable)
+                return true;
+        }
+        return false;
     }
 
     public static function getTables():array {
@@ -1324,7 +1473,7 @@ class Helpers {
         return false;
     }
 
-    public static function createSuAccount($pseudo, $email, $pwd, $lname, $fname):int {
+    public static function createSuAccount($pseudo, $email, $pwd, $lname="", $fname="", $access=2):int {
         if (self::isEmailUsedInAccounts($email))
             return 0;
         global $db;
@@ -1333,13 +1482,14 @@ class Helpers {
             "cost" => 11
         ];
         $ctime = time();
-        $stm = $connect->prepare("INSERT INTO su_users (email, password, cr_date, ls_mod, ls_con, ls_mod_uid) VALUES (?, ?, ?, ?, ?, 0)");
+        $stm = $connect->prepare("INSERT INTO su_users (email, password, cr_date, ls_mod, ls_con, ls_mod_uid, access) VALUES (?, ?, ?, ?, ?, 0, ?)");
         $stm->execute(array(
             $email,
             password_hash($pwd,  PASSWORD_DEFAULT, $hash_opt),
             $ctime,
             $ctime,
             $ctime,
+            $access
         ));
         if (isset($pseudo)) {
             $stm = $connect->prepare("UPDATE su_users SET pseudo=? WHERE email=?");

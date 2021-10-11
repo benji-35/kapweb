@@ -19,6 +19,7 @@ class ConfFiles {
         . "user-signin-ids=false\n"
         . "user-age=false\n"
         . "user-signin-pseudo=false\n"
+        . "can-create-account=true\n"
         . "#email that will use for sending confirm email\n"
         . "email-confirm-password=\n";
 
@@ -246,14 +247,6 @@ class ConfFiles {
 
     public static function getFilesConfig():string {
         return self::$pathOtherConf;
-    }
-
-    public static function generateOtherSettings() {
-        $f = fopen(self::getFilesConfig(), "w");
-        if ($f) {
-            fwrite($f, self::$baseOtherConfig, strlen(self::$baseOtherConfig));
-        }
-        fclose($f);
     }
 }
 ?>

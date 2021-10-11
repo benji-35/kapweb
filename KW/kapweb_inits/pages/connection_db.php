@@ -60,7 +60,6 @@
                     $db->initDb($connArr);
                     $hlp->saveNewDb($connArr);
                     $hlp->generateTablesNeeded();
-                    $cf->generateOtherSettings();
                 }
                 unset($_SESSION['stepDbConnection']);
                 header("location: " . $hlp->getMainUrl() . "");
