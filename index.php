@@ -6,6 +6,7 @@ use Application\Database;
 use Application\ConfFiles;
 use Application\Helpers;
 use Application\EditorPage;
+use Application\Extensions;
 
 $db_class_name = "Application\Database";
 
@@ -79,10 +80,29 @@ $autoloader_ep = function ($ep_class_name) {
     }
 };
 
+$ext_class_name = "Application\Extensions";
+
+$autoloader_ext = function ($ext_class_name) {
+    // on prépare le terrain : on remplace le séparteur d'espace de nom par le séparateur de répertoires du système
+    $name = str_replace('\\', DIRECTORY_SEPARATOR, $ext_class_name);
+    // on construit le chemin complet du fichier à inclure :
+    // il faut que l'autoloader soit toujours à la racine du site : tout part de là avec __DIR__
+    $path = __DIR__ . DIRECTORY_SEPARATOR . $name . '.php';
+
+    // on vérfie que le fichier existe et on l'inclut
+    // sinon on passe la main à une autre autoloader (return false)
+    if (is_file($path)) {
+        include $path;
+    } else {
+        return false;
+    }
+};
+
 spl_autoload_register($autoloader_cf);
 spl_autoload_register($autoloader_ep);
 spl_autoload_register($autoloader_db);
 spl_autoload_register($autoloader_hlp);
+spl_autoload_register($autoloader_ext);
 
 $db = new Application\Database();
 $db = new Database();
@@ -96,10 +116,14 @@ $ep = new EditorPage();
 $hlp = new Application\Helpers();
 $hlp = new Helpers();
 
+$ext = new Application\Extensions();
+$ext = new Extensions();
+
 $hlp->setDB($db, $cf);
 $ep->initEditor($cf, $hlp);
 $db->initDb($hlp->getConnectionConfig());
 $canConnect = $db->canConnect();
+$ext->init_extensions();
 
 if ($hlp->haveConnectionDbIntels() == false || $canConnect == false) {
     require "KW/kapweb_inits/pages/connection_db.php";

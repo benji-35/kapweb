@@ -330,6 +330,11 @@
                         <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt"></i><?=" Deleted Database"?></button>
                     <?php
                         }
+                        if ($hlp->haveAccesTo("Extensions")) {
+                    ?>
+                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="fas fa-puzzle-piece"></i><?=" Extensions"?></button>
+                    <?php
+                        }
                     ?>
                 </div>
                 <form class="deconnectForm" method="POST">
@@ -1078,6 +1083,76 @@
                         </thead>
                         <tbody>
                             
+                        </tbody>
+                    </table>
+                </div>
+                <div class="contextDev" id="extensionListing">
+                    <table class="tablePages">
+                        <caption></caption>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Nom</th>
+                                <th>Auteur</th>
+                                <th>Description</th>
+                                <th>Categories</th>
+                                <th>Utilisé</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                                $extensionsList = $ext->getExtensionList();
+                                for ($i = 0; $i < count($extensionsList); $i++) {
+                                    $extension = $extensionsList[$i];
+                                    $categoriesExtension = array();
+                                    if ($extension['isFront'] == "true") {
+                                        array_push($categoriesExtension, "Front");
+                                    }
+                                    if ($extension['isBack'] == "true") {
+                                        array_push($categoriesExtension, "Back");
+                                    }
+                            ?>
+                                <tr>
+                                    <td>
+                                        <picture>
+                                            <img src="<?=$extension['icon']?>">
+                                        </picture>
+                                    </td>
+                                    <td><p><?=$extension['name']?></p></td>
+                                    <td><p><?=$extension['author']?></p></td>
+                                    <td><p><?=$extension['description']?></p></td>
+                                    <td>
+                                    <?php
+                                        for ($cat = 0; $cat < count($categoriesExtension); $cat++) {
+                                    ?>
+                                        <div class="categorieExtension">
+                                            <p><?=$categoriesExtension[$cat]?></p>
+                                        </div>
+                                    <?php
+                                        }
+                                    ?>
+                                    </td>
+                                    <td>
+                                        <?php
+                                            if ($extension['use'] == "true") {
+                                        ?>
+                                            <p class="yesUse">OUI</p>
+                                        <?php
+                                            } else {
+                                        ?>
+                                            <p class="noUse">NON</p>
+                                        <?php
+                                            }
+                                        ?>
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                            ?>
                         </tbody>
                     </table>
                 </div>

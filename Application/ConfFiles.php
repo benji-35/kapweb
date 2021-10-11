@@ -158,7 +158,7 @@ class ConfFiles {
                     $res .= "=" . $arrLine[$x];
                 }
                 if (self::strCanBeRead($res)) {
-                    return $res;
+                    return preg_replace('/\p{C}+/u', "", $res);
                 } else {
                     return "";
                 }
