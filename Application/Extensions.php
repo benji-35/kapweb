@@ -9,6 +9,8 @@ class Extensions {
     private static $extensionsName = array();
     private static $extensionList = array();
 
+    private static $extensionListFrontElement = array();
+
     public function __construct() {}
 
     public static function init_extensions() {
@@ -50,6 +52,10 @@ class Extensions {
 
     public static function getExtensionList():array {
         return self::$extensionList;
+    }
+
+    public static function getExtensionsFrontElement():array {
+        return self::$extensionListFrontElement;
     }
 }
 

@@ -246,6 +246,8 @@
     <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+        <script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
+        <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>
         <?php
@@ -1137,11 +1139,11 @@
                                         <?php
                                             if ($extension['use'] == "true") {
                                         ?>
-                                            <p class="yesUse">OUI</p>
+                                            <box-icon type='solid' size="lg" color="green" name='check-circle'></box-icon>
                                         <?php
                                             } else {
                                         ?>
-                                            <p class="noUse">NON</p>
+                                            <box-icon color="red" size="lg" type='solid' name='x-circle'></box-icon>
                                         <?php
                                             }
                                         ?>

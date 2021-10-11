@@ -391,6 +391,8 @@ class EditorPage {
     }
 
     public static function getSelectAdded($type):string {
+        global $ext;
+        $extAdded = $ext->getExtensionsFrontElement();
         $res = "";
         $res .= "<optgroup label=\"HTML Basics\">";
         $res .= "<optgroup label=\"Text\">";
@@ -439,6 +441,46 @@ class EditorPage {
             }
             $res .= "</optgroup>";
         }
+        /*
+
+        POUR LES EXTENSIONS
+
+        for ($i = 0; $i < count($extAdded); $i++) {
+            $extAdd = $extAdded[$i];
+            $nameExt = $extAdd['name'];
+            $exts = $extAdd['exts'];
+            $types = $extAdd['types'];
+            $formType = "";
+            $selectType = "";
+            $audioVideoPictureType = "";
+            $normalType = "";
+            for ($x = 0; $x < count($exts); $x++) {
+                if ($types[$i] == "") {
+
+                } else if ($types[$i] == "") {
+
+                } else if ($types[$i] == "") {
+
+                } else if ($types[$i] == "") {
+
+                } else {
+
+                }
+            }
+            $res .= "<optgroup label=\"" . $nameExt . "\">";
+            $res .= $normalType;
+            if ($formType != "") {
+                $res .= $formType;
+            }
+            if ($selectType != "") {
+                $res .= $selectType;
+            }
+            if ($audioVideoPictureType != "") {
+                $res .= $audioVideoPictureType;
+            }
+            $res .= "</optgroup>";
+        }
+        */
         return $res;
     }
 
