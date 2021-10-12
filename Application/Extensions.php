@@ -314,6 +314,49 @@ class Extensions {
         }
         return $res;
     }
+
+    public static function isExtensionBaliseType($type):bool {
+        for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
+            $elems = self::$extensionListFrontElement[$i]['elems'];
+            for ($x = 0; $x < count($elems); $x++) {
+                if ($type == $elems[$x]['name']) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static function getHtmlExtensionFromBalise($type):string {
+        for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
+            $elems = self::$extensionListFrontElement[$i]['elems'];
+            for ($x = 0; $x < count($elems); $x++) {
+                if ($type == $elems[$x]['name']) {
+                    $f = fopen($elems[$x]['own-path'] . "/frontPage.html", "r");
+                    $strHtml = "";
+                    if ($f) {
+                        $size = filesize($elems[$x]['own-path'] . "/frontPage.html");
+                        if ($size > 0) {
+                            $strHtml = fread($f, $size);
+                        }
+                    }
+                    fclose($f);
+                    if (file_exists($elems[$x]['own-path'] . "/frontPage.css")) {
+                        $f = fopen($elems[$x]['own-path'] . "/frontPage.css", "r");
+                        if ($f) {
+                            $size = filesize($elems[$x]['own-path'] . "/frontPage.css");
+                            if ($size > 0) {
+                                $strHtml .= "<style>" . fread($f, $size) . "</style>";
+                            }
+                        }
+                        fclose($f);
+                    }
+                    return $strHtml;
+                }
+            }
+        }
+        return "";
+    }
 }
 
 ?>

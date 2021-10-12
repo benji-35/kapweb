@@ -32,3 +32,37 @@
     margin-top: 55px;
     text-align: left;
 }
+
+.configContactMe-StandarExtension {
+    width: 70%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 2px solid black;
+    border-radius: 10px;
+}
+
+.emailContactMe {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 50px;
+    padding-left: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.validEmail-sendContactMe {
+    margin-bottom: 15px;
+    width: 50%;
+    height: 40px;
+    border-radius: 10px;
+    background-color: white;
+    transition: 0.2s;
+}
+
+.validEmail-sendContactMe:hover {
+    background-color: #e1e1e1;
+    cursor: pointer;
+    border: 1px solid gray;
+}

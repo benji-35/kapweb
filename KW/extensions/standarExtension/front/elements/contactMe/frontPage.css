@@ -1,0 +1,27 @@
+.standarExtension-formContactMe {
+    background-color: orange;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    width: 400px;
+    text-align: center;
+    border: 2px solid black;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+.standarExtension-whiteSpacing {
+    background-color: white;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.standarExtension-whiteSpacing input {
+    width: 80%;
+    height: 35px;
+    margin-left: 10%;
+    margin-right: 10%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
