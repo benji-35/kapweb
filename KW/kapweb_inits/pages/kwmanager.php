@@ -301,10 +301,19 @@
                 <?php
                     }
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i id="iconAdmin" class="far fa-arrow-alt-circle-down"></i><?=" Admin"?></button>
+                <?php
+                    $accesAdmin = $hlp->haveAccesTo("Administrors");
+                    $accesUsers = $hlp->haveAccesTo("Users");
+                    $accesAccess = $hlp->haveAccesTo("Access");
+                    if ($accesAdmin || $accesUsers || $accesAccess || $ext->haveAccesToExt("navMenuAdmin")) {
+                ?>
+                    <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i id="iconAdmin" class="far fa-arrow-alt-circle-down"></i><?=" Admin"?></button>
+                <?php
+                    }
+                ?>
                 <div class="closeMenuNav" id="navMenuAdmin">
                     <?php
-                        if ($hlp->haveAccesTo("Administrors")) {
+                        if ($accesAdmin) {
                     ?>
                         <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class="fas fa-users-cog"></i><?=" Administrateurs"?></button>    
                     <?php
@@ -322,15 +331,23 @@
                         echo $ext->getButtonFromCat("navMenuAdmin");
                     ?>
                 </div>
+                <?php
+                    $accessPage = $hlp->haveAccesTo("Pages");
+                    $accesDeletedPage = $hlp->haveAccesTo("Deleted Pages");
+                    if ($accessPage || $accesDeletedPage || $ext->haveAccesToExt("navMenuWebsite")) {
+                ?>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i id="iconWebsite" class="far fa-arrow-alt-circle-down"></i><?=" Site Web"?></button>
+                <?php
+                    }
+                ?>
                 <div class="closeMenuNav" id="navMenuWebsite">
                     <?php
-                        if ($hlp->haveAccesTo("Pages")) {
+                        if ($accessPage) {
                     ?>
                         <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="fa fa-file-word"></i><?=" Pages"?></button>
                     <?php
                         }
-                        if ($hlp->haveAccesTo("Deleted Pages")) {
+                        if ($accesDeletedPage) {
                     ?>
                         <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt"></i><?=" Deleted Pages"?></button>
                     <?php
@@ -338,25 +355,36 @@
                         echo $ext->getButtonFromCat("navMenuWebsite");
                     ?>
                 </div>
+                <?php
+                    $accessCookies = $hlp->haveAccesTo("Cookies");
+                    $accessDb = $hlp->haveAccesTo("Database");
+                    $accessDeletedDB = $hlp->haveAccesTo("Deleted Database");
+                    $accessExt = $hlp->haveAccesTo("Extensions");
+
+                    if ($accessCookies || $accessDb || $accessDeletedDB || $accessExt || $ext->haveAccesToExt("navMenuFiles")) {
+                ?>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i id="iconFiles" class="far fa-arrow-alt-circle-down"></i><?=" Fichiers"?></button>
+                <?php
+                    }
+                ?>
                 <div class="closeMenuNav" id="navMenuFiles">
                     <?php
-                        if ($hlp->haveAccesTo("Cookies")) {
+                        if ($accessCookies) {
                     ?>
                         <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="fas fa-save"></i><?=" Cookies"?></button>
                     <?php
                         }
-                        if ($hlp->haveAccesTo("Database")) {
+                        if ($accessDb) {
                     ?>
                         <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="fas fa-database"></i><?=" Database"?></button>
                     <?php
                         }
-                        if ($hlp->haveAccesTo("Deleted Database")) {
+                        if ($accessDeletedDB) {
                     ?>
                         <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt"></i><?=" Deleted Database"?></button>
                     <?php
                         }
-                        if ($hlp->haveAccesTo("Extensions")) {
+                        if ($accessExt) {
                     ?>
                         <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="fas fa-puzzle-piece"></i><?=" Extensions"?></button>
                     <?php

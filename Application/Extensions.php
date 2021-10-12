@@ -116,7 +116,57 @@ class Extensions {
     }
 
     public static function otherButtonAcces():string {
+        global $cf, $hlp;
+        $new_cats = array();
+        $btns = array();
+        $mainCats = array("navMenuAdmin", "navMenuFiles", "navMenuWebsite");
+
+        $extensions = self::$extensionList;
+        for ($i = 0; $i < count($extensions); $i++) {
+            $extension = $extensions[$i];
+            if ($extension['isBack'] && $extension['use'] == "true") {
+                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
+                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
+                if ($nb_uis >= 1) {
+                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
+                        $catGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-cat");
+                        if ($catGet != "navMenuAdmin" && $catGet != "navMenuFiles" && $catGet != "navMenuWebsite") {
+                            array_push($new_cats, $catGet);
+                            $txtBtn = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn);
+                            $callActiveFunction = "displayContextMenu('". 'folder-' . $extension['folder'] . "-" . $btn . "', '" . $extension['folder'] . "-" . $btn . "')";
+                            $iconBeforeBtn = "";
+                            $iconClassGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-catLogo");
+                            if ($iconClassGet != "") {
+                                $iconBeforeBtn = '<i class="' . $iconClassGet . '"></i> ';
+                            }
+                            $htmlBtn = '<button class="btnNavMenu" id="' . $extension['folder'] . "-" . $btn . '" onclick="' . $callActiveFunction . '">' . $iconBeforeBtn . $txtBtn . '</button>';
+                            array_push($btns, array("cat" => $catGet, "html" => $htmlBtn));
+                        }
+                    }
+                }
+            }
+        }
+
         $res = "";
+
+        for ($i = 0; $i < count($new_cats); $i++) {
+            if ($hlp->haveAccesTo($new_cats[$i])) {
+                $res .= '<button class="btnNavMenu" onclick="displayNavMenu(\'ncat-' . 
+                    $new_cats[$i] . '\', \'icon-' . 
+                    $new_cats[$i] . '\')"><i id="icon-' . 
+                    $new_cats[$i] . '" class="far fa-arrow-alt-circle-down"></i> ' . 
+                    $new_cats[$i] . '</button>';
+                $res .= '<div class="closeMenuNav" id="ncat-' . 
+                    $new_cats[$i] . '">';
+                for ($x = 0; $x < count($btns); $x++) {
+                    if ($btns[$x]['cat'] == $new_cats[$i]) {
+                        $res .= $btns[$x]['html'];
+                    }
+                }
+                $res .= "</div>";
+            }
+        }
+
         return $res;
     }
 
@@ -148,6 +198,11 @@ class Extensions {
             }
         }
         return $res;
+    }
+
+    public static function haveAccesToExt(string $catName):bool {
+        global $hlp;
+        return $hlp->haveAccesTo($catName);
     }
 
     public static function getPhpExtensionManager() {
