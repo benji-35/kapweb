@@ -302,3 +302,38 @@ th {
 .modifUrlForm input[type="text"] {
     width: 75%;
 }
+
+.categorieExtension {
+    border: 2px solid;
+    border-radius: 7px;
+    margin-bottom: 5px;
+}
+
+.categorieExtension p {
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+#catExt-Front {
+    border-color: red !important;
+    background-color: pink;
+}
+
+#catExt-Back {
+    border-color: green !important;
+    background-color: rgb(134, 219, 134);
+}
+
+#catExt-Database {
+    border-color: rgb(25, 0, 255) !important;
+    background-color: rgb(198, 192, 255);
+}
+
+.stopUsingExtension {
+    border: none;
+    background-color: transparent;
+}
+
+.stopUsingExtension:hover {
+    cursor: pointer;
+}

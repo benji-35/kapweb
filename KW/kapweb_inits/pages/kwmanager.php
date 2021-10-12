@@ -240,6 +240,23 @@
     if ($cf->strStartWith($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-pseudo"), "true"))
         $need_pseudo = true;
     $listAccess = $hlp->getAccessList();
+    $extensionsList = $ext->getExtensionList();
+
+    for ($i = 0; $i < count($extensionsList); $i++) {
+        $extension = $extensionsList[$i];
+        if (isset($_POST['extStop-' . $extension['folder']])) {
+            $ext->stopExtension($extension['name']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+        if (isset($_POST['extStart-' . $extension['folder']])) {
+            $ext->startExtension($extension['name']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+        if (isset($_POST['extDelete-' . $extension['folder']])) {
+            $ext->removeExtensionFromUsingList($extension['name']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -1090,21 +1107,20 @@
                 </div>
                 <div class="contextDev" id="extensionListing">
                     <table class="tablePages">
-                        <caption></caption>
+                        <caption><h1>Extensions</h1></caption>
                         <thead>
                             <tr>
-                                <th></th>
-                                <th>Nom</th>
-                                <th>Auteur</th>
-                                <th>Description</th>
-                                <th>Categories</th>
-                                <th>Utilisé</th>
+                                <th style="width:   12px !important;">Icon</th>
+                                <th style="width: 250px !important;">Nom</th>
+                                <th style="width: 12px !important;">Auteur</th>
+                                <th style="width: 200px !important;">Description</th>
+                                <th style="width: 12px !important;">Categories</th>
                                 <th>Action</th>
+                                <th style="width: 12px !important;">Utilisé</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
-                                $extensionsList = $ext->getExtensionList();
                                 for ($i = 0; $i < count($extensionsList); $i++) {
                                     $extension = $extensionsList[$i];
                                     $categoriesExtension = array();
@@ -1113,6 +1129,9 @@
                                     }
                                     if ($extension['isBack'] == "true") {
                                         array_push($categoriesExtension, "Back");
+                                    }
+                                    if ($extension['isDbExt'] == "true") {
+                                        array_push($categoriesExtension, "Database");
                                     }
                             ?>
                                 <tr>
@@ -1128,12 +1147,28 @@
                                     <?php
                                         for ($cat = 0; $cat < count($categoriesExtension); $cat++) {
                                     ?>
-                                        <div class="categorieExtension">
+                                        <div class="categorieExtension" id="<?="catExt-" . $categoriesExtension[$cat]?>">
                                             <p><?=$categoriesExtension[$cat]?></p>
                                         </div>
                                     <?php
                                         }
                                     ?>
+                                    </td>
+                                    <td>
+                                        <form method="POST" id="<?="extAction-" . $extension['folder']?>">
+                                            <?php
+                                                if ($extension['use'] == "true") {
+                                            ?>
+                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Stop use this extension" name="<?="extStop-" . $extension['folder']?>"><box-icon  color="red" size="lg" type='solid' name='message-square-x'></box-icon></i></button>
+                                            <?php
+                                                } else {
+                                            ?>
+                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Start use this extension" name="<?="extStart-" . $extension['folder']?>"><box-icon color="green" size="lg" name='message-square-check' type='solid' ></box-icon></i></button>
+                                            <?php
+                                                }
+                                            ?>
+                                            <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Delete this extension" name="<?="extDelete-" . $extension['folder']?>"><box-icon size="lg" type='solid' name='trash'></box-icon></button>
+                                        </form>
                                     </td>
                                     <td>
                                         <?php
@@ -1147,9 +1182,6 @@
                                         <?php
                                             }
                                         ?>
-                                    </td>
-                                    <td>
-
                                     </td>
                                 </tr>
                             <?php
