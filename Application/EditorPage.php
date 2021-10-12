@@ -22,6 +22,8 @@ class EditorPage {
         "['isConnectedNormalB']" => "<?php \$r = \$hlp->isConnectedNo(); if (\$r == 1) {echo \"true\";} else {echo \"false\";}/*don't touch this line*/?>",
     );
 
+    private static $extensionsElementsGlob = array();
+
     public function __construct() {}
 
     public function initEditor($cf, $hlp) {
@@ -394,7 +396,8 @@ class EditorPage {
 
     public static function getSelectAdded($type):string {
         global $ext;
-        $extAdded = $ext->getExtensionsFrontElement();
+        self::$extensionsElementsGlob = $ext->getExtensionsFrontElement();
+        $extAdded = self::$extensionsElementsGlob;
         $res = "";
         $res .= "<optgroup label=\"HTML Basics\">";
         $res .= "<optgroup label=\"Text\">";
@@ -801,6 +804,46 @@ class EditorPage {
             }
             fclose($f);
         }
+    }
+
+
+    public static function getSpecificsOptions(array $balise):string {
+        $type = $balise['type'];
+        if ($type == "input") {
+            return '<label>Readonly :</label>
+            <input type="checkbox" name="readonly-'. $balise['name'] . '">
+            <input type="text" placeholder="Placeholder..." value="' . $balise['placeholder'] . '" name="chgPh-' . $balise['name'] . '">
+            <input type="text" placeholder="Value..." value="' . $balise['value'] . '" name="chgIVal-' . $balise['name'] . '">';
+        }
+        if ($type == "img") {
+            return '<input type="text" placeholder="Source of image..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $balise['name'] . '">';
+        }
+        if ($type == "source") {
+            return '<input type="text" placeholder="Source..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $balise['name'] . '">';
+        }
+        if ($type == "a") {
+            return '<input type="text" placeholder="Link..." value="' . str_replace("\"", "'", $balise['link']) . '" name="chgLink-' . $balise['name'] . '">' . 
+            '<input type="text" placeholder="Target..." value="' . str_replace("\"", "'", $balise['target']) . '" name="chgTarget-' . $balise['name'] . '">';
+        }
+        for ($i = 0; $i < count(self::$extensionsElementsGlob); $i++) {
+            $extension = self::$extensionsElementsGlob[$i];
+            $elemsExt = $extension['elems'];
+            for ($elemId = 0; $elemId < count($elemsExt); $elemId++) {
+                $elem = $elemsExt[$elemId];
+                if ($elem['name'] == $type) {
+                    if (file_exists($elem['own-path'] . "/editPage.html")) {
+                        $contentEdition = "";
+                        $f = fopen($elem['own-path'] . "/editPage.html", "r");
+                        if ($f) {
+                            $contentEdition = fread($f, filesize($elem['own-path'] . "/editPage.html"));
+                        }
+                        fclose($f);
+                        return $contentEdition;
+                    }
+                }
+            }
+        }
+        return '';
     }
 }
 ?>

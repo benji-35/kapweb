@@ -31,12 +31,16 @@ class Extensions {
                         "front" => $cf->getValueFromKeyConf($pathElems, $elem . "-front"),
                         "back" => $cf->getValueFromKeyConf($pathElems, $elem . "-back"),
                         "css" => $cf->getValueFromKeyConf($pathElems, $elem . "-css"),
+                        "path-options" => $pathElems,
+                        "own-path" => $extList['path'] . "/front/elements/" . $elem,
                     );
                     array_push($array_ext_elems, $elemArr);
                 }
             }
         }
-        array_push(self::$extensionListFrontElement, array("name" => $extList['name'], "author" =>  $extList['author'], "elems" => $array_ext_elems));
+        if ($extList['use'] == "true") {
+            array_push(self::$extensionListFrontElement, array("name" => $extList['name'], "author" =>  $extList['author'], "elems" => $array_ext_elems));
+        }
     }
 
     public static function init_extensions() {
@@ -160,7 +164,9 @@ class Extensions {
                     for ($btn = 1; $btn <= $nb_uis; $btn++) {
                         $catGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-cat");
                         if ($catGet != "navMenuAdmin" && $catGet != "navMenuFiles" && $catGet != "navMenuWebsite") {
-                            array_push($new_cats, $catGet);
+                            if (in_array($catGet, $new_cats) == false) {
+                                array_push($new_cats, $catGet);
+                            }
                             $txtBtn = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn);
                             $callActiveFunction = "displayContextMenu('". 'folder-' . $extension['folder'] . "-" . $btn . "', '" . $extension['folder'] . "-" . $btn . "')";
                             $iconBeforeBtn = "";
@@ -292,7 +298,12 @@ class Extensions {
                         if (file_exists($pathHtml)) {
                             $f = fopen($pathHtml, "r");
                             if ($f) {
-                                $res .= fread($f, filesize($pathHtml));
+                                $csize = filesize($pathHtml);
+                                if ($csize <= 0) {
+                                    $res .= "";
+                                } else {
+                                    $res .= fread($f, $csize);
+                                }
                             }
                             fclose($f);
                         }
