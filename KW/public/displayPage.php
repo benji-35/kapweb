@@ -1,5 +1,6 @@
 <?php
     $_SESSION['editName'] =  $_SESSION['pageName'];
+	$ep->generatePhpCode();
 ?>
 
 <!DOCTYPE html>

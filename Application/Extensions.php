@@ -33,6 +33,7 @@ class Extensions {
                         "css" => $cf->getValueFromKeyConf($pathElems, $elem . "-css"),
                         "path-options" => $pathElems,
                         "own-path" => $extList['path'] . "/front/elements/" . $elem,
+                        "vars" => $cf->getValueFromKeyConf($pathElems, $elem . "-vars"),
                     );
                     array_push($array_ext_elems, $elemArr);
                 }
@@ -327,17 +328,25 @@ class Extensions {
         return false;
     }
 
-    public static function getHtmlExtensionFromBalise($type):string {
+    public static function getHtmlExtensionFromBalise(string $type, string $elementName):string {
+        global $ep;
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
             $elems = self::$extensionListFrontElement[$i]['elems'];
             for ($x = 0; $x < count($elems); $x++) {
                 if ($type == $elems[$x]['name']) {
+                    $vars = explode(",", $elems[$x]['vars']);
                     $f = fopen($elems[$x]['own-path'] . "/frontPage.html", "r");
                     $strHtml = "";
                     if ($f) {
                         $size = filesize($elems[$x]['own-path'] . "/frontPage.html");
                         if ($size > 0) {
                             $strHtml = fread($f, $size);
+                        }
+                    }
+                    $balise = $ep->genArrayElements($elementName);
+                    for ($j = 0; $j < count($vars); $j++) {
+                        if ($vars[$j] != "") {
+                            $strHtml = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $strHtml);
                         }
                     }
                     fclose($f);
@@ -352,6 +361,30 @@ class Extensions {
                         fclose($f);
                     }
                     return $strHtml;
+                }
+            }
+        }
+        return "";
+    }
+
+    public static function getVarsFromFrontElement($elemName):array {
+        for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
+            $elems = self::$extensionListFrontElement[$i]['elems'];
+            for ($x = 0; $x < count($elems); $x++) {
+                if ($elemName == $elems[$x]['name']) {
+                    return explode(",", $elems[$x]['vars']);
+                }
+            }
+        }
+        return array();
+    }
+
+    public static function getPageEditHtmlFromElement($elemName):string {
+        for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
+            $elems = self::$extensionListFrontElement[$i]['elems'];
+            for ($x = 0; $x < count($elems); $x++) {
+                if ($elemName == $elems[$x]['name']) {
+                    return $elems[$x]['own-path'] . "/editPage.html";
                 }
             }
         }

@@ -33,10 +33,11 @@ class EditorPage {
     }
 
     private static function stringOfElemsArr(array $arr, array $names):string {
+        global $ext;
         if (count($arr) <= 0)
             return "";
         $to_write = "";
-        for ($i = 0; $i < count($names); $i++) {
+        for ($i = 0; $i <= count($names); $i++) {
             if (isset($names[$i])) {
                 if ($to_write == "") {
                     $to_write = "elements=" . $names[$i];
@@ -54,7 +55,12 @@ class EditorPage {
                 $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
                 $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
                 $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
-                if ($balise['type'] == "input") {
+                if ($ext->isExtensionBaliseType($balise['type'])) {
+                    $vars = $ext->getVarsFromFrontElement($balise['type']);
+                    for ($j = 0; $j < count($vars); $j++) {
+                        $to_write .= $balise['name'] . "-" . $vars[$j] . "=" . $balise[$vars[$j]] . "\n";
+                    }
+                } else if ($balise['type'] == "input") {
                     $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
                     $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
                     $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
@@ -74,6 +80,7 @@ class EditorPage {
     }
 
     public static function addElement($name, $type, $parent="body", $class="", $content="") {
+        global $ext;
         if (!isset($_SESSION['editName'])) {
             return;
         }
@@ -96,12 +103,18 @@ class EditorPage {
             }
         }
         $to_write = self::stringOfElemsArr($elements, $nameElems);
+        $to_write .= "\n";
         $to_write .= $name . "=" . $type . "\n";
         $to_write .= $name . "-class=" . $class . "\n";
         $to_write .= $name . "-content=" . $content . "\n";
         $to_write .= $name . "-parent=" . $parent . "\n";
         $to_write .= $name . "-children=\n";
-        if ($type == "a") {
+        if ($ext->isExtensionBaliseType($type)) {
+            $vars = $ext->getVarsFromFrontElement($type);
+            for ($j = 0; $j < count($vars); $j++) {
+                $to_write .= $name . "-" . $vars[$j] . "=\n";
+            }
+        } else if ($type == "a") {
             $to_write .= $name . "-link=\n";
             $to_write .= $name . "-target=\n";
         } else if ($type == "input") {
@@ -152,9 +165,8 @@ class EditorPage {
         }
         $elements = array();
         $nameElems = self::getElementsName();
-        
-        
-        for ($i = 0; $i < count($nameElems); $i++) {
+
+        for ($i = 0; $i <= count($nameElems); $i++) {
             if ($nameElems[$i] != $name) {
                 array_push($elements, self::genArrayElements($nameElems[$i]));
             } else {
@@ -162,7 +174,12 @@ class EditorPage {
             }
         }
         $n_arr = self::getDeletedStr($elements, $name);
+
         $to_write = self::stringOfElemsArr($n_arr, $nameElems);
+
+        $to_write = str_replace($name . ",", "", $to_write);
+        $to_write = str_replace("," . $name, "", $to_write);
+        $to_write = str_replace($name, "", $to_write);
 
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
         $f = fopen($path, "w");
@@ -235,6 +252,20 @@ class EditorPage {
         fclose($f);
     }
 
+    public static function updateArraySaveFromExtensions(array $currArr, array $balise):array {
+        global $ext;
+        if ($ext->isExtensionBaliseType($balise['type'])) {
+            $vars = $ext->getVarsFromFrontElement($balise['type']);
+            for ($i = 0; $i < count($vars); $i++) {
+                $postName = $balise['name'] . "-" . $vars[$i];
+                if (isset($_POST[$postName])) {
+                    $currArr = array_merge($currArr, array($vars[$i] => $_POST[$postName]));
+                }
+            }
+        }
+        return $currArr;
+    }
+
     public static function updateElement(string $name, array $arr) {
         if (count($arr) <= 0)
             return;
@@ -255,16 +286,12 @@ class EditorPage {
                 }
             } else {
                 $arrGet = self::genArrayElements($nameElems[$i]);
-                $arrGet['name'] = $arr['name'];
-                $arrGet['type'] = $arr['type'];
-                $arrGet['content'] = $arr['content'];
-                $arrGet['class'] = $arr['class'];
-                $arrGet['readonly'] = $arr['readonly'];
-                $arrGet['placeholder'] = $arr['placeholder'];
-                $arrGet['value'] = $arr['value'];
-                $arrGet['src'] = $arr['src'];
-                $arrGet['link'] = $arr['link'];
-                $arrGet['target'] = $arr['target'];
+                $keys = array_keys($arrGet);
+                for ($x = 0; $x < count($keys); $x++) {
+                    if (key_exists($keys[$x], $arr)) {
+                        $arrGet[$keys[$x]] = $arr[$keys[$x]];
+                    }
+                }
                 array_push($elements, $arrGet);
             }
         }
@@ -281,26 +308,16 @@ class EditorPage {
         $to_write .= "\n";
         for ($i = 0; $i < count($elements); $i++) {
             $balise = $elements[$i];
-            $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
-            $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
-            $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
-            $to_write .= $balise['name'] . "-parent=" . $balise['parent'] . "\n";
-            $to_write .= $balise['name'] . "-children=" . $balise['children'] . "\n";
-            if ($balise['type'] == "input") {
-                $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
-                $to_write .= $balise['name'] . "-readonly=" . $balise['readonly'] . "\n";
-                $to_write .= $balise['name'] . "-placeholder=" . $balise['placeholder'] . "\n";
-                $to_write .= $balise['name'] . "-value=" . $balise['value'] . "\n";
-                $to_write .= $balise['name'] . "-iname=" . $balise['iname'] . "\n";
-            } else if ($balise['type'] == "img") {
-                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
-            } else if ($balise['type'] == "form") {
-                $to_write .= $balise['name'] . "-method=" . $balise['method'] . "\n";
-            } else if ($balise['type'] == "a") {
-                $to_write .= $balise['name'] . "-link=" . $balise['link'] . "\n";
-                $to_write .= $balise['name'] . "-target=" . $balise['target'] . "\n";
-            } else if ($balise['type'] == "source") {
-                $to_write .= $balise['name'] . "-src=" . $balise['src'] . "\n";
+            $keysToSave = array_keys($balise);
+            for ($j = 0; $j < count($keysToSave); $j++) {
+                $key = $keysToSave[$j];
+                if ($key != "name") {
+                    if ($key == "type") {
+                        $to_write .= $balise['name'] . "=" . $balise[$key] . "\n";
+                    } else {
+                        $to_write .= $balise['name'] . "-" . $key . "=" . $balise[$key] . "\n";
+                    }
+                }
             }
         }
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
@@ -340,7 +357,7 @@ class EditorPage {
     }
 
     public static function genArrayElements($elemName):array {
-        global $cf;
+        global $cf, $ext;
         if (!isset($_SESSION['editName'])) {
             return array(
                 "name" => $elemName,
@@ -360,7 +377,14 @@ class EditorPage {
             "content" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-content")),
         );
 
-        if ($res['type'] == "img") {
+        if ($ext->isExtensionBaliseType($res['type'])) {
+            $vars = $ext->getVarsFromFrontElement($res['type']);
+            for ($i = 0; $i < count($vars); $i++) {
+                if ($vars[$i] != "") {
+                    $res = array_merge($res, array($vars[$i] => $cf->getValueFromKeyConf($path, $elemName . "-" . $vars[$i])));
+                }
+            }
+        } else if ($res['type'] == "img") {
             $res = array_merge($res, array("src" => $cf->getValueFromKeyConf($path, $elemName . "-src")));
         } else if ($res['type'] == "input") {
             $inputArray = array(
@@ -712,7 +736,7 @@ class EditorPage {
             if (self::canBeDisplay($arr, $balise) == true) {
                 if ($balise['parent'] == $parent) {
                     if ($ext->isExtensionBaliseType($balise['type'])) {
-                        $res .= $ext->getHtmlExtensionFromBalise($balise['type']);
+                        $res .= $ext->getHtmlExtensionFromBalise($balise['type'], $balise['name']);
                     } else {
                         $res .= "<" . $balise['type'] . " id=\"" . $balise['name'] . "\"";
                         if ($balise['class'] != "") {
@@ -780,6 +804,25 @@ class EditorPage {
         return $resStr;
     }
 
+    private static function getPhpFromNameElem(string $nameElem):string {
+        return "";
+    }
+
+    public static function generatePhpCode() {
+        global $cf, $hlp;
+        if (!isset($_SESSION['editName'])) {
+            return;
+        }
+        $res = array();
+        $nameElems = self::getElementsName();
+        for ($i = 0; $i < count($nameElems); $i++) {
+            $toRequire = self::getPhpFromNameElem($nameElems[$i]);
+            if ($toRequire != "") {
+                
+            }
+        }
+    }
+
     public static function saveCssJs(array $inputs) {
         if (!isset($_SESSION['editName'])) {
             return;
@@ -810,8 +853,8 @@ class EditorPage {
         }
     }
 
-
     public static function getSpecificsOptions(array $balise):string {
+        global $ext;
         $type = $balise['type'];
         if ($type == "input") {
             return '<label>Readonly :</label>
@@ -829,23 +872,26 @@ class EditorPage {
             return '<input type="text" placeholder="Link..." value="' . str_replace("\"", "'", $balise['link']) . '" name="chgLink-' . $balise['name'] . '">' . 
             '<input type="text" placeholder="Target..." value="' . str_replace("\"", "'", $balise['target']) . '" name="chgTarget-' . $balise['name'] . '">';
         }
-        for ($i = 0; $i < count(self::$extensionsElementsGlob); $i++) {
-            $extension = self::$extensionsElementsGlob[$i];
-            $elemsExt = $extension['elems'];
-            for ($elemId = 0; $elemId < count($elemsExt); $elemId++) {
-                $elem = $elemsExt[$elemId];
-                if ($elem['name'] == $type) {
-                    if (file_exists($elem['own-path'] . "/editPage.html")) {
-                        $contentEdition = "";
-                        $f = fopen($elem['own-path'] . "/editPage.html", "r");
-                        if ($f) {
-                            $contentEdition = fread($f, filesize($elem['own-path'] . "/editPage.html"));
-                        }
-                        fclose($f);
-                        return $contentEdition;
+        if ($ext->isExtensionBaliseType($balise['type'])) {
+            $vars = $ext->getVarsFromFrontElement($balise['type']);
+            $editPagePath = $ext->getPageEditHtmlFromElement($balise['type']);
+            $res = "";
+            if (file_exists($editPagePath)) {
+                $f = fopen($editPagePath, "r");
+                if ($f) {
+                    $size = filesize($editPagePath);
+                    if ($size > 0) {
+                        $res = fread($f, $size);
                     }
                 }
+                fclose($f);
             }
+            for ($i = 0; $i < count($vars); $i++) {
+                $res = str_replace("\$kw['" . $vars[$i] . "']", $balise['name'] . "-" . $vars[$i], $res);
+                $currVal = $balise[$vars[$i]];
+                $res = str_replace("\$kw['get-" . $vars[$i] . "']", $currVal, $res);
+            }
+            return $res;
         }
         return '';
     }

@@ -112,6 +112,7 @@
 				"link" => $link,
 				"target" => $target,
 			);
+			$arrUpdate = $ep->updateArraySaveFromExtensions($arrUpdate, $balise);
 			$ep->updateElement($balise['name'], $arrUpdate);
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
