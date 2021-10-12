@@ -114,6 +114,111 @@ class Extensions {
             $cf->addValueFormKeyConf(self::$pathExtMain, "list-ext", $nextensionStr);
         }
     }
+
+    public static function otherButtonAcces():string {
+        $res = "";
+        return $res;
+    }
+
+    public static function getButtonFromCat(string $catName):string {
+        global $cf;
+
+        $res = "";
+        $extensions = self::$extensionList;
+        for ($i = 0; $i < count($extensions); $i++) {
+            $extension = $extensions[$i];
+            if ($extension['isBack'] && $extension['use'] == "true") {
+                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
+                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
+                if ($nb_uis >= 1) {
+                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
+                        $catGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-cat");
+                        if ($catGet == $catName) {
+                            $txtBtn = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn);
+                            $callActiveFunction = "displayContextMenu('". 'folder-' . $extension['folder'] . "-" . $btn . "', '" . $extension['folder'] . "-" . $btn . "')";
+                            $iconBeforeBtn = "";
+                            $iconClassGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-catLogo");
+                            if ($iconClassGet != "") {
+                                $iconBeforeBtn = '<i class="' . $iconClassGet . '"></i> ';
+                            }
+                            $res .= '<button class="btnNavMenu" id="' . $extension['folder'] . "-" . $btn . '" onclick="' . $callActiveFunction . '">' . $iconBeforeBtn . $txtBtn . '</button>';
+                        }
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
+    public static function getPhpExtensionManager() {
+        global $cf;
+        $extensions = self::$extensionList;
+        for ($i = 0; $i < count($extensions); $i++) {
+            $extension = $extensions[$i];
+            if ($extension['isBack'] && $extension['use'] == "true") {
+                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
+                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
+                if ($nb_uis >= 1) {
+                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
+                        $pathPhp = $extension['path'] . "/back/panels/php/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-php");
+                        if (file_exists($pathPhp)) {
+                            require $pathPhp;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public static function getCssAddedExtensionManager():string {
+        $res = "";
+        global $cf, $hlp;
+        $extensions = self::$extensionList;
+        for ($i = 0; $i < count($extensions); $i++) {
+            $extension = $extensions[$i];
+            if ($extension['isBack'] && $extension['use'] == "true") {
+                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
+                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
+                if ($nb_uis >= 1) {
+                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
+                        $pathCss = $extension['path'] . "/back/panels/css/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-css");
+                        if (file_exists($pathCss)) {
+                            $res .= '<link rel="stylesheet" href="' . $hlp->getMainUrl() . "/" . $pathCss . '">';
+                        }
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
+    public static function getHtmlAddedExtensionManager():string {
+        $res = "";
+        global $cf;
+        $extensions = self::$extensionList;
+        for ($i = 0; $i < count($extensions); $i++) {
+            $extension = $extensions[$i];
+            if ($extension['isBack'] && $extension['use'] == "true") {
+                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
+                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
+                if ($nb_uis >= 1) {
+                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
+                        $pathHtml = $extension['path'] . "/back/panels/html/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-html");
+                        $res .= '<div class="contextDev" id="' . 'folder-' . $extension['folder'] . "-" . $btn . '">';
+                        if (file_exists($pathHtml)) {
+                            $f = fopen($pathHtml, "r");
+                            if ($f) {
+                                $res .= fread($f, filesize($pathHtml));
+                            }
+                            fclose($f);
+                        }
+                        $res .= '</div>';
+                    }
+                }
+            }
+        }
+        return $res;
+    }
 }
 
 ?>

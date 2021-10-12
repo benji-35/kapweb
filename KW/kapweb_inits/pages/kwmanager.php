@@ -257,6 +257,8 @@
             header("location: " . $hlp->getMainUrl() . "/KW/manager");
         }
     }
+
+    $ext->getPhpExtensionManager();
 ?>
 <!DOCTYPE html>
 <html>
@@ -265,6 +267,9 @@
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
         <script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
         <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
+        <?php
+            echo $ext->getCssAddedExtensionManager();
+        ?>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>
         <?php
@@ -314,6 +319,7 @@
                         <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="fa fa-users"></i><?=" Accès"?></button>
                     <?php
                         }
+                        echo $ext->getButtonFromCat("navMenuAdmin");
                     ?>
                 </div>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i id="iconWebsite" class="far fa-arrow-alt-circle-down"></i><?=" Site Web"?></button>
@@ -329,6 +335,7 @@
                         <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt"></i><?=" Deleted Pages"?></button>
                     <?php
                         }
+                        echo $ext->getButtonFromCat("navMenuWebsite");
                     ?>
                 </div>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i id="iconFiles" class="far fa-arrow-alt-circle-down"></i><?=" Fichiers"?></button>
@@ -354,8 +361,12 @@
                         <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="fas fa-puzzle-piece"></i><?=" Extensions"?></button>
                     <?php
                         }
+                        echo $ext->getButtonFromCat("navMenuFiles");
                     ?>
                 </div>
+                <?php
+                    echo $ext->otherButtonAcces();
+                ?>
                 <form class="deconnectForm" method="POST">
                     <input type="submit" value="disconnect" name="disconnect">
                 </form>
@@ -1190,6 +1201,9 @@
                         </tbody>
                     </table>
                 </div>
+                <?php
+                    echo $ext->getHtmlAddedExtensionManager();
+                ?>
             </div>
         </div>
     </body>
