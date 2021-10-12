@@ -1198,7 +1198,7 @@
                                             <?php
                                                 if ($extension['use'] == "true") {
                                             ?>
-                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Stop use this extension" name="<?="extStop-" . $extension['folder']?>"><box-icon  color="red" size="lg" type='solid' name='message-square-x'></box-icon></i></button>
+                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Stop use this extension" name="<?="extStop-" . $extension['folder']?>"><box-icon  color="red" size="lg" type='solid' flip="horizontal" name='message-square-x'></box-icon></i></button>
                                             <?php
                                                 } else {
                                             ?>

@@ -185,27 +185,7 @@
 								<td><textarea name="<?="chgContent-" . $balise['name']?>"><?=$balise['content']?></textarea></td>
 								<td>
 									<?php
-										if ($balise['type'] == "input") {
-									?>
-										<label>Readonly :</label>
-										<input type="checkbox" name="<?="readonly-" . $balise['name']?>">
-										<input type="text" placeholder="Placeholder..." value="<?=$balise['placeholder']?>" name="<?="chgPh-" . $balise['name']?>">
-										<input type="text" placeholder="Value..." value="<?=$balise['value']?>" name="<?="chgIVal-" . $balise['name']?>">
-									<?php
-										} else if ($balise['type'] == "img") {
-									?>
-										<input type="text" placeholder="Source of image..." value="<?=str_replace("\"", "'", $balise['src'])?>" name="<?="imgSrc-" . $balise['name']?>">
-									<?php
-										} else if ($balise['type'] == "source") {
-									?>
-										<input type="text" placeholder="Source..." value="<?=str_replace("\"", "'", $balise['src'])?>" name="<?="imgSrc-" . $balise['name']?>">
-									<?php
-										}else if ($balise['type'] == "a") {
-									?>
-										<input type="text" placeholder="Link..." value="<?=str_replace("\"", "'", $balise['link'])?>" name="<?="chgLink-" . $balise['name']?>">
-										<input type="text" placeholder="Target..." value="<?=str_replace("\"", "'", $balise['target'])?>" name="<?="chgTarget-" . $balise['name']?>">
-									<?php
-										}
+										echo $ep->getSpecificsOptions($balise);
 									?>
 								</td>
 								<td>
