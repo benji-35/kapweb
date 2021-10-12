@@ -13,6 +13,32 @@ class Extensions {
 
     public function __construct() {}
 
+    private static function initFrontElements(array $extList) {
+        global $cf, $hlp;
+        $array_ext_elems = array();
+        $pathElems = $extList['path'] . "/front/front-elements.conf";
+        $elemsExt = $cf->getValueFromKeyConf($pathElems, "front-elements");
+
+        if ($elemsExt != "") {
+            $elemsArr = explode(",", $elemsExt);
+            for ($i = 0; $i < count($elemsArr); $i++) {
+                $elem = $elemsArr[$i];
+                if ($elem != "") {
+                    $elemArr = array(
+                        "name" => $elem,
+                        "nb-specif" => $cf->getValueFromKeyConf($pathElems, $elem),
+                        "dependencies" => $cf->getValueFromKeyConf($pathElems, $elem . "-dependencies"),
+                        "front" => $cf->getValueFromKeyConf($pathElems, $elem . "-front"),
+                        "back" => $cf->getValueFromKeyConf($pathElems, $elem . "-back"),
+                        "css" => $cf->getValueFromKeyConf($pathElems, $elem . "-css"),
+                    );
+                    array_push($array_ext_elems, $elemArr);
+                }
+            }
+        }
+        array_push(self::$extensionListFrontElement, array("name" => $extList['name'], "author" =>  $extList['author'], "elems" => $array_ext_elems));
+    }
+
     public static function init_extensions() {
         global $cf, $hlp;
 
@@ -44,6 +70,9 @@ class Extensions {
                             $extList['icon'] = $hlp->getMainUrl() . "/" . $cf->sys_getMainIco();
                         } else {
                             $extList['icon'] = $hlp->getMainUrl() . "/KW/extensions/" . $extensions[$i] . "/ressources/" . $extList['icon'];
+                        }
+                        if ($extList['isFront'] == true) {
+                            self::initFrontElements($extList);
                         }
                         array_push(self::$extensionsName, $extList['name']);
                         array_push(self::$extensionList, $extList);

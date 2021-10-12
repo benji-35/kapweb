@@ -3,6 +3,8 @@ namespace Application;
 
 use Application\ConfFiles;
 
+use function PHPSTORM_META\type;
+
 class EditorPage {
 
     private static $cf;
@@ -441,46 +443,57 @@ class EditorPage {
             }
             $res .= "</optgroup>";
         }
-        /*
-
-        POUR LES EXTENSIONS
-
+        
         for ($i = 0; $i < count($extAdded); $i++) {
-            $extAdd = $extAdded[$i];
-            $nameExt = $extAdd['name'];
-            $exts = $extAdd['exts'];
-            $types = $extAdd['types'];
-            $formType = "";
-            $selectType = "";
-            $audioVideoPictureType = "";
-            $normalType = "";
-            for ($x = 0; $x < count($exts); $x++) {
-                if ($types[$i] == "") {
-
-                } else if ($types[$i] == "") {
-
-                } else if ($types[$i] == "") {
-
-                } else if ($types[$i] == "") {
-
-                } else {
-
+            $extName = $extAdded[$i]['name'];
+            $extAuthor = $extAdded[$i]['author'];
+            $extElems = $extAdded[$i]['elems'];
+            if (count($extElems) > 0) {
+                $dependenciesElems = array();
+                $res .= '<optgroup label="=-=-="></optgroup>';
+                $res .= '<optgroup label="' . $extName . ' - ' . $extAuthor . '">';
+                for ($elemId = 0; $elemId < count($extElems); $elemId++) {
+                    $elem = $extElems[$elemId];
+                    $elemName = $elem['name'];
+                    if ($elem['dependencies'] == "" || strlen($elem['dependencies']) <= 0) {
+                        $res .= '<option value="' . $elemName . '">' . $elemName . '</option>';
+                    } else {
+                        $dependencies = explode(",", $elem['dependencies']);
+                        for ($depId = 0; $depId < count($dependencies); $depId++) {
+                            $dependecy = $dependencies[$depId];
+                            echo 'Type = "' . $type . '", dependency="' . $dependecy . '"' . "\n";
+                            if ($dependecy != "" && $type==$dependecy) {
+                                echo "add dependency";
+                                echo "\n";
+                                var_dump($dependenciesElems);
+                                echo "\n\n";
+                                if (array_key_exists($dependecy, $dependenciesElems)) {
+                                    array_push($dependenciesElems[$dependecy], $elem['name']);
+                                } else {
+                                    $dependenciesElems = array($dependecy => array($elem['name']));
+                                }
+                            }
+                        }
+                    }
                 }
+                var_dump($dependenciesElems);
+                if (count($dependenciesElems) > 0) {
+                    var_dump($dependenciesElems);
+                    $dependenciesNames = array_keys($dependenciesElems);
+                    for ($keyId = 0; $keyId < count($dependenciesNames); $keyId++) {
+                        $nameDependency = $dependenciesNames[$keyId];
+                        $res .= '<optgroup label="===="></optgroup>';
+                        $res .= '<optgroup label="Specifics">';
+                        for ($x = 0; $x < count($dependenciesElems[$nameDependency]); $x++) {
+                            $nameElem = $dependenciesElems[$nameDependency][$x];
+                            $res .= '<option value="' . $nameElem . '">' . $nameElem . '</option>';
+                        }
+                        $res .= "</optgroup>";
+                    }
+                }
+                $res .= '</optgroup>';
             }
-            $res .= "<optgroup label=\"" . $nameExt . "\">";
-            $res .= $normalType;
-            if ($formType != "") {
-                $res .= $formType;
-            }
-            if ($selectType != "") {
-                $res .= $selectType;
-            }
-            if ($audioVideoPictureType != "") {
-                $res .= $audioVideoPictureType;
-            }
-            $res .= "</optgroup>";
         }
-        */
         return $res;
     }
 
