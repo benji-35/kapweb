@@ -55,33 +55,35 @@ class Extensions {
 
     private static function initBackElement(array $extList) {
         global $cf;
-        $pathBack = $extList['path'] . "/back/manager-ui.conf";
-        $nb_buttons = $cf->getValueFromKeyConf($pathBack, "manager-ui");
-        if ($nb_buttons == "" || $nb_buttons <= 0) {
-            return;
+        if ($extList['use'] == "true") {
+            $pathBack = $extList['path'] . "/back/manager-ui.conf";
+            $nb_buttons = $cf->getValueFromKeyConf($pathBack, "manager-ui");
+            if ($nb_buttons == "" || $nb_buttons <= 0) {
+                return;
+            }
+            $totArr = array();
+            for ($i = 1; $i <= $nb_buttons; $i++) {
+                $arrBack = array(
+                    "extensionName" => $extList['name'],
+                    "main-path" => $extList['path'],
+                    "folderName" => $extList['folder'],
+                    "id" => $i,
+                    "access" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-accessName"),
+                    "button" => array(
+                        "text" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i),
+                        "logo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogo"),
+                        "category" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-cat"),
+                    ),
+                    "panel" => array(
+                        "html" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-html"),
+                        "css" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-css"),
+                        "php" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-php"),
+                    ),
+                );
+                array_push($totArr, $arrBack);
+            }
+            array_push(self::$extensionsBack, $totArr);
         }
-        $totArr = array();
-        for ($i = 1; $i <= $nb_buttons; $i++) {
-            $arrBack = array(
-                "extensionName" => $extList['name'],
-                "main-path" => $extList['path'],
-                "folderName" => $extList['folder'],
-                "id" => $i,
-                "access" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-accessName"),
-                "button" => array(
-                    "text" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i),
-                    "logo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogo"),
-                    "category" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-cat"),
-                ),
-                "panel" => array(
-                    "html" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-html"),
-                    "css" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-css"),
-                    "php" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-php"),
-                ),
-            );
-            array_push($totArr, $arrBack);
-        }
-        array_push(self::$extensionsBack, $totArr);
     }
 
     public static function init_extensions() {
@@ -116,10 +118,10 @@ class Extensions {
                         } else {
                             $extList['icon'] = $hlp->getMainUrl() . "/KW/extensions/" . $extensions[$i] . "/ressources/" . $extList['icon'];
                         }
-                        if ($extList['isFront'] == true) {
+                        if ($extList['isFront'] == true && $extList['use'] == "true") {
                             self::initFrontElements($extList);
                         }
-                        if ($extList['isBack'] == true) {
+                        if ($extList['isBack'] == true && $extList['use'] == "true") {
                             self::initBackElement($extList);
                         }
                         array_push(self::$extensionsName, $extList['name']);
