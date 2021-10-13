@@ -15,11 +15,11 @@ function removeDep(idName) {
 }
 
 function checkCategory(idBtn, idCheck) {
-    if (document.getElementById(idCheck).value == "1") {
-        document.getElementById(idCheck).value = "0";
+    if (document.getElementById(idCheck).checked == true) {
+        document.getElementById(idCheck).checked = false;
         document.getElementById(idBtn).innerHTML = "<box-icon color='red' size='lg' name='message-square-x' type='solid' ></box-icon>";
     } else {
-        document.getElementById(idCheck).value = "1"
+        document.getElementById(idCheck).checked = true;
         document.getElementById(idBtn).innerHTML = "<box-icon type='solid' color='green' size='lg' name='message-square-check'></box-icon>";
     }
 }

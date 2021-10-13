@@ -58,6 +58,12 @@
 
 .easyExtensionGen-alignCheck button {
     margin-left: 10px !important;
+    background-color: transparent;
+    border: none;
+}
+
+.easyExtensionGen-alignCheck button:hover {
+    cursor: pointer;
 }
 
 .easyExtensionGen-DependencyAdded {

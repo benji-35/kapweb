@@ -86,14 +86,14 @@
         }
         mkdir($mainPathExt, 0777, false);
         mkdir($mainPathExt . "/ressources", 0777, false);
-        if ($isFront) {
+        if (isset($_POST['extIsFront'])) {
             mkdir($mainPathExt . "/front", 0777, false);
             mkdir($mainPathExt . "/front/elements", 0777, false);
             $f = fopen($mainPathExt . "/front/front-elements.conf", "w+");
             fwrite($f, $front_base_content, strlen($front_base_content));
             fclose($f);
         }
-        if ($isBack) {
+        if (isset($_POST['extIsBack'])) {
             mkdir($mainPathExt . "/back", 0777, false);
             mkdir($mainPathExt . "/back/panels", 0777, false);
             mkdir($mainPathExt . "/back/panels/css", 0777, false);
