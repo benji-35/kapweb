@@ -744,10 +744,10 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("kp_acces") == false) {
+        if (self::tabelExists("kp_access") == false) {
             $structure = ""
                 . "ALTER TABLE kp_access ADD COLUMN name varchar(255) NOT NULL;"
-                . "ALTER TABLE kp_access ADD COLUMN tableAcces text NOT NULL;";
+                . "ALTER TABLE kp_access ADD COLUMN tableAccess text NOT NULL;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_access (aid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
             $stm->execute();
             $stm = $connect->prepare($structure);
@@ -763,69 +763,6 @@ class Helpers {
             $stm->execute(array(
                 "restricted",
                 "",
-            ));
-        }
-        if (self::tabelExists("kp_tableacces") == false) {
-            $structure = ""
-                . "ALTER TABLE kp_tableacces ADD COLUMN name varchar(255) NOT NULL;"
-                . "ALTER TABLE kp_tableacces ADD COLUMN description text NOT NULL;";
-            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_tableacces (tid int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
-            $stm->execute();
-            $stm = $connect->prepare($structure);
-            $stm->execute();
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Dashboard",
-                "Managing reseting of website",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Administrors",
-                "Managing all admins",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Users",
-                "Managing all users",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Pages",
-                "Managing all undeleted pages",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Deleted Pages",
-                "Managing all deleted pages",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Cookies",
-                "Managing all cookies",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Database",
-                "Managing all undeleted db",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Deleted Database",
-                "Managing all deleted db",
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tableacces (name, tableAccess) VALUES " .
-                "(?, ?)");
-            $stm->execute(array(
-                "Access",
-                "Managing all access",
             ));
         }
         if ($add_kp_tables == true) {
@@ -912,17 +849,6 @@ class Helpers {
                 3,
                 "int,varchar,text",
                 "aid,name,tableAcces",
-                1,
-                0,
-                0,
-                0
-            ));
-            $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-            $stm->execute(array(
-                "kp_tableacces",
-                3,
-                "int,varchar,text",
-                "aid,name,description",
                 1,
                 0,
                 0,
