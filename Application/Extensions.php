@@ -462,9 +462,11 @@ class Extensions {
             if ($sizeF > 0) {
                 $readed = fread($f, $sizeF);
                 for ($j = 0; $j < count($vars); $j++) {
-                    $readed = str_replace("\\\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
-                    $readed = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
-                    $readed = self::remplaceStaticKeyWord($readed, $pathExtenConfFile);
+                    if ($vars[$j] != "") {
+                        $readed = str_replace("\\\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
+                        $readed = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
+                        $readed = self::remplaceStaticKeyWord($readed, $pathExtenConfFile);
+                    }
                 }
             }
         }

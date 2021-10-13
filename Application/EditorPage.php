@@ -902,9 +902,11 @@ class EditorPage {
                 fclose($f);
             }
             for ($i = 0; $i < count($vars); $i++) {
-                $res = str_replace("\$kw['" . $vars[$i] . "']", $balise['name'] . "-" . $vars[$i], $res);
-                $currVal = $balise[$vars[$i]];
-                $res = str_replace("\$kw['get-" . $vars[$i] . "']", $currVal, $res);
+                if ($vars[$i] != "") {
+                    $res = str_replace("\$kw['" . $vars[$i] . "']", $balise['name'] . "-" . $vars[$i], $res);
+                    $currVal = $balise[$vars[$i]];
+                    $res = str_replace("\$kw['get-" . $vars[$i] . "']", $currVal, $res);
+                }
             }
             return $res;
         }
