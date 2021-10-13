@@ -325,6 +325,28 @@ class Extensions {
         return $res;
     }
 
+    public static function getJsAddedExtensionManager():string {
+        $res = "";
+        global $cf, $hlp;
+        $extensions = self::$extensionList;
+        for ($i = 0; $i < count($extensions); $i++) {
+            $extension = $extensions[$i];
+            if ($extension['isBack'] && $extension['use'] == "true") {
+                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
+                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
+                if ($nb_uis >= 1) {
+                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
+                        $pathJs = $extension['path'] . "/back/panels/js/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-js");
+                        if (file_exists($pathJs)) {
+                            $res .= "<script src='" . $hlp->getMainUrl() . "/" . $pathJs . "'></script>";
+                        }
+                    }
+                }
+            }
+        }
+        return $res;
+    }
+
     public static function isExtensionBaliseType($type):bool {
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
             $elems = self::$extensionListFrontElement[$i]['elems'];

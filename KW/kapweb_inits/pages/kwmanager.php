@@ -269,6 +269,7 @@
         <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
         <?php
             echo $ext->getCssAddedExtensionManager();
+            echo $ext->getJsAddedExtensionManager();
         ?>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>
