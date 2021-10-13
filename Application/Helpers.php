@@ -1288,7 +1288,7 @@ class Helpers {
         $jsPath = $cf->getStrFromPos($jsPath, 1);
         unlink($cssPath);
         unlink($jsPath);
-        unlink($htmlPath);
+        unlink("KW/public/pages/" . $name . ".conf");
     }
 
     public static function restorePage($name) {
