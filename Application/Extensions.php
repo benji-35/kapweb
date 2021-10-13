@@ -347,7 +347,7 @@ class Extensions {
                     $res = str_replace("\$cf-", "", $exp2[$x]);
                     $val = $cf->getValueFromKeyConf($pathConfFile, $res);
                     if ($val != "") {
-                        $str = str_replace("\$kw['configExtension']['\$cf-" . $res . "']", "\"". $val . "\"", $str);
+                        $str = str_replace("\$kw['configExtension']['\$cf-" . $res . "']", $val, $str);
                     }
                 }
             }
