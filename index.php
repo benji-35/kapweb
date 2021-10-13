@@ -183,7 +183,7 @@ if ($hlp->haveConnectionDbIntels() == false || $canConnect == false) {
         } else if (count($url) >= 1 && $url[0] == "pageNotFound") {
             require $hlp->getPathPage($url);
         } else {
-            require $hlp->getPathPage(array("KW"));
+            require $hlp->getPathPage(array("pageNotFound"));
         }
     } else {
         $url = array();
