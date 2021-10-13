@@ -312,6 +312,7 @@ class Extensions {
                                     $res .= "";
                                 } else {
                                     $res .= fread($f, $csize);
+                                    $res = self::remplaceStaticKeyWord($res, $extension['path'] . "/config.conf");
                                 }
                             }
                             fclose($f);
@@ -462,6 +463,15 @@ class Extensions {
         }
         fclose($f);
         return $readed;
+    }
+
+    public static function getConfigFileExtension(string $extensionName):string {
+        for ($i = 0; $i < count(self::$extensionList); $i++) {
+            if (self::$extensionList[$i]['name'] == $extensionName) {
+                return self::$extensionList[$i]['path'] . "/config.conf";
+            }
+        }
+        return "";
     }
 }
 
