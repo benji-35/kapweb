@@ -804,23 +804,39 @@ class EditorPage {
         return $resStr;
     }
 
-    private static function getPhpFromNameElem(string $nameElem):string {
-        return "";
-    }
-
     public static function generatePhpCode() {
-        global $cf, $hlp;
+        global $cf, $hlp, $ext;
         if (!isset($_SESSION['editName'])) {
             return;
         }
-        $res = array();
+        if (file_exists("KW/public/tmpPhpPage.php")) {
+            $f = fopen("KW/public/tmpPhpPage.php", "w");
+            if ($f) {
+                fwrite($f, "", 0);
+            }
+            fclose($f);
+        }
+        $res = "<?php\n";
         $nameElems = self::getElementsName();
         for ($i = 0; $i < count($nameElems); $i++) {
-            $toRequire = self::getPhpFromNameElem($nameElems[$i]);
+            $balise = self::genArrayElements($nameElems[$i]);
+            echo "call to_require<br>";
+            $toRequire = $ext->getFrontBackPaheFromElement($balise['type'], $balise);
             if ($toRequire != "") {
-                
+                $toRequire = str_replace("<?php", "", $toRequire);
+                $toRequire = str_replace("?>", "", $toRequire);
+                $res .= $toRequire . "\n";
             }
         }
+        $res .= "?>";
+        if (file_exists("KW/public/tmpPhpPage.php")) {
+            $f = fopen("KW/public/tmpPhpPage.php", "w");
+            if ($f) {
+                fwrite($f, $res, strlen($res));
+            }
+            fclose($f);
+        }
+        require "KW/public/tmpPhpPage.php";
     }
 
     public static function saveCssJs(array $inputs) {

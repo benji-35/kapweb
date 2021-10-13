@@ -390,6 +390,39 @@ class Extensions {
         }
         return "";
     }
+
+    public static function getFrontBackPaheFromElement(string $type, array $balise):string {
+        echo "getFrontBachPhp<br>";
+        $path = "";
+        $vars = array();
+        for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
+            $elems = self::$extensionListFrontElement[$i]['elems'];
+            for ($x = 0; $x < count($elems); $x++) {
+                if ($type == $elems[$x]['name']) {
+                    $path = $elems[$x]['own-path'] . "/frontBackPage.php";
+                    $vars = explode(",", $elems[$x]['vars']);
+                    break;
+                }
+            }
+        }
+        if ($path == "" || file_exists($path) == false) {
+            return "";
+        }
+        $readed = "";
+        $f = fopen($path, "r");
+        if ($f) {
+            $sizeF = filesize($path);
+            if ($sizeF > 0) {
+                $readed = fread($f, $sizeF);
+                for ($j = 0; $j < count($vars); $j++) {
+                    $readed = str_replace("\\\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
+                    $readed = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
+                }
+            }
+        }
+        fclose($f);
+        return $readed;
+    }
 }
 
 ?>
