@@ -114,6 +114,9 @@
         $f = fopen($mainPathExt . "/ext.conf", "w+");
         fwrite($f, $extConf_content, strlen($extConf_content));
         fclose($f);
+        $f = fopen($mainPathExt . "/config.conf", "w+");
+        fwrite($f, "\n", 1);
+        fclose($f);
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
 ?>
