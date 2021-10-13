@@ -103,7 +103,7 @@ class Extensions {
         return self::$extensionListFrontElement;
     }
 
-    private static function getExtensionFromListByName(string $name):array {
+    public static function getExtensionFromListByName(string $name):array {
         $extensions = self::$extensionList;        
         for ($i = 0; $i < count($extensions); $i++) {
             if ($extensions[$i]['name'] == $name) {
@@ -390,23 +390,8 @@ class Extensions {
                         }
                     }
                     $vars = explode(",", $elems[$x]['vars']);
-                    $f = fopen($elems[$x]['own-path'] . "/frontPage.html", "r");
+                    require $elems[$x]['own-path'] . "/frontPage.php";
                     $strHtml = "";
-                    if ($f) {
-                        $size = filesize($elems[$x]['own-path'] . "/frontPage.html");
-                        if ($size > 0) {
-                            $strHtml = fread($f, $size);
-                        }
-                    }
-                    $balise = $ep->genArrayElements($elementName);
-                    for ($j = 0; $j < count($vars); $j++) {
-                        if ($vars[$j] != "") {
-                            $strHtml = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $strHtml);
-                            $strHtml = self::remplaceStaticKeyWord($strHtml, $pathExtConfFile);
-
-                        }
-                    }
-                    fclose($f);
                     if (file_exists($elems[$x]['own-path'] . "/frontPage.css")) {
                         $f = fopen($elems[$x]['own-path'] . "/frontPage.css", "r");
                         if ($f) {
@@ -417,7 +402,7 @@ class Extensions {
                         }
                         fclose($f);
                     }
-                    return $strHtml;
+                    return "";
                 }
             }
         }
@@ -494,6 +479,42 @@ class Extensions {
             }
         }
         return "";
+    }
+
+    public static function getPathAllEditFiles(string $type):array {
+        for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
+            $elems = self::$extensionListFrontElement[$i]['elems'];
+            for ($x = 0; $x < count($elems); $x++) {
+                if ($type == $elems[$x]['name']) {
+                    return array(
+                        "front" => $elems[$x]['own-path'] . "/frontPage.php",
+                        "css" => $elems[$x]['own-path'] . "/frontPage.css",
+                        "editPage" => $elems[$x]['own-path'] . "/editPage.php",
+                        "backFront" => $elems[$x]['own-path'] . "/frontBackPage.php",
+                    );
+                }
+            }
+        }
+        return array();
+    }
+
+    public static function getCssExtensionUsed():string {
+        global $cf, $hlp, $ep;
+        if (!isset($_SESSION['editName'])) {
+            return "";
+        }
+        $res = "";
+        $nameElems = $ep->getElementsName();
+        for ($i = 0; $i < count($nameElems); $i++) {
+            $balise = $ep->genArrayElements($nameElems[$i]);
+            if (self::isExtensionBaliseType($balise['type'])) {
+                $pathes = self::getPathAllEditFiles($balise['type']);
+                if (isset($pathes['css'])) {
+                    $res .= "<link href=" . $pathes['css'] . " rel=\"stylesheet\">";
+                }
+            }
+        }
+        return $res;
     }
 }
 

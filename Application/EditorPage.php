@@ -346,7 +346,7 @@ class EditorPage {
         return $res;
     }
 
-    private static function getElementsName():array {
+    public static function getElementsName():array {
         if (!isset($_SESSION['editName'])) {
             return array();
         }

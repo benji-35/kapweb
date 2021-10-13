@@ -24,6 +24,7 @@
 			<link rel="icon" href="<?=$_SESSION['icoPage']?>">
 		<?php
 			}
+			echo $ext->getCssExtensionUsed();
 		?>
 	</head>
 	<body>

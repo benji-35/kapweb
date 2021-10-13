@@ -1,3 +1,6 @@
+<?php
+
+?>
 <form method="$kw['contactMe-method']" class="standarExtension-formContactMe">
     <h1>Contact Me</h1>
     <div class="standarExtension-whiteSpacing">

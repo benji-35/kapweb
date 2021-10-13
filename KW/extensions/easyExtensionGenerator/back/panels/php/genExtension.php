@@ -74,8 +74,8 @@
             . "#\n#[name of element]=[nb specifics variables]\n"
             . "#[name of element]-name=[name in page edit]\n"
             . "#[name of element]-dependencies=[dependency1],[dependency2],...\n"
-            . "#[name of element]-front= [true/false] -> know if we need to generate html or not\n"
-            . "#[name of element]-back=[true/false] -> know if we need to generate php or not\n"
+            . "#[name of element]-front= [true/false] -> know if we need to generate front php (AFTER !DOCTYPE) or not\n"
+            . "#[name of element]-back=[true/false] -> know if we need to generate back php (BEFORE !DOCTYPE) or not\n"
             . "#[name of element]-css=[true/false] -> know if we need to generate css or not\n"
             . "#[name of element]-vars=[var name 1],[var name 2],...\n"
             . "#\n";
