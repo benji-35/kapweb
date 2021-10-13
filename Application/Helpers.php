@@ -866,11 +866,25 @@ class Helpers {
         $stm = $connect->prepare("SELECT * FROM kp_access WHERE 1");
         $stm->execute();
         while ($resStm = $stm->fetch()) {
-            array_push($res, $resStm['name']);
+            $acc = $resStm['tableAcces'];
+            if ($acc == "*") {
+                $acc = "All";
+            } else if ($acc == "") {
+                $acc = "Nothing";
+            }
+            array_push($res, array("name" => $resStm['name'], "access" => $acc));
         }
         $db->disconnect();
 
         return $res;
+    }
+
+    public static function addNewAcces(array $intels) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("INSERT INTO kp_access (name, tableAcces) VALUES (?, ?)");
+        $stm->execute(array($intels['name'], $intels['access']));
+        $db->disconnect();
     }
 
     public static function haveAccesTo(string $nameTable):bool {
@@ -896,6 +910,46 @@ class Helpers {
                 return true;
             if ($accesArr[$i] == $nameTable)
                 return true;
+        }
+        return false;
+    }
+
+    public static function getAccessListing():array {
+        global $ext;
+        $res = array(
+            "Dashboard",
+            "Administrors",
+            "Users",
+            "Access",
+            "navMenuAdmin",
+            "Pages",
+            "Deleted Pages",
+            "navMenuWebsite",
+            "Cookies",
+            "Database",
+            "Deleted Database",
+            "Extensions",
+            "navMenuFiles",
+        );
+        $extentions = $ext->getExtensionsBackList();
+        for ($extId = 0; $extId < count($extentions); $extId++) {
+            for ($backId = 0; $backId < count($extentions[$extId]); $backId++) {
+                array_push($res, $extentions[$extId][$backId]['access']);
+            }
+        }
+        return $res;
+    }
+
+    public static function haveExtensionAccesFromMainClass(string $mainClass):bool {
+        global $ext;
+        $extentions = $ext->getExtensionsBackList();
+        for ($extId = 0; $extId < count($extentions); $extId++) {
+            for ($backId = 0; $backId < count($extentions[$extId]); $backId++) {
+                $backMainClass = $extentions[$extId][$backId]['button']['category'];
+                if ($backMainClass == $mainClass) {
+                    return self::haveAccesTo($extentions[$extId][$backId]['access']);
+                }
+            }
         }
         return false;
     }

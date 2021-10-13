@@ -43,3 +43,17 @@ function displayEditCurrUrl(button, inputReadonly, inputedit, inputSend) {
     document.getElementById(inputedit).style.display = "block";
     document.getElementById(inputSend).style.display = "block";
 }
+
+function selectAllAccessNew(nbAccess) {
+    var tRows = document.getElementById("tblBodyNAccess").getElementsByTagName("tr");
+    for (var i = 0; i < tRows.length; i++) {
+        document.getElementById("access-" + i).checked = true;
+    }
+}
+
+function unselectAllAccessNew(nbAccess) {
+    var tRows = document.getElementById("tblBodyNAccess").getElementsByTagName("tr");
+    for (var i = 0; i < tRows.length; i++) {
+        document.getElementById("access-" + i).checked = false;
+    }
+}

@@ -1,4 +1,6 @@
 <?php
+    global $db, $hlp, $cf, $ext, $ep;
+    
     if ($hlp->isConnectedSu() == false)
         header("location: " . $hlp->getMainUrl() . "/KW");
     if (!isset($_SESSION['suemail']) || !isset($_SESSION['supwd']))
@@ -258,8 +260,33 @@
         }
     }
 
-    $ext->getPhpExtensionManager();
+    $accessListing = $hlp->getAccessListing();
+    if (isset($_POST['addNewAccess'])) {
+        $strAccess = "";
+        for ($i = 0; $i < count($accessListing); $i++) {
+            if (isset($_POST['access-' . $i])) {
+                if ($strAccess == "") {
+                    $strAccess .= $accessListing[$i];
+                } else {
+                    $strAccess .= "," . $accessListing[$i];
+                }
+            }
+        }
+        $newAccessIntel = array("name" => $_POST['nameNewAccess'], "access" => $strAccess);
+        $hlp->addNewAcces($newAccessIntel);
+        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+    }
+
+    /*$backBtn = $ext->getExtensionsBackList();
+    for ($i = 0; $i < count($backBtn); $i++) {
+        for ($x = 0; $x < count($backBtn[$i]); $x++) {
+            if ($hlp->haveAccesTo($backBtn[$i][$x]['access'])) {
+                var_dump($backBtn[$i][$x]);
+            }
+        }
+    }*/
 ?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -306,7 +333,7 @@
                     $accesAdmin = $hlp->haveAccesTo("Administrors");
                     $accesUsers = $hlp->haveAccesTo("Users");
                     $accesAccess = $hlp->haveAccesTo("Access");
-                    if ($accesAdmin || $accesUsers || $accesAccess || $ext->haveAccesToExt("navMenuAdmin")) {
+                    if ($hlp->haveExtensionAccesFromMainClass("navMenuAdmin") || $accesAdmin || $accesUsers || $accesAccess) {
                 ?>
                     <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i id="iconAdmin" class="far fa-arrow-alt-circle-down"></i><?=" Admin"?></button>
                 <?php
@@ -335,7 +362,7 @@
                 <?php
                     $accessPage = $hlp->haveAccesTo("Pages");
                     $accesDeletedPage = $hlp->haveAccesTo("Deleted Pages");
-                    if ($accessPage || $accesDeletedPage || $ext->haveAccesToExt("navMenuWebsite")) {
+                    if ($accessPage || $accesDeletedPage || $hlp->haveExtensionAccesFromMainClass("navMenuWebsite")) {
                 ?>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i id="iconWebsite" class="far fa-arrow-alt-circle-down"></i><?=" Site Web"?></button>
                 <?php
@@ -362,7 +389,7 @@
                     $accessDeletedDB = $hlp->haveAccesTo("Deleted Database");
                     $accessExt = $hlp->haveAccesTo("Extensions");
 
-                    if ($accessCookies || $accessDb || $accessDeletedDB || $accessExt || $ext->haveAccesToExt("navMenuFiles")) {
+                    if ($accessCookies || $accessDb || $accessDeletedDB || $accessExt || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i id="iconFiles" class="far fa-arrow-alt-circle-down"></i><?=" Fichiers"?></button>
                 <?php
@@ -1141,9 +1168,45 @@
                             </tr>
                         </thead>
                         <tbody>
-                            
+                            <?php
+                                for ($i = 0; $i < count($listAccess); $i++) {
+                            ?>
+                                <tr>
+                                    <td><?=$listAccess[$i]['name']?></td>
+                                    <td><?=$listAccess[$i]['access']?></td>
+                                </tr>
+                            <?php
+                                }
+                            ?>
                         </tbody>
                     </table>
+                    <form method="POST" class="NAccessDiv">
+                        <input type="text" name="nameNewAccess" placeholder="Name of access...">
+                        <table class="tableNAccess">
+                            <!--<button type="button" onclick="selectAllAccessNew(<?='\'' . count($accessListing)?> . '\'')">Select all</button>
+                            <button type="button" onclick="unselectAllAccessNew(<?='\'' . count($accessListing)?> . '\''?>)">Unselect all</button>
+                            -->
+                            <thead>
+                                <tr>
+                                    <th>Access name</th>
+                                    <th>Select</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblBodyNAccess">
+                                <?php
+                                    for ($i = 0; $i < count($accessListing); $i++) {
+                                ?>
+                                    <tr>
+                                        <th><?=$accessListing[$i]?></th>
+                                        <th><input type="checkbox" name="<?="access-" . $i?>" checked></th>
+                                    </tr>
+                                <?php
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                        <input type="submit" name="addNewAccess" value="New Access">
+                    </form>
                 </div>
                 <div class="contextDev" id="extensionListing">
                     <table class="tablePages">

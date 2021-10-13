@@ -337,3 +337,17 @@ th {
 .stopUsingExtension:hover {
     cursor: pointer;
 }
+
+.NAccessDiv {
+    width: 50%;
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    text-align: center;
+}
+
+.tableNAccess {
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}

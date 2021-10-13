@@ -8,6 +8,7 @@ class Extensions {
     private static $extensionsPathes = array();
     private static $extensionsName = array();
     private static $extensionList = array();
+    private static $extensionsBack = array();
 
     private static $varsKW = array(
         "configExtension" => 0,
@@ -52,6 +53,37 @@ class Extensions {
         }
     }
 
+    private static function initBackElement(array $extList) {
+        global $cf;
+        $pathBack = $extList['path'] . "/back/manager-ui.conf";
+        $nb_buttons = $cf->getValueFromKeyConf($pathBack, "manager-ui");
+        if ($nb_buttons == "" || $nb_buttons <= 0) {
+            return;
+        }
+        $totArr = array();
+        for ($i = 1; $i <= $nb_buttons; $i++) {
+            $arrBack = array(
+                "extensionName" => $extList['name'],
+                "main-path" => $extList['path'],
+                "folderName" => $extList['folder'],
+                "id" => $i,
+                "access" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-accessName"),
+                "button" => array(
+                    "text" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i),
+                    "logo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogo"),
+                    "category" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-cat"),
+                ),
+                "panel" => array(
+                    "html" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-html"),
+                    "css" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-css"),
+                    "php" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-php"),
+                ),
+            );
+            array_push($totArr, $arrBack);
+        }
+        array_push(self::$extensionsBack, $totArr);
+    }
+
     public static function init_extensions() {
         global $cf, $hlp;
 
@@ -87,6 +119,9 @@ class Extensions {
                         if ($extList['isFront'] == true) {
                             self::initFrontElements($extList);
                         }
+                        if ($extList['isBack'] == true) {
+                            self::initBackElement($extList);
+                        }
                         array_push(self::$extensionsName, $extList['name']);
                         array_push(self::$extensionList, $extList);
                     }
@@ -97,6 +132,10 @@ class Extensions {
 
     public static function getExtensionList():array {
         return self::$extensionList;
+    }
+
+    public static function getExtensionsBackList():array {
+        return self::$extensionsBack;
     }
 
     public static function getExtensionsFrontElement():array {
@@ -163,81 +202,80 @@ class Extensions {
         $btns = array();
         $mainCats = array("navMenuAdmin", "navMenuFiles", "navMenuWebsite");
 
-        $extensions = self::$extensionList;
+        $extensions = self::$extensionsBack;
+        
         for ($i = 0; $i < count($extensions); $i++) {
-            $extension = $extensions[$i];
-            if ($extension['isBack'] && $extension['use'] == "true") {
-                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
-                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
-                if ($nb_uis >= 1) {
-                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
-                        $catGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-cat");
-                        if ($catGet != "navMenuAdmin" && $catGet != "navMenuFiles" && $catGet != "navMenuWebsite") {
-                            if (in_array($catGet, $new_cats) == false) {
-                                array_push($new_cats, $catGet);
-                            }
-                            $txtBtn = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn);
-                            $callActiveFunction = "displayContextMenu('". 'folder-' . $extension['folder'] . "-" . $btn . "', '" . $extension['folder'] . "-" . $btn . "')";
-                            $iconBeforeBtn = "";
-                            $iconClassGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-catLogo");
-                            if ($iconClassGet != "") {
-                                $iconBeforeBtn = '<i class="' . $iconClassGet . '"></i> ';
-                            }
-                            $htmlBtn = '<button class="btnNavMenu" id="' . $extension['folder'] . "-" . $btn . '" onclick="' . $callActiveFunction . '">' . $iconBeforeBtn . $txtBtn . '</button>';
-                            array_push($btns, array("cat" => $catGet, "html" => $htmlBtn));
+            for($backId = 0; $backId < count($extensions[$i]); $backId++) {
+                if ($hlp->haveAccesTo($extensions[$i][$backId]['access'])) {
+                    if (in_array($extensions[$i][$backId]['button']['category'], $mainCats) == false) {
+                        if (in_array($extensions[$i][$backId]['button']['category'], $new_cats) == false) {
+                            array_push($new_cats, $extensions[$i][$backId]['button']['category']);
                         }
+                        array_push($btns, $extensions[$i][$backId]);
                     }
                 }
             }
         }
 
         $res = "";
-
         for ($i = 0; $i < count($new_cats); $i++) {
-            if ($hlp->haveAccesTo($new_cats[$i])) {
-                $res .= '<button class="btnNavMenu" onclick="displayNavMenu(\'ncat-' . 
-                    $new_cats[$i] . '\', \'icon-' . 
-                    $new_cats[$i] . '\')"><i id="icon-' . 
-                    $new_cats[$i] . '" class="far fa-arrow-alt-circle-down"></i> ' . 
-                    $new_cats[$i] . '</button>';
-                $res .= '<div class="closeMenuNav" id="ncat-' . 
-                    $new_cats[$i] . '">';
-                for ($x = 0; $x < count($btns); $x++) {
-                    if ($btns[$x]['cat'] == $new_cats[$i]) {
-                        $res .= $btns[$x]['html'];
+            if ($new_cats[$i] != "") {
+                $res .= '<button class="btnNavMenu" onclick="displayNavMenu(\''. $new_cats[$i] . '\', \'icon-' . $new_cats[$i] . '\')"'
+                . '><i class="far fa-arrow-alt-circle-down" id="icon-' . $new_cats[$i] . '"></i> '
+                    . $new_cats[$i] . '</button>';
+                $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
+                for ($btnId = 0; $btnId < count($btns); $btnId++) {
+                    if ($btns[$btnId]['button']['category'] == $new_cats[$i]) {
+                        $btnIdHtml = $btns[$btnId]['folderName'] . "-" . $btns[$btnId]['id'];
+                        $pageIdHtml = 'folder-' . $btnIdHtml;
+                        $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
+                            . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
+                        if ($btns[$btnId]['button']['logo'] != "") {
+                            $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i>';
+                        }
+                        $res .= $btns[$btnId]['button']['text'];
+                        $res .= "</button>";
                     }
                 }
                 $res .= "</div>";
             }
         }
-
+        for ($btnId = 0; $btnId < count($btns); $btnId++) {
+            if ($btns[$btnId]['button']['category'] == "") {
+                $btnIdHtml = $btns[$btnId]['folderName'] . "-" . $btns[$btnId]['id'];
+                $pageIdHtml = 'folder-' . $btnIdHtml;
+                $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
+                    . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
+                if ($btns[$btnId]['button']['logo'] != "") {
+                    $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i>';
+                }
+                $res .= $btns[$btnId]['button']['text'];
+                $res .= "</button>";
+            }
+        }
         return $res;
     }
 
     public static function getButtonFromCat(string $catName):string {
-        global $cf;
+        global $hlp;
 
         $res = "";
-        $extensions = self::$extensionList;
-        for ($i = 0; $i < count($extensions); $i++) {
-            $extension = $extensions[$i];
-            if ($extension['isBack'] && $extension['use'] == "true") {
-                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
-                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
-                if ($nb_uis >= 1) {
-                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
-                        $catGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-cat");
-                        if ($catGet == $catName) {
-                            $txtBtn = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn);
-                            $callActiveFunction = "displayContextMenu('". 'folder-' . $extension['folder'] . "-" . $btn . "', '" . $extension['folder'] . "-" . $btn . "')";
-                            $iconBeforeBtn = "";
-                            $iconClassGet = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-button" . $btn . "-catLogo");
-                            if ($iconClassGet != "") {
-                                $iconBeforeBtn = '<i class="' . $iconClassGet . '"></i> ';
-                            }
-                            $res .= '<button class="btnNavMenu" id="' . $extension['folder'] . "-" . $btn . '" onclick="' . $callActiveFunction . '">' . $iconBeforeBtn . $txtBtn . '</button>';
-                        }
+        $extensionsBack = self::$extensionsBack;
+        for ($i = 0; $i < count($extensionsBack); $i++) {
+            for ($backId = 0; $backId < count($extensionsBack[$i]); $backId++) {
+                $backExt = $extensionsBack[$i][$backId];
+                $pathBack = $backExt['main-path'] . "/back/manager-ui.conf";
+                if ($hlp->haveAccesTo($backExt['access']) && $backExt['button']['category'] == $catName) {
+                    $iconBeforeBtn = "";
+                    if ($backExt['button']['logo'] != "") {
+                        $iconBeforeBtn = '<i class="' . $backExt['button']['logo'] . '"></i> ';
                     }
+                    $callActiveFunction = "displayContextMenu('". 'folder-' . $backExt['folderName'] . '-' . $backExt['id'] . "', '" . $backExt['folderName'] . '-' . $backExt['id'] . "')";
+                    $res .= '<button class="btnNavMenu" id="'
+                        . $backExt['folderName'] . '-' . $backExt['id'] . '" onclick="'
+                        . $callActiveFunction
+                        . '">'
+                        . $iconBeforeBtn . $backExt['button']['text'] . '</button>';
                 }
             }
         }
@@ -337,7 +375,7 @@ class Extensions {
                 if ($nb_uis >= 1) {
                     for ($btn = 1; $btn <= $nb_uis; $btn++) {
                         $pathJs = $extension['path'] . "/back/panels/js/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-js");
-                        if (file_exists($pathJs)) {
+                        if ($cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-js") != "" && file_exists($pathJs)) {
                             $res .= "<script src='" . $hlp->getMainUrl() . "/" . $pathJs . "'></script>";
                         }
                     }
