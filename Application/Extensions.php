@@ -9,6 +9,14 @@ class Extensions {
     private static $extensionsName = array();
     private static $extensionList = array();
 
+    private static $varsKW = array(
+        "configExtension" => 0,
+    );
+
+    private static $actionVarsKw = array(
+
+    );
+
     private static $extensionListFrontElement = array();
 
     public function __construct() {}
@@ -328,12 +336,36 @@ class Extensions {
         return false;
     }
 
+    private static function remplaceStaticKeyWord($str, $pathConfFile):string {
+        global $cf;
+        $exp1 = explode("\$kw['configExtension']['", $str);
+        for ($i = 0; $i < count($exp1); $i++) {
+            $exp2 = explode("']", $exp1[$i]);
+            for ($x = 0; $x < count($exp2); $x++) {
+                if ($cf->strStartWith($exp2[$x], "\$cf-") && $cf->strContains($exp2[$x], " ") == false) {
+                    $res = str_replace("\$cf-", "", $exp2[$x]);
+                    $val = $cf->getValueFromKeyConf($pathConfFile, $res);
+                    if ($val != "") {
+                        $str = str_replace("\$kw['configExtension']['\$cf-" . $res . "']", "\"". $val . "\"", $str);
+                    }
+                }
+            }
+        }
+        return $str;
+    }
+
     public static function getHtmlExtensionFromBalise(string $type, string $elementName):string {
         global $ep;
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
             $elems = self::$extensionListFrontElement[$i]['elems'];
             for ($x = 0; $x < count($elems); $x++) {
                 if ($type == $elems[$x]['name']) {
+                    $pathExtConfFile = "";
+                    for ($j = 0; $j < count(self::$extensionList); $j++) {
+                        if (self::$extensionList[$j]['name'] == self::$extensionListFrontElement[$i]['name']) {
+                            $pathExtConfFile = self::$extensionList[$j]['path'] . "/config.conf";
+                        }
+                    }
                     $vars = explode(",", $elems[$x]['vars']);
                     $f = fopen($elems[$x]['own-path'] . "/frontPage.html", "r");
                     $strHtml = "";
@@ -347,6 +379,8 @@ class Extensions {
                     for ($j = 0; $j < count($vars); $j++) {
                         if ($vars[$j] != "") {
                             $strHtml = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $strHtml);
+                            $strHtml = self::remplaceStaticKeyWord($strHtml, $pathExtConfFile);
+
                         }
                     }
                     fclose($f);
@@ -394,10 +428,16 @@ class Extensions {
     public static function getFrontBackPaheFromElement(string $type, array $balise):string {
         $path = "";
         $vars = array();
+        $pathExtenConfFile = "";
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
             $elems = self::$extensionListFrontElement[$i]['elems'];
             for ($x = 0; $x < count($elems); $x++) {
                 if ($type == $elems[$x]['name']) {
+                    for ($j = 0; $j < count(self::$extensionList); $j++) {
+                        if (self::$extensionList[$j]['name'] == self::$extensionListFrontElement[$i]['name']) {
+                            $pathExtenConfFile = self::$extensionList[$j]['path'] . "/config.conf";
+                        }
+                    }
                     $path = $elems[$x]['own-path'] . "/frontBackPage.php";
                     $vars = explode(",", $elems[$x]['vars']);
                     break;
@@ -416,6 +456,7 @@ class Extensions {
                 for ($j = 0; $j < count($vars); $j++) {
                     $readed = str_replace("\\\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
                     $readed = str_replace("\$kw['" . $vars[$j] . "']", $balise[$vars[$j]], $readed);
+                    $readed = self::remplaceStaticKeyWord($readed, $pathExtenConfFile);
                 }
             }
         }
