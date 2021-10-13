@@ -231,7 +231,7 @@ class Extensions {
                         $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
                             . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
                         if ($btns[$btnId]['button']['logo'] != "") {
-                            $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i>';
+                            $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i> ';
                         }
                         $res .= $btns[$btnId]['button']['text'];
                         $res .= "</button>";
@@ -247,7 +247,7 @@ class Extensions {
                 $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
                     . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
                 if ($btns[$btnId]['button']['logo'] != "") {
-                    $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i>';
+                    $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i> ';
                 }
                 $res .= $btns[$btnId]['button']['text'];
                 $res .= "</button>";
