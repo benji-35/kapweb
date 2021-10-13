@@ -820,7 +820,6 @@ class EditorPage {
         $nameElems = self::getElementsName();
         for ($i = 0; $i < count($nameElems); $i++) {
             $balise = self::genArrayElements($nameElems[$i]);
-            echo "call to_require<br>";
             $toRequire = $ext->getFrontBackPaheFromElement($balise['type'], $balise);
             if ($toRequire != "") {
                 $toRequire = str_replace("<?php", "", $toRequire);

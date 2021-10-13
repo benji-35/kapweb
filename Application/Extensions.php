@@ -392,7 +392,6 @@ class Extensions {
     }
 
     public static function getFrontBackPaheFromElement(string $type, array $balise):string {
-        echo "getFrontBachPhp<br>";
         $path = "";
         $vars = array();
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
