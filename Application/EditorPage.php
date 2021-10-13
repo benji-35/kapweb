@@ -58,7 +58,9 @@ class EditorPage {
                 if ($ext->isExtensionBaliseType($balise['type'])) {
                     $vars = $ext->getVarsFromFrontElement($balise['type']);
                     for ($j = 0; $j < count($vars); $j++) {
-                        $to_write .= $balise['name'] . "-" . $vars[$j] . "=" . $balise[$vars[$j]] . "\n";
+                        if ($vars[$j] != "") {
+                            $to_write .= $balise['name'] . "-" . $vars[$j] . "=" . $balise[$vars[$j]] . "\n";
+                        }
                     }
                 } else if ($balise['type'] == "input") {
                     $to_write .= $balise['name'] . "-itype=" . $balise['itype'] . "\n";
