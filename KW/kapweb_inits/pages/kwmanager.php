@@ -276,15 +276,7 @@
         $hlp->addNewAcces($newAccessIntel);
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
-
-    /*$backBtn = $ext->getExtensionsBackList();
-    for ($i = 0; $i < count($backBtn); $i++) {
-        for ($x = 0; $x < count($backBtn[$i]); $x++) {
-            if ($hlp->haveAccesTo($backBtn[$i][$x]['access'])) {
-                var_dump($backBtn[$i][$x]);
-            }
-        }
-    }*/
+    $ext->getPhpExtensionManager();
 ?>
 
 <!DOCTYPE html>
