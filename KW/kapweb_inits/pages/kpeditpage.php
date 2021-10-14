@@ -1,5 +1,6 @@
 <?php
-	$arrfinal = array(
+	global $ep, $hlp;
+	$cssJs = array(
 		"css" => NULL,
 		"js" => NULL
 	);
@@ -9,24 +10,16 @@
 	if (!isset($_SESSION['suemail']) || !isset($_SESSION['supwd']) || !isset($_SESSION['urlEdit']))
 		header("location: " . $hlp->getMainUrl() . "/KW/manager");
 	if ($hlp->pageExists($_SESSION['urlEdit'])) {
-		$textToEdit = "";
-		$cssJs = $ep->getAllCssJsContent($_SESSION['urlEdit']);
-		if (isset($_POST['save'])) {
-			$ntext = $_POST['phpEdit'];
-			$ep->saveHtmlEditable($_SESSION['urlEdit'], $ntext);
-			if ($cssJs['css'] != NULL) {
-				$arrfinal['css'] = $_POST['cssEdit'];
-			}
-			if ($cssJs['js'] != NULL) {
-				$arrfinal['js'] = $_POST['jsEdit'];
-			}
-			$ep->saveAllCssJsContent($_SESSION['urlEdit'], $arrfinal);
-			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
-		}
+		$_SESSION['editName'] = $_SESSION['urlEdit'];
+		$cssJs = $ep->getAllCssJsContent($_SESSION['editName']);
 	} else {
 		$pageExists = false;
 	}
-	$elems = $ep->getHtmlEditor();
+	if ($hlp->pageExists($_SESSION['urlEdit'])) {
+		$elems = $ep->getHtmlEditor();
+	} else {
+		$elems = array();
+	}
 	if (isset($_POST['newElement'])) {
 		$content = "";
 		$class = "";
@@ -125,7 +118,7 @@
 		$ep->saveCssJs($arr);
 		header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 	}
-?>
+	?>
 
 <!DOCTYPE html>
 <html  lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">

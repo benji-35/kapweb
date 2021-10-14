@@ -332,8 +332,8 @@ class EditorPage {
 
     public static function getAllCssJsContent($fileName):array {
         $res = array(
-            "css" => "",
-            "js" => ""
+            "css" => NULL,
+            "js" => NULL
         );
         $f = fopen("KW/public/ressources/css/" . $fileName . ".css", "r");
         if ($f) {

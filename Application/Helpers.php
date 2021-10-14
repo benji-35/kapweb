@@ -1132,8 +1132,15 @@ class Helpers {
         $stm->execute(array($name));
         $resStm = $stm->fetch();
         $db->disconnect();
-        if ($resStm)
+        if ($resStm) {
+            if ($resStm['builtin'] == "0") {
+                $fExists = self::neededPageFilesExists($resStm['name']);
+                if ($fExists == false) {
+                    self::createBasicsPagesFiles($resStm['name']);
+                }
+            }
             return true;
+        }
         return false;
     }
 
