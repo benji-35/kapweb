@@ -1,0 +1,1 @@
+//welcome, this page is created for js for the page projects

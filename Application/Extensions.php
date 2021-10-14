@@ -228,8 +228,9 @@ class Extensions {
                 $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
                 for ($btnId = 0; $btnId < count($btns); $btnId++) {
                     if ($btns[$btnId]['button']['category'] == $new_cats[$i]) {
+                        $path_manager_ui = $btns[$btnId]['main-path'] . "/back/manager-ui.conf";
                         $btnIdHtml = $btns[$btnId]['folderName'] . "-" . $btns[$btnId]['id'];
-                        $pageIdHtml = 'folder-' . $btnIdHtml;
+                        $pageIdHtml = $cf->getValueFromKeyConf($path_manager_ui, "manager-ui-pannel" . ($btns[$btnId]['id']) . "-id");
                         $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
                             . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
                         if ($btns[$btnId]['button']['logo'] != "") {
@@ -245,7 +246,8 @@ class Extensions {
         for ($btnId = 0; $btnId < count($btns); $btnId++) {
             if ($btns[$btnId]['button']['category'] == "") {
                 $btnIdHtml = $btns[$btnId]['folderName'] . "-" . $btns[$btnId]['id'];
-                $pageIdHtml = 'folder-' . $btnIdHtml;
+                $path_manager_ui = $btns[$btnId]['main-path'] . "/back/manager-ui.conf";
+                $pageIdHtml = $cf->getValueFromKeyConf($path_manager_ui, "manager-ui-pannel" . ($btnId + 1) . "-id");
                 $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
                     . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
                 if ($btns[$btnId]['button']['logo'] != "") {
@@ -343,21 +345,9 @@ class Extensions {
                 if ($nb_uis >= 1) {
                     for ($btn = 1; $btn <= $nb_uis; $btn++) {
                         $pathHtml = $extension['path'] . "/back/panels/html/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-html");
-                        $res .= '<div class="contextDev" id="' . 'folder-' . $extension['folder'] . "-" . $btn . '">';
                         if (file_exists($pathHtml)) {
-                            $f = fopen($pathHtml, "r");
-                            if ($f) {
-                                $csize = filesize($pathHtml);
-                                if ($csize <= 0) {
-                                    $res .= "";
-                                } else {
-                                    $res .= fread($f, $csize);
-                                    $res = self::remplaceStaticKeyWord($res, $extension['path'] . "/config.conf");
-                                }
-                            }
-                            fclose($f);
+                            require $pathHtml;
                         }
-                        $res .= '</div>';
                     }
                 }
             }
@@ -523,6 +513,22 @@ class Extensions {
         return "";
     }
 
+    public static function getManagerUiExtension(string $extensionName):string {
+        $res = "";
+        for ($i = 0; $i < count(self::$extensionList); $i++) {
+            if (self::$extensionList[$i]['name'] == $extensionName) {
+                $pathRes = self::$extensionList[$i]['path'] . "/back/manager-ui.conf";
+                if (file_exists($pathRes)) {
+                    return $pathRes;
+                } else {
+                    return "";
+                }
+            }
+        }
+        return "";
+        return $res;
+    }
+
     public static function getPathAllEditFiles(string $type):array {
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
             $elems = self::$extensionListFrontElement[$i]['elems'];
@@ -552,7 +558,7 @@ class Extensions {
             if (self::isExtensionBaliseType($balise['type'])) {
                 $pathes = self::getPathAllEditFiles($balise['type']);
                 if (isset($pathes['css'])) {
-                    $res .= "<link href=" . $pathes['css'] . " rel=\"stylesheet\">";
+                    $res .= "<link href=" . $hlp->getMainUrl() . "/" . $pathes['css'] . " rel=\"stylesheet\">";
                 }
             }
         }

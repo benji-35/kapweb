@@ -1,4 +1,5 @@
 <?php
+	global $ext, $ep, $hlp;
     $_SESSION['editName'] =  $_SESSION['pageName'];
 	$ep->generatePhpCode();
 ?>

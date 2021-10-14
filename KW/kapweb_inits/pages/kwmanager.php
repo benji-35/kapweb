@@ -276,6 +276,7 @@
         $hlp->addNewAcces($newAccessIntel);
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
+
     $ext->getPhpExtensionManager();
 ?>
 
@@ -631,6 +632,7 @@
                             ?>
                             <input type="password" placeholder="Mot de passe.." name="pwdNewAdmin" required>
                             <input type="password" placeholder="Confirmez mot de passe..." name="confNewAdminPwd" required>
+
                             <select name="accessNewAdmin">
                                 <option value="0" hidden>Select administrator access</option>
                                 <?php
