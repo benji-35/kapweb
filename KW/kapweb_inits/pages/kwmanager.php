@@ -644,7 +644,7 @@
                                 <?php
                                     for ($i = 0; $i < count($listAccess); $i++) {
                                 ?>
-                                    <option value="<?=$i+1?>"><?=$listAccess[$i]?></option>
+                                    <option value="<?=$i+1?>"><?=$listAccess[$i]['name']?></option>
                                 <?php
                                     }
                                 ?>
