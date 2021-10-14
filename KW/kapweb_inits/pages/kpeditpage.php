@@ -275,8 +275,17 @@
 		<?php
 			} else {
 		?>
-			<h1>Page does not exists</h1>
-			<a href="<?=$hlp->getMainUrl() . "/KW/manager"?>">Back to main page</a>
+			<div class="errorDoNotExists">
+				<picture>
+                    <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
+                </picture>
+				<h1>Page does not exists</h1>
+				<div class="whiteSPacingError">
+					<h3>Back to manager page</h3>
+					<a href="<?=$hlp->getMainUrl() . "/KW/manager"?>">Manager</a>
+				</div>
+				<p>The page you want to edit does not exists. Please retry with a page that exists.</p>
+			</div>
 		<?php
 			}
 		?>

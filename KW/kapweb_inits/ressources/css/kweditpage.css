@@ -162,3 +162,22 @@ body {
 .backButton:hover {
     color: rgb(196, 127, 0);
 }
+
+.errorDoNotExists {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: orange;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    width: 400px;
+    border: 2px solid black;
+    text-align: center;
+}
+
+.whiteSPacingError {
+    background-color: white;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}
