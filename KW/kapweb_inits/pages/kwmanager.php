@@ -347,7 +347,7 @@
             </div>
             <div class="optionsBarConnect">
                 <div class="connectIntels">
-                    <button class="btnAccount">
+                    <button class="btnAccount" onclick="hideShowSoftwareIntels()">
                         <i class='bx bxs-user bx-sm' style='color:#ffffff;position: relative;transform: translateY(20%);'></i>
                         <p><?=$accountIntels['pseudo']?></p>
                     </button>
@@ -1409,6 +1409,13 @@
                 <?php
                     echo $ext->getHtmlAddedExtensionManager();
                 ?>
+            </div>
+        </div>
+        <div id="softwareIntels" style="display: none;" onclick="hideShowSoftwareIntels()">
+            <div class="contentSoftwareIntels">
+                <p><?="Software version: " . $cf->getValueFromKeyConf($cf->getFilesConfig(), "software-version")?></p>
+                <a href="<?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "help-link")?>" style="color: #a1a1a1;" target="_blank">Help</a>
+                <p><?="email used: " . $_SESSION['suemail']?></p>
             </div>
         </div>
     </body>

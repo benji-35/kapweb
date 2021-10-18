@@ -464,3 +464,16 @@ th {
     width: 5%;
     text-align: left;
 }
+
+#softwareIntels {
+    position: absolute;
+    width: 350px;
+    right: 0;
+    background-color: #242424;
+    color: gray;
+}
+
+.contentSoftwareIntels {
+    width: 80%;
+    transform: translateX(10%);
+}

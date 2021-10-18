@@ -57,3 +57,11 @@ function unselectAllAccessNew(nbAccess) {
         document.getElementById("access-" + i).checked = false;
     }
 }
+
+function hideShowSoftwareIntels() {
+    if (document.getElementById("softwareIntels").style.display=="none") {
+        document.getElementById("softwareIntels").style.display = "block";
+    } else {
+        document.getElementById("softwareIntels").style.display = "none";
+    }
+}

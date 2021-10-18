@@ -118,14 +118,17 @@
                     <input type="email" placeholder="Email..." name="connectEmail" required>
                     <input type="password" placeholder="Password..." name="connectPwd" required>
                     <input type="submit" value="Se connecter" name="connect">
+                    <?php
+                        if (isset($_SESSION['c_errors'])) {
+                    ?>
+                        <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);font-size: small;"><?=$_SESSION['c_errors']?></p>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <p>Pas de compte ? Cliquez sur le bouton ci-dessous.</p>
             </form>
             <button onclick="openClosePannel('creation', 'connection')">Créer un compte</button>
-            <?php
-                if (isset($_SESSION['c_errors']))
-                    echo $_SESSION['c_errors'];
-            ?>
         </div>
         <div id="creation" class="formConnect">
             <form method="POST">
@@ -153,14 +156,17 @@
                     <input type="password" placeholder="Password..." name="creationPwd" required>
                     <input type="password" placeholder="Confirm password..." name="confirmPwd" required>
                     <input type="submit" value="Créer le compte" name="create">
+                    <?php
+                        if (isset($_SESSION['c_errors'])) {
+                    ?>
+                        <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);font-size: small;"><?=$_SESSION['c_errors']?></p>
+                    <?php
+                        }
+                    ?>
                 </div>
                 <p>Vous avez déjà un compte ? Cliquez sur le bouton ci-dessous.</p>
             </form>
             <button onclick="openClosePannel('connection', 'creation')">Déjà un compte ?</button>
-            <?php
-                if (isset($_SESSION['c_errors']))
-                    echo $_SESSION['c_errors'];
-            ?>
         </div>
     </body>
 </html>

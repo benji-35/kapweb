@@ -134,7 +134,7 @@
                     <?php
                         if (isset($_SESSION['connectError'])) {
                     ?>
-                        <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);"><?=$_SESSION['connectError']?></p>
+                        <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);font-size: small;"><?=$_SESSION['connectError']?></p>
                     <?php
                         }
                     ?>
