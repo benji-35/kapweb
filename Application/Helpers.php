@@ -721,7 +721,7 @@ class Helpers {
                 . "ALTER TABLE no_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
-                . "ALTER TABLE no_users ADD COLUMN lang int(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE no_users ADD COLUMN lang int(11) NOT NULL DEFAULT 1;"
                 . "ALTER TABLE no_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE no_users ADD COLUMN baned tinyint(1) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE no_users ADD COLUMN deleted tinyint(1) NOT NULL DEFAULT 0;";
@@ -741,7 +741,7 @@ class Helpers {
                 . "ALTER TABLE su_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
-                . "ALTER TABLE no_users ADD COLUMN lang int(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE no_users ADD COLUMN lang int(11) NOT NULL DEFAULT 1;"
                 . "ALTER TABLE su_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE su_users ADD COLUMN access int(11) NOT NULL DEFAULT 1;"
                 . "ALTER TABLE su_users ADD COLUMN baned tinyint(1) NOT NULL DEFAULT 0;"
