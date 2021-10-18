@@ -535,10 +535,9 @@ class Helpers {
             $stm->execute();
         }
         if (self::tabelExists("kp_languages") == false) {
-            $structure = ""
-                . "ALTER TABLE kp_languages ADD COLUMN name varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
-                . "ALTER TABLE kp_languages ADD COLUMN name_en varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
-                . "ALTER TABLE kp_languages ADD COLUMN name_short varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;";
+            $structure = "ALTER TABLE kp_languages ADD COLUMN name varchar(255) CHARACTER NOT NULL;"
+                . "ALTER TABLE kp_languages ADD COLUMN name_en varchar(255) CHARACTER NOT NULL;"
+                . "ALTER TABLE kp_languages ADD COLUMN name_short varchar(2) CHARACTER NOT NULL;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_languages (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
             $stm->execute();
             $stm = $connect->prepare($structure);
