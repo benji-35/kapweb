@@ -61,6 +61,10 @@
         $cf->addValueFormKeyConf($cf->getDbConfig(), "db", "");
         header("location: " . $hlp->getMainUrl());
     }
+    if (isset($_POST['changeNameWebsite'])) {
+        $cf->addValueFormKeyConf($cf->getFilesConfig(), "website_name", $_POST['newWebsiteName']);
+        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+    }
 
     for ($i = 0; $i < count($admins); $i++) {
         if (isset($_POST['deleteSuAccount-' . $admins[$i]['uid']])) {
@@ -343,7 +347,8 @@
     <body>
         <div class="optionsBar">
             <div class="optionsBarButtons">
-
+                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-manager-icon")?>" style="height: 50px;width: auto;">
+                <p><?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?></p>
             </div>
             <div class="optionsBarConnect">
                 <div class="connectIntels">
@@ -480,6 +485,7 @@
                         <thead>
                             <tr>
                                 <th class="urlTd">Theoric url</th>
+                                <th class="urlTd">Website name</th>
                                 <th class="actionsTd">Actions</th>
                             </tr>
                         </thead>
@@ -491,6 +497,12 @@
                                     <form method="POST" class="modifUrlForm">
                                         <input id="currUrlEdit" type="text" value="<?=$hlp->getMainUrl()?>" placeholder="current main url..." name="currUrl">
                                         <input id="saveCurrUrl" type="submit" value="Sauvegarder" name="saveCurrUrl">
+                                    </form>
+                                </td>
+                                <td class="urlTd">
+                                    <form method="POST">
+                                        <input type="text" name="newWebsiteName" placeholder="Website name..." value="<?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?>">
+                                        <input type="submit" name="changeNameWebsite" value="Sauvegarder">
                                     </form>
                                 </td>
                                 <td class="actionsTd">

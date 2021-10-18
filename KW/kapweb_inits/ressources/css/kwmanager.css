@@ -469,11 +469,20 @@ th {
     position: absolute;
     width: 350px;
     right: 0;
-    background-color: #242424;
+    background-color: #313131;
     color: gray;
 }
 
 .contentSoftwareIntels {
     width: 80%;
     transform: translateX(10%);
+}
+
+.optionsBarButtons {
+    display: inline-flex;
+    color: white;
+}
+
+.optionsBarButtons p{
+    padding-left: 15px;
 }
