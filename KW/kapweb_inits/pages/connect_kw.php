@@ -1,4 +1,5 @@
 <?php
+    global $hlp;
     $hlp->disconnectSelf();
     $haveToConnect = $hlp->suAccountExists();
     $errorsConnect = array(
@@ -7,7 +8,8 @@
         "Your account is deleted",
         "Your account is baned",
         "Please try another password",
-        "Please confirm your account in your email"
+        "Please confirm your account in your email",
+        "Please connect with an account knows",
     );
     $errorsCreate = array(
         "This email is already taken in account",
@@ -16,25 +18,21 @@
     );
 
     if (isset($_POST['create'])) {
-        unset($_SESSION['connectError']);
-        $pseudo = NULL;
-        $fname = NULL;
-        $lname = NULL;
-        if (isset($_POST['pseudoCreate'])) {
-            $pseudo = $_POST['pseudoCreate'];
-        }
-        if (isset($_POST['lname'])) {
-            $lname = $_POST['lname'];
-        }
-        if (isset($_POST['fname'])) {
-            $fname = $_POST['fname'];
-        }
-        $resCheck = $hlp->createSuAccount($pseudo, $_POST['emailCreate'], $_POST['pwdCreate'], $lname, $fname, 1);
-        if ($resCheck == 1) {
+        if ($_POST['lang'] == "0") {
+            $_SESSION['connectError'] = "Please select a language";
             header("location: " . $hlp->getMainUrl() . "/KW");
         } else {
-            $_SESSION['connectError'] = $errorsCreate[$resCheck];
-            header("location: " . $hlp->getMainUrl() . "/KW");
+            unset($_SESSION['connectError']);
+            $pseudo = $_POST['pseudoCreate'];
+            $fname = $_POST['fname'];
+            $lname = $_POST['lname'];
+            $resCheck = $hlp->createSuAccount($pseudo, $_POST['emailCreate'], $_POST['pwdCreate'], $lname, $fname, $_POST['lang'], 1);
+            if ($resCheck == 1) {
+                header("location: " . $hlp->getMainUrl() . "/KW");
+            } else {
+                $_SESSION['connectError'] = $errorsCreate[$resCheck];
+                header("location: " . $hlp->getMainUrl() . "/KW");
+            }
         }
     }
     if (isset($_POST['connect'])) {
@@ -59,6 +57,7 @@
         $need_ids = true;
     if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-pseudo") == "true")
         $need_pseudo = true;
+    $langauges = $hlp->getLanguageList();
 ?>
 <!DOCTYPE html>
 <html  lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">
@@ -115,23 +114,21 @@
                 <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
                 <h3>Create account Administrator</h3>
                 <div class="whiteInForm">
-                    <?php
-                        if ($need_pseudo) {
-                    ?>
-                        <input type="text" placeholder="pseudo..." name="pseudoCreate" required>
-                    <?php
-                        }
-                    ?>
-                        <input type="email" placeholder="email..." name="emailCreate" required>
-                    <?php
-                        if ($need_ids) {
-                    ?>
-                        <input type="text" placeholder="nom..." name="lname" required>
-                        <input type="text" placeholder="prénom..." name="fname" required>
-                    <?php
-                        }
-                    ?>
+                    <input type="text" placeholder="pseudo..." name="pseudoCreate" required>
+                    <input type="email" placeholder="email..." name="emailCreate" required>
+                    <input type="text" placeholder="nom..." name="lname" required>
+                    <input type="text" placeholder="prénom..." name="fname" required>
                     <input type="password" placeholder="password" name="pwdCreate" required>
+                    <select name="lang">
+                        <option value="0" hidden selected>Select your language</option>
+                        <?php
+                            for ($i = 0; $i < count($langauges); $i++) {
+                        ?>
+                            <option value="<?=$i + 1?>"><?=$langauges[$i]['name']?></option>
+                        <?php
+                            }
+                        ?>
+                    </select>
                     <input type="submit" value="Créer un compte" name="create">
                     <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Back to main page</p></div></a>
                     <?php

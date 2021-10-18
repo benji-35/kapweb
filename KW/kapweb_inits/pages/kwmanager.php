@@ -15,6 +15,7 @@
     $cookies = $hlp->getCookies();
     $languages = $hlp->getRowsTable("kp_languages");
     $accountIntels = $hlp->getAccountIntels();
+    $hlp->setLanguageToAccountLanguage();
 
     if (isset($_POST['createFirstPage'])) {
         unset($_SESSION['pageError']);
@@ -62,21 +63,29 @@
     }
 
     for ($i = 0; $i < count($admins); $i++) {
-        if (isset($_POST['deleteSuUser-' . $admins[$i]['uid']])) {
+        if (isset($_POST['deleteSuAccount-' . $admins[$i]['uid']])) {
             $hlp->deleteSuUserAccount($admins[$i]['email']);
             header("location: " . $hlp->getMainUrl() . "/KW");
         }
-        if (isset($_POST['banSuUser-' . $admins[$i]['uid']])) {
+        if (isset($_POST['banSuAccount-' . $admins[$i]['uid']])) {
             $hlp->banSuUserAccount($admins[$i]['email']);
             header("location: " . $hlp->getMainUrl() . "/KW");
         }
-        if (isset($_POST['unbanSuUser-' . $admins[$i]['uid']])) {
+        if (isset($_POST['unbanSuAccount-' . $admins[$i]['uid']])) {
             $hlp->unbanSuUserAccount($admins[$i]['email']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+        if (isset($_POST['restoreSuAccount-' . $admins[$i]['uid']])) {
+            $hlp->restoreSuUserAccount($admins[$i]['email']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+        if (isset($_POST['disableSuAccount-' . $admins[$i]['uid']])) {
+            $hlp->disableSuAccount($admins[$i]['uid']);
             header("location: " . $hlp->getMainUrl() . "/KW");
         }
-        if (isset($_POST['restoreSuUser-' . $admins[$i]['uid']])) {
-            $hlp->restoreSuUserAccount($admins[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW");
+        if (isset($_POST['enableSuAccount-' . $admins[$i]['uid']])) {
+            $hlp->enableSuAccount($admins[$i]['uid']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
         }
     }
 
@@ -537,91 +546,98 @@
                 <div class="contextDev" id="administratorsContext">
                     <h1 class="titleContextDev">Administrateurs</h1>
                     <form method="POST">
-                        <table class="tablePages">
+                        <table class="tableAdminListing">
                             <thead>
                                 <tr>
-                                    <th>Pseudo</th>
-                                    <th>Last Name</th>
-                                    <th>First Name</th>
-                                    <th>Email</th>
-                                    <th>Action</th>
+                                    <th class="icons_adminslist"></th>
+                                    <th class="nameFname_adminslist"><?=$hlp->getLangWorldMainFile("adminUsersTable-listing")?></th>
+                                    <th class="lastLogin_adminList"><?=$hlp->getLangWorldMainFile("lastLoginTable-adminsListing")?></th>
+                                    <th class="actions_adminsList"></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                     for ($i = 0; $i < count($admins); $i++) {
-                                        if ($admins[$i]['deleted'] == 0 && $admins[$i]['baned'] == 0) {
+                                        $date = date_create();
+                                        $lst_con = date_timestamp_set($date, $admins[$i]['ls_con'])->format("d/m/Y");
                                 ?>
                                     <tr>
-                                        <th><?=$admins[$i]['pseudo']?></th>
-                                        <th><?=$admins[$i]['lname']?></th>
-                                        <th><?=$admins[$i]['fname']?></th>
-                                        <th><?=$admins[$i]['email']?></th>
+                                        <th class="icons_adminslist"><i class='bx bx-user bx-md' undefined ></i></th>
+                                        <th class="nameFname_adminslist"><?=$admins[$i]['fname'] . " " . $admins[$i]['lname']?></th>
+                                        <th class="lastLogin_adminList"><?=$lst_con?></th>
                                         <th>
-                                            <input class="deleteTable" type="submit" value="Delete" name="<?="deleteSuUser-" . $admins[$i]['uid']?>">
-                                            <input class="deleteTable" type="submit" value="Ban" name="<?="banSuUser-" . $admins[$i]['uid']?>">
+                                            <div class="btn-block">
+                                                <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-edit")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-edit-alt bx-md'></i></button>
+                                                <?php
+                                                    if ($admins[$i]['status'] == 0) {
+                                                ?>
+                                                    <button class="cantUseBtn" disabled><i class='bx bx-message-square bx-md' style='color:rgba(0,0,0,0)'  ></i></button>
+                                                <?php
+                                                    } else if ($admins[$i]['status'] == 1) {
+                                                ?>
+                                                    <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-disable")?>" name="<?="disableSuAccount-" . $admins[$i]['uid']?>"><i class='bx bxs-toggle-right bx-md'></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                    <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-enable")?>" name="<?="enableSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-toggle-left bx-md'></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                                <?php
+                                                    if ($admins[$i]['deleted'] == 1) {
+                                                ?>
+                                                    <button class="cantUseBtn" disabled><i class='bx bx-message-square' style='color:rgba(0,0,0,0)'  ></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                    <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-delete")?>" name="<?="deleteSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-trash bx-md'></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                                <?php
+                                                    if ($admins[$i]['baned'] == 1) {
+                                                ?>
+                                                    <button class="cantUseBtn" disabled><i class='bx bx-message-square' style='color:rgba(0,0,0,0)'  ></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                    <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-ban")?>" name="<?="banSuAccount-" . $admins[$i]['uid']?>"><i class='bx bxs-no-entry bx-md'></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                                
+                                            </div>
+                                            <div class="btn-block">
+                                                <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-details")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-detail bx-md'></i></button>
+                                                <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-information")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-info-circle bx-md'></i></button>
+                                            </div>
+                                            <div class="btn-block">
+                                                <?php
+                                                    if ($admins[$i]['deleted'] == 1) {
+                                                ?>
+                                                    <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-restore")?>" name="<?="restoreSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-copy-alt bx-md'></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                    <button class="cantUseBtn" disabled><i class='bx bx-message-square' style='color:rgba(0,0,0,0)'  ></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                                <?php
+                                                    if ($admins[$i]['baned'] == 1) {
+                                                ?>
+                                                    <button title="<?=$hlp->getLangWorldMainFile("adminListingTitle-unban")?>" name="<?="unbanSuAccount-" . $admins[$i]['uid']?>"><i class='bx bxs-lock-open bx-md'></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                    <button class="cantUseBtn" disabled><i class='bx bx-message-square' style='color:rgba(0,0,0,0)'  ></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </div>
                                         </th>
                                     </tr>
                                 <?php
-                                        }
-                                    }
-                                ?>
-                            </tbody>
-                        </table>
-                        <h3>Administrateurs ban OU supprimés</h3>
-                        <table class="tablePages">
-                            <thead>
-                                <tr>
-                                    <th>Email</th>
-                                    <th>Pseudo</th>
-                                    <th>Nom</th>
-                                    <th>Prénom</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    for ($i = 0; $i < count($admins); $i++) {
-                                        if ($admins[$i]['baned'] == 1 || $admins[$i]['deleted'] == 1) {
-                                            $status = "";
-                                            $color = "red";
-                                            if ($admins[$i]['baned'] == 1) {
-                                                $status = "Baned";
-                                            }
-                                            if ($admins[$i]['deleted'] == 1) {
-                                                if ($status == "") {
-                                                    $status = "deleted";
-                                                    $color = "orange";
-                                                } else {
-                                                    $status .= ", deleted";
-                                                    $color = "purple";
-                                                }
-                                            }
-                                ?>
-                                    <tr>
-                                        <th><?=$admins[$i]['email']?></th>
-                                        <th><?=$admins[$i]['pseudo']?></th>
-                                        <th><?=$admins[$i]['lname']?></th>
-                                        <th><?=$admins[$i]['fname']?></th>
-                                        <th style="<?="color: " . $color . ";"?>"><?=$status?></th>
-                                        <th>
-                                            <?php
-                                                if ($admins[$i]['deleted'] == 1) {
-                                            ?>
-                                            <input class="deleteTable" type="submit" value="Restore" name="<?="restoreSuUser-" . $admins[$i]['uid']?>">
-                                            <?php
-                                                }
-                                                if ($admins[$i]['baned'] == 1) {
-                                            ?>
-                                            <input class="deleteTable" type="submit" value="Unban" name="<?="unbanSuUser-" . $admins[$i]['uid']?>">
-                                            <?php
-                                                }
-                                            ?>
-                                        </th>
-                                    </tr>
-                                <?php
-                                        }
                                     }
                                 ?>
                             </tbody>
@@ -633,22 +649,10 @@
                         </picture>
                         <h3>Créer un nouveau compte admin</h3>
                         <div class="whiteDiv">
-                            <?php
-                                if ($need_pseudo) {
-                            ?>
-                                <input type="text" placeholder="Pseudo..." name="pseudoNewAdmin" required>
-                            <?php
-                                }
-                            ?>
+                            <input type="text" placeholder="Pseudo..." name="pseudoNewAdmin" required>
                             <input type="email" placeholder="Email..." name="emailNewAdmin" required>
-                            <?php
-                                if ($need_ids) {
-                            ?>
-                                <input type="text" placeholder="Nom..." name="lnameNewAdmin" required>
-                                <input type="text" placeholder="Prénom..." name="fnameNewAdmin" required>
-                            <?php
-                                }
-                            ?>
+                            <input type="text" placeholder="Nom..." name="lnameNewAdmin" required>
+                            <input type="text" placeholder="Prénom..." name="fnameNewAdmin" required>
                             <input type="password" placeholder="Mot de passe.." name="pwdNewAdmin" required>
                             <input type="password" placeholder="Confirmez mot de passe..." name="confNewAdminPwd" required>
 
@@ -1226,13 +1230,13 @@
                         <caption><h1>Extensions</h1></caption>
                         <thead>
                             <tr>
-                                <th style="width:   12px !important;">Icon</th>
-                                <th style="width: 250px !important;">Nom</th>
-                                <th style="width: 12px !important;">Auteur</th>
-                                <th style="width: 200px !important;">Description</th>
-                                <th style="width: 12px !important;">Categories</th>
-                                <th>Action</th>
-                                <th style="width: 12px !important;">Utilisé</th>
+                                <th style="width:   12px !important;"><?=$hlp->getLangWorldMainFile("extensionListing-title-icon")?></th>
+                                <th style="width: 250px !important;"><?=$hlp->getLangWorldMainFile("extensionListing-title-name")?></th>
+                                <th style="width: 12px !important;"><?=$hlp->getLangWorldMainFile("extensionListing-title-author")?></th>
+                                <th style="width: 200px !important;"><?=$hlp->getLangWorldMainFile("extensionListing-title-description")?></th>
+                                <th style="width: 12px !important;"><?=$hlp->getLangWorldMainFile("extensionListing-title-category")?></th>
+                                <th><?=$hlp->getLangWorldMainFile("extensionListing-title-actions")?></th>
+                                <th style="width: 12px !important;"><?=$hlp->getLangWorldMainFile("extensionListing-title-used")?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1275,26 +1279,26 @@
                                             <?php
                                                 if ($extension['use'] == "true") {
                                             ?>
-                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Stop use this extension" name="<?="extStop-" . $extension['folder']?>"><box-icon  color="red" size="lg" type='solid' flip="horizontal" name='message-square-x'></box-icon></i></button>
+                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="<?=$hlp->getLangWorldMainFile("extensionListing-disbale")?>" name="<?="extStop-" . $extension['folder']?>"><box-icon  color="red" size="lg" type='solid' flip="horizontal" name='message-square-x'></box-icon></i></button>
                                             <?php
                                                 } else {
                                             ?>
-                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Start use this extension" name="<?="extStart-" . $extension['folder']?>"><box-icon color="green" size="lg" name='message-square-check' type='solid' ></box-icon></i></button>
+                                                <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="<?=$hlp->getLangWorldMainFile("extensionListing-enable")?>" name="<?="extStart-" . $extension['folder']?>"><box-icon color="green" size="lg" name='message-square-check' type='solid' ></box-icon></i></button>
                                             <?php
                                                 }
                                             ?>
-                                            <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="Delete this extension" name="<?="extDelete-" . $extension['folder']?>"><box-icon size="lg" type='solid' name='trash'></box-icon></button>
+                                            <button type="submit" form="<?="extAction-" . $extension['folder']?>" class="stopUsingExtension" title="<?=$hlp->getLangWorldMainFile("extensionListing-delete")?>" name="<?="extDelete-" . $extension['folder']?>"><box-icon size="lg" type='solid' name='trash'></box-icon></button>
                                         </form>
                                     </td>
                                     <td>
                                         <?php
                                             if ($extension['use'] == "true") {
                                         ?>
-                                            <box-icon type='solid' size="lg" color="green" name='check-circle'></box-icon>
+                                            <box-icon title="<?=$hlp->getLangWorldMainFile("extensionListing-enabled")?>" type='solid' size="lg" color="green" name='check-circle'></box-icon>
                                         <?php
                                             } else {
                                         ?>
-                                            <box-icon color="red" size="lg" type='solid' name='x-circle'></box-icon>
+                                            <box-icon title="<?=$hlp->getLangWorldMainFile("extensionListing-disbaled")?>" color="red" size="lg" type='solid' name='x-circle'></box-icon>
                                         <?php
                                             }
                                         ?>

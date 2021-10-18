@@ -404,3 +404,44 @@ th {
 .iconDirectory {
     float: right;
 }
+
+.cantUseBtn:hover {
+    cursor: not-allowed !important;
+}
+
+.nameFname_adminslist {
+    width: 56%;
+    text-align: left;
+}
+
+.lastLogin_adminList {
+    width: 9%;
+    text-align: left;
+    font-size: 12px;
+}
+
+.icons_adminslist {
+    width: 3%;
+    text-align: center;
+}
+
+.btn-block {
+    display: inline-flex;
+    vertical-align: middle;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.btn-block button {
+    margin: 0;
+    width: 45px;
+    height: 45px;
+    border: 1px solid black;
+    margin-left: 1px;
+    margin-right: 1px;
+    border-radius: 10px;
+}
+
+.btn-block button:hover {
+    cursor: pointer;
+}

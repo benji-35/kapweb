@@ -144,6 +144,20 @@ class Database
             return true;
         return false;
     }
+
+    public static function canConnectWithArray(array $dbIntels):bool {
+        $connection = NULL;
+        if (self::$dbHost == "" || self::$dbUsername == "")
+            return false;
+        try {
+            $connection = new PDO("mysql:host=" . $dbIntels['host'] . ";dbname=" . $dbIntels['dbName'], $dbIntels['username'], $dbIntels['passsword']);
+        } catch (PDOException $e) {
+            return false;
+        }
+        if ($connection != NULL)
+            return true;
+        return false;
+    }
 }
 
 ?>

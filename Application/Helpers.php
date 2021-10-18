@@ -378,6 +378,19 @@ class Helpers {
         return 1;
     }
 
+    public static function getLanguageList():array {
+        global $db;
+        $res = array();
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_languages WHERE 1");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
     public static function getLangWorldMainFileFromLanguage(string $lang, string $key):string {
         global $cf;
         $path = "KW/kapweb_inits/ressources/languages/" . $lang . "Lang.conf";
@@ -1480,7 +1493,7 @@ class Helpers {
         return false;
     }
 
-    public static function createSuAccount($pseudo, $email, $pwd, $lname="", $fname="", $access=2):int {
+    public static function createSuAccount($pseudo, $email, $pwd, $lname="", $fname="", $lang=1, $access=2):int {
         if (self::isEmailUsedInAccounts($email))
             return 0;
         global $db;
@@ -1532,6 +1545,8 @@ class Helpers {
                 return 3;
             if ($resStm['status'] == 0)
                 return 5;
+            if ($resStm['status'] == 2)
+                return 6;
             if (password_verify($pwd, $resStm['password']))
                 return 1;
             return 4;
@@ -1554,6 +1569,8 @@ class Helpers {
                 return 3;
             if ($resStm['status'] == 0)
                 return 5;
+            if ($resStm['status'] == 0)
+                return 6;
             if (password_verify($pwd, $resStm['password']))
                 return 1;
             return 4;
@@ -1844,6 +1861,59 @@ class Helpers {
         return array();
     }
 
+    public static function setLanguageToAccountLanguage() {
+        global $db;
+        if (self::isConnectedSu()) {
+            $connect = $db->connect();
+            $stm = $connect->prepare("SELECT lang FROM su_users WHERE email=?");
+            $stm->execute(array($_SESSION['suemail']));
+            $resStm = $stm->fetch();
+            if ($resStm) {
+                $lang = $resStm['lang'];
+                $stm = $connect->prepare("SELECT * FROM kp_languages WHERE id=?");
+                $stm->execute(array($lang));
+                $resStm = $stm->fetch();
+                if ($resStm) {
+                    $_SESSION['language'] = $resStm['name_short'];
+                }
+            }
+            $db->disconnect();
+        }
+        if (self::isConnectedNo()) {
+            $connect = $db->connect();
+            $stm = $connect->prepare("SELECT lang FROM no_users WHERE email=?");
+            $stm->execute(array($_SESSION['no_email']));
+            $resStm = $stm->fetch();
+            if ($resStm) {
+                $lang = $resStm['lang'];
+                $stm = $connect->prepare("SELECT * FROM kp_languages WHERE id=?");
+                $stm->execute(array($lang));
+                $resStm = $stm->fetch();
+                if ($resStm) {
+                    $_SESSION['language'] = $resStm['name_short'];
+                }
+            }
+            $db->disconnect();
+        }
+    }
+
+
+    public static function disableSuAccount(int $uid) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE su_users SET status=2 WHERE uid=?");
+        $stm->execute(array($uid));
+        $db->disconnect();
+    }
+
+    public static function enableSuAccount(int $uid) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE su_users SET status=1 WHERE uid=?");
+        $stm->execute(array($uid));
+        $db->disconnect();
+    }
+
     /*
             COOKIES MANAGING
     */
@@ -1898,7 +1968,6 @@ class Helpers {
         $db->disconnect();
         return false;
     }
-
 }
 
 ?>

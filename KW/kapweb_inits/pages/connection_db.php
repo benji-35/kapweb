@@ -39,6 +39,10 @@
                 "username" => $gerArr[1],
                 "passsword" => $gerArr[2],
             );
+            if ($db->canConnectWithArray($connArr) == false) {
+                $_SESSION['stepDbConnection'] = 0;
+                header("location: " . $hlp->getMainUrl());
+            }
             $db->initDb($connArr);
             $hlp->saveNewDb($connArr);
             $hlp->generateTablesNeeded();

@@ -7,7 +7,8 @@
         "Your account is deleted",
         "Your account is baned",
         "Please try another password",
-        "Please confirm your account in your email"
+        "Please confirm your account in your email",
+        "Please connect with an account knows",
     );
     $errorsCreate = array(
         "This email is already taken in account",
