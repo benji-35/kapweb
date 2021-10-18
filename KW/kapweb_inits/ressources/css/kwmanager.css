@@ -410,7 +410,7 @@ th {
 }
 
 .nameFname_adminslist {
-    width: 56%;
+    width: 50%;
     text-align: left;
 }
 
@@ -444,4 +444,22 @@ th {
 
 .btn-block button:hover {
     cursor: pointer;
+}
+
+.redirectsTable {
+    width: 100%;
+}
+
+.iconListingRedirects {
+    width: 5%;
+}
+
+.lastListingRedirects, .newListingRedirects {
+    width: 35%;
+    text-align: left;
+}
+
+.useListingRedirects {
+    width: 5%;
+    text-align: left;
 }

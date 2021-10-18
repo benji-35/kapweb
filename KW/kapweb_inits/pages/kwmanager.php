@@ -587,7 +587,20 @@
                                         $lst_con = date_timestamp_set($date, $admins[$i]['ls_con'])->format("d/m/Y");
                                 ?>
                                     <tr>
-                                        <th class="icons_adminslist"><i class='bx bx-user bx-md' undefined ></i></th>
+                                        <th class="icons_adminslist">
+                                            <i class='bx bx-user bx-md' undefined ></i>
+                                            <?php
+                                                if ($admins[$i]['deleted'] == 1) {
+                                            ?>
+                                                <i title="<?=$hlp->getLangWorldMainFile("w-deleted")?>" class='bx bxs-error-circle bx-sm' style='color:#ff0000;position: absolute;transform: translate(-105%, 50%);'></i>
+                                            <?php
+                                                } else if ($admins[$i]['baned'] == 1) {
+                                            ?>
+                                                <i title="<?=$hlp->getLangWorldMainFile("w-baned")?>" class='bx bxs-error bx-sm' style='color:#ff8000;position: absolute;transform: translate(-105%, 50%);'></i>
+                                            <?php
+                                                }
+                                            ?>
+                                        </th>
                                         <th class="nameFname_adminslist"><?=$admins[$i]['fname'] . " " . $admins[$i]['lname']?></th>
                                         <th class="lastLogin_adminList"><?=$lst_con?></th>
                                         <th>
@@ -1336,6 +1349,57 @@
                     </table>
                 </div>
                 <div class="contextDev" id="redirectsManager">
+                    <table class="redirectsTable">
+                        <thead>
+                            <tr>
+                                <th class="iconListingRedirects"></th>
+                                <th class="lastListingRedirects"><?=$hlp->getLangWorldMainFile("listingRedirects-last")?></th>
+                                <th class="newListingRedirects"><?=$hlp->getLangWorldMainFile("listingRedirects-new")?></th>
+                                <th class="useListingRedirects"><?=$hlp->getLangWorldMainFile("listingRedirects-use")?></th>
+                                <th class="actionListRedirects"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                                for ($i = 0; $i < count($allRedirects); $i++) {
+                            ?>
+                                <tr>
+                                    <td class="iconListingRedirects">
+                                        <i class='bx bx-exclude bx-md'></i>
+                                        <?php
+                                            if ($allRedirects[$i]['deleted'] == 1) {
+                                        ?>
+                                            <i class='bx bxs-error-circle bx-sm' style='color:#ff0000;position: absolute;transform: translate(-105%, 50%);'></i>
+                                        <?php
+                                            }
+                                        ?>
+                                    </td>
+                                    <td class="lastListingRedirects"><?=$allRedirects[$i]['last_path']?></td>
+                                    <td class="newListingRedirects"><?=$allRedirects[$i]['new_path']?></td>
+                                    <td class="useListingRedirects"><?=$allRedirects[$i]['used'] . strtolower($hlp->getLangWorldMainFile("listingRedirects-use"))?></td>
+                                    <td class="actionListRedirects">
+                                        <form method="POST">
+                                            <div class="btn-block">
+                                                <?php
+                                                    if ($allRedirects[$i]['deleted'] == 0) {
+                                                ?>
+                                                <button name="<?="deleteRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-delete")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-trash bx-md'></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                <button name="<?="restoreRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-restore")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-copy-alt bx-md'></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                            </div>
+                                        </form>
+                                    </td>
+                                </tr>
+                            <?php
+                                }
+                            ?>
+                        </tbody>
+                    </table>
                     <form method="POST">
                         <input name="lastRedirect" placeholder="<?=$hlp->getLangWorldMainFile("creaetRedirect-last")?>">
                         <input name="newRedirect" placeholder="<?=$hlp->getLangWorldMainFile("creaetRedirect-new")?>">

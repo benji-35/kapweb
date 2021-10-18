@@ -799,7 +799,8 @@ class Helpers {
         if (self::tabelExists("kp_redirects") == false) {
             $structure = "ALTER TABLE kp_redirects ADD COLUMN last_path varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_redirects ADD COLUMN new_path varchar(255) NOT NULL;"
-                . "ALTER TABLE kp_redirects ADD COLUMN deleted int(2) NOT NULL DEFAULT 0;";
+                . "ALTER TABLE kp_redirects ADD COLUMN deleted int(2) NOT NULL DEFAULT 0;"
+                . "ALTER TABLE kp_redirects ADD COLUMN used int(11) NOT NULL DEFAULT 0;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_redirects (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
             $stm->execute();
             $stm = $connect->prepare($structure);
