@@ -318,7 +318,7 @@
                 <?php
                     if ($hlp->haveAccesTo("Dashboard")) {
                 ?>
-                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class="fa fa-house-user"></i><?=" Dashboard"?></button>
+                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class="fa fa-house-user iconDirectory"></i><?=" Dashboard"?></button>
                 <?php
                     }
                 ?>
@@ -328,7 +328,7 @@
                     $accesAccess = $hlp->haveAccesTo("Access");
                     if ($hlp->haveExtensionAccesFromMainClass("navMenuAdmin") || $accesAdmin || $accesUsers || $accesAccess) {
                 ?>
-                    <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i id="iconAdmin" class="far fa-arrow-alt-circle-down"></i><?=" Admin"?></button>
+                    <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i class='bx bx-rocket'></i><?=" Admin"?><i id="iconAdmin" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -336,17 +336,17 @@
                     <?php
                         if ($accesAdmin) {
                     ?>
-                        <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class="fas fa-users-cog"></i><?=" Administrateurs"?></button>    
+                        <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class="fas fa-users-cog" style="background-color: green;padding: 5px;border-radius: 5px;"></i><?=" Administrateurs"?></button>    
                     <?php
                         }
                         if ($hlp->haveAccesTo("Users")) {
                     ?>
-                        <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="fa fa-users"></i><?=" Utilisateur"?></button>
+                        <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="fa fa-users" style="background-color: red;padding: 5px;border-radius: 5px;"></i><?=" Utilisateur"?></button>
                     <?php
                         }
                         if ($hlp->haveAccesTo("Access")) {
                     ?>
-                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="fa fa-users"></i><?=" Accès"?></button>
+                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="fa fa-users" style="background-color: blue;padding: 5px;border-radius: 5px;"></i><?=" Accès"?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuAdmin");
@@ -357,7 +357,7 @@
                     $accesDeletedPage = $hlp->haveAccesTo("Deleted Pages");
                     if ($accessPage || $accesDeletedPage || $hlp->haveExtensionAccesFromMainClass("navMenuWebsite")) {
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i id="iconWebsite" class="far fa-arrow-alt-circle-down"></i><?=" Site Web"?></button>
+                <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i class='bx bx-world' ></i><?=" Site Web"?><i id="iconWebsite" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -365,12 +365,12 @@
                     <?php
                         if ($accessPage) {
                     ?>
-                        <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="fa fa-file-word"></i><?=" Pages"?></button>
+                        <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="fa fa-file-word" style="background-color: #bd5f0c;padding: 5px;border-radius: 5px;"></i><?=" Pages"?></button>
                     <?php
                         }
                         if ($accesDeletedPage) {
                     ?>
-                        <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt"></i><?=" Deleted Pages"?></button>
+                        <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt" style="padding: 5px;border-radius: 5px;background-color: #08839f;"></i><?=" Deleted Pages"?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuWebsite");
@@ -384,7 +384,7 @@
 
                     if ($accessCookies || $accessDb || $accessDeletedDB || $accessExt || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i id="iconFiles" class="far fa-arrow-alt-circle-down"></i><?=" Fichiers"?></button>
+                <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i class='bx bx-image-alt' ></i><?=" Fichiers"?><i id="iconFiles" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -392,22 +392,22 @@
                     <?php
                         if ($accessCookies) {
                     ?>
-                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="fas fa-save"></i><?=" Cookies"?></button>
+                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="fas fa-save" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" Cookies"?></button>
                     <?php
                         }
                         if ($accessDb) {
                     ?>
-                        <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="fas fa-database"></i><?=" Database"?></button>
+                        <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="fas fa-database" style="padding: 5px;border-radius: 5px;background-color: #b02379;"></i><?=" Database"?></button>
                     <?php
                         }
                         if ($accessDeletedDB) {
                     ?>
-                        <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt"></i><?=" Deleted Database"?></button>
+                        <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt" style="padding: 5px;border-radius: 5px;background-color: #9d1313;"></i><?=" Deleted Database"?></button>
                     <?php
                         }
                         if ($accessExt) {
                     ?>
-                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="fas fa-puzzle-piece"></i><?=" Extensions"?></button>
+                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="fas fa-puzzle-piece" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" Extensions"?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuFiles");

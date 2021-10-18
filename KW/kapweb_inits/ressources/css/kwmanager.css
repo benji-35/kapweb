@@ -15,11 +15,13 @@ body {
 
 .navMenu{
     width: 15%;
-    background: rgb(2,0,36);
+    /*background: rgb(2,0,36);
     background: -moz-linear-gradient(235deg, rgba(2,0,36,1) 0%, rgba(121,9,9,1) 71%, rgba(255,0,0,1) 100%);
     background: -webkit-linear-gradient(235deg, rgba(2,0,36,1) 0%, rgba(121,9,9,1) 71%, rgba(255,0,0,1) 100%);
     background: linear-gradient(235deg, rgba(2,0,36,1) 0%, rgba(121,9,9,1) 71%, rgba(255,0,0,1) 100%);
     filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#020024",endColorstr="#ff0000",GradientType=1);  
+    */
+    background-color: rgb(80, 80, 80);
     text-align: center;
     display: block;
     color: white;
@@ -35,10 +37,9 @@ body {
     display: none;
     text-align: center;
     color: white;
-    width: 90%;
-    border: 2px solid white;
     position: relative;
-    left: 5%;
+    width: 97%;
+    transform: translateX(3%);
 }
 
 .contextDev {
@@ -46,13 +47,14 @@ body {
 }
 
 .btnNavMenu {
-    width: 100%;
+    width: 90%;
     height: 50px;
     background-color: transparent;
     color: white;
     border: none;
     text-transform: capitalize;
-    font-size: large;
+    text-align: left;
+    font-size: medium;
 }
 
 .btnNavMenu:hover {
@@ -60,13 +62,13 @@ body {
 }
 
 .btnSelected {
-    background-color: rgba(71, 71, 71, 0.7);
-    width: 100%;
+    background-color: rgba(34, 34, 34, 0.7);
+    width: 90%;
     height: 50px;
     color: white;
     border: none;
-    font-size: large;
-    text-transform: uppercase;
+    text-align: left;
+    font-size: medium;
 }
 
 .titleContextDev {
@@ -350,4 +352,8 @@ th {
     position: relative;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.iconDirectory {
+    float: right;
 }
