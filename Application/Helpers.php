@@ -721,6 +721,7 @@ class Helpers {
                 . "ALTER TABLE no_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE no_users ADD COLUMN lang int(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE no_users ADD COLUMN baned tinyint(1) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE no_users ADD COLUMN deleted tinyint(1) NOT NULL DEFAULT 0;";
@@ -740,6 +741,7 @@ class Helpers {
                 . "ALTER TABLE su_users ADD COLUMN pseudo varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci DEFAULT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN email varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN password varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
+                . "ALTER TABLE no_users ADD COLUMN lang int(11) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN status int(11) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE su_users ADD COLUMN access int(11) NOT NULL DEFAULT 1;"
                 . "ALTER TABLE su_users ADD COLUMN baned tinyint(1) NOT NULL DEFAULT 0;"
@@ -820,8 +822,8 @@ class Helpers {
             $stm->execute(array(
                 "no_users",
                 13,
-                "int,int,int,int,int,varchar,varchar,varchar,varchar,varchar,int,tinyint,tinyint",
-                "uid,cr_date,ls_mod,ls_con,ls_mod_uid,lname,fname,pseudo,email,password,status,banned,deleted",
+                "int,int,int,int,int,varchar,varchar,varchar,varchar,varchar,int,int,tinyint,tinyint",
+                "uid,cr_date,ls_mod,ls_con,ls_mod_uid,lname,fname,pseudo,email,password,lang,status,banned,deleted",
                 1,
                 0,
                 0,
@@ -831,8 +833,8 @@ class Helpers {
             $stm->execute(array(
                 "su_users",
                 14,
-                "int,int,int,int,int,varchar,varchar,varchar,varchar,varchar,int,int,tinyint,tinyint",
-                "uid,cr_date,ls_mod,ls_con,ls_mod_uid,lname,fname,pseudo,email,password,status,access,banned,deleted",
+                "int,int,int,int,int,varchar,varchar,varchar,varchar,varchar,int,int,int,tinyint,tinyint",
+                "uid,cr_date,ls_mod,ls_con,ls_mod_uid,lname,fname,pseudo,email,password,lang,status,access,banned,deleted",
                 1,
                 0,
                 0,
