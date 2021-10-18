@@ -288,6 +288,25 @@
     }
 
     $ext->getPhpExtensionManager();
+    $allRedirects = $hlp->getRedirectsList();
+    if (isset($_POST['creaeteRedirect'])) {
+        if ($hlp->urlIsRedirected($_POST['lastRedirect']) == true) {
+
+        } else {
+            $hlp->createRedirection($_POST['lastRedirect'], $_POST['newRedirect']);
+        }
+    }
+
+    for ($i = 0; $i < count($allRedirects); $i++) {
+        if (isset($_POST['deleteRedirect-' . $allRedirects[$i]['id']])) {
+            $hlp->updateDeletedRedirect($allRedirects[$i]['id'], 1);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+        if (isset($_POST['restoreRedirect-' . $allRedirects[$i]['id']])) {
+            $hlp->updateDeletedRedirect($allRedirects[$i]['id'], 0);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -383,6 +402,7 @@
                 <?php
                     $accessPage = $hlp->haveAccesTo("Pages");
                     $accesDeletedPage = $hlp->haveAccesTo("Deleted Pages");
+                    $accesRedirect = $hlp->haveAccesTo("Redirects");
                     if ($accessPage || $accesDeletedPage || $hlp->haveExtensionAccesFromMainClass("navMenuWebsite")) {
                 ?>
                 <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i class='bx bx-world' ></i><?=" " . $hlp->getLangWorldMainFile("webSiteMain")?><i id="iconWebsite" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
@@ -399,6 +419,11 @@
                         if ($accesDeletedPage) {
                     ?>
                         <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt" style="padding: 5px;border-radius: 5px;background-color: #08839f;"></i><?=" " . $hlp->getLangWorldMainFile("delPages")?></button>
+                    <?php
+                        }
+                        if ($accesRedirect) {
+                    ?>
+                        <button class="btnNavMenu" id="btnRedirects" onclick="displayContextMenu('redirectsManager', 'btnRedirects')"><i class='bx bx-exclude' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #08839f;'></i><?=" " . $hlp->getLangWorldMainFile("redirectsBtnNavMenu")?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuWebsite");
@@ -1309,6 +1334,13 @@
                             ?>
                         </tbody>
                     </table>
+                </div>
+                <div class="contextDev" id="redirectsManager">
+                    <form method="POST">
+                        <input name="lastRedirect" placeholder="<?=$hlp->getLangWorldMainFile("creaetRedirect-last")?>">
+                        <input name="newRedirect" placeholder="<?=$hlp->getLangWorldMainFile("creaetRedirect-new")?>">
+                        <input type="submit" value="<?=$hlp->getLangWorldMainFile("creaetRedirect")?>" name="creaeteRedirect">
+                    </form>
                 </div>
                 <?php
                     echo $ext->getHtmlAddedExtensionManager();

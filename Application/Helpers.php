@@ -796,6 +796,15 @@ class Helpers {
                 "",
             ));
         }
+        if (self::tabelExists("kp_redirects") == false) {
+            $structure = "ALTER TABLE kp_redirects ADD COLUMN last_path varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_redirects ADD COLUMN new_path varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_redirects ADD COLUMN deleted int(2) NOT NULL DEFAULT 0;";
+            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_redirects (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
+            $stm->execute();
+            $stm = $connect->prepare($structure);
+            $stm->execute();
+        }
         if ($add_kp_tables == true) {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
@@ -961,6 +970,7 @@ class Helpers {
             "Deleted Database",
             "Extensions",
             "navMenuFiles",
+            "Redirects",
         );
         $extentions = $ext->getExtensionsBackList();
         for ($extId = 0; $extId < count($extentions); $extId++) {
@@ -1175,6 +1185,21 @@ class Helpers {
         return false;
     }
 
+    public static function getRedirectPage(string $urlStr):array {
+        global $db;
+        $connect = $db->connect();
+        $res = array();
+        $stm = $connect->prepare("SELECT * FROM kp_redirects WHERE last_path=? AND deleted=0");
+        $stm->execute(array($urlStr));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            $totNUrl = $resStm['new_path'];
+            $res = explode("/", $totNUrl);
+        }
+        return $res;
+    }
+
     public static function getPathPage($url):string {
         global $db, $cf;
         $_SESSION['titlePage'] = "Page not found";
@@ -1233,6 +1258,10 @@ class Helpers {
                 $_SESSION['icoPage'] = $cf->sys_getMainIco();
             }
         } else {
+            $redir = self::getRedirectPage($totUrl);
+            if (count($redir) > 0) {
+                return self::getPathPage($redir);
+            }
             $connect = $db->connect();
             $stm = $connect->prepare("SELECT 1 from pages LIMIT 1");
             $stm->execute();
@@ -1474,6 +1503,55 @@ class Helpers {
         }
 
         return $res;
+    }
+
+    public static function getRedirectsList():array {
+        global $db;
+        $res = array();
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_redirects WHERE 1");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
+    public static function urlIsRedirected($urlStr):bool {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_redirects WHERE last_path=? AND deleted=0");
+        $stm->execute(array($urlStr));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return true;
+        }
+        return false;
+    }
+
+    public static function updateDeletedRedirect(int $id, int $value) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE kp_redirects SET deleted=? WHERE id=?");
+        $stm->execute(array($value, $id));
+        $db->disconnect();
+    }
+
+    public static function createRedirection(string $last_url, string $new_url):int {
+        if (self::urlIsRedirected($last_url) == true) {
+            return 1;
+        }
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("INSERT INTO kp_redirects (last_path, new_path, deleted) VALUES (?, ?, ?)");
+        $stm->execute(array($last_url, $new_url, 0));
+        $db->disconnect();
+        if (self::urlIsRedirected($last_url) == true) {
+            return 0;
+        }
+        return 2;
     }
 
     /*
