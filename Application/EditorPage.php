@@ -733,7 +733,8 @@ class EditorPage {
     private static function getHtmlStringBalise($arr, $parent) {
         global $cf, $hlp, $db, $ext;
         $res = "";
-        for ($i = 0; $i < count($arr); $i++) {
+        $sizeArr = count($arr);
+        for ($i = 0; $i < $sizeArr; $i++) {
             $balise = $arr[$i];
             if (self::canBeDisplay($arr, $balise) == true) {
                 if ($balise['parent'] == $parent) {

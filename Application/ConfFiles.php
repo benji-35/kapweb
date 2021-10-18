@@ -167,13 +167,23 @@ class ConfFiles {
         return "";
     }
 
-    private static function haveKeyInText($text, $key):bool {
+    public static function haveKeyInText($text, $key):bool {
         $lines = explode("\n", $text);
         for ($i = 0; $i < count($lines); $i++) {
-            if (self::strStartWith($lines[$i], $key))
+            if (self::strStartWith($lines[$i], $key . "=")) {
                 return true;
+            }
         }
         return false;
+    }
+
+    public static function keyExistsConfFile($pathFile, $key):bool {
+        if (file_exists($pathFile) == false || filesize($pathFile) == 0)
+            return false;
+        $f = fopen($pathFile, "r");
+        $str = fread($f, filesize($pathFile));
+        fclose($f);
+        return self::haveKeyInText($str, $key);
     }
 
     public static function addValueFormKeyConf($pathFile, $key, $value) {
@@ -235,6 +245,33 @@ class ConfFiles {
                 $finalRes .= "\n" . $lines[$i];
             }
         }
+        $f = fopen($pathFile, "w+");
+        if ($f) {
+            fwrite($f, $finalRes, strlen($finalRes));
+        }
+        fclose($f);
+    }
+
+    public static function deleteVariableByKey($pathFile, $key) {
+        $totStr = "";
+        $finalRes = "";
+        if (file_exists($pathFile) && filesize($pathFile) > 0) {
+            $f = fopen($pathFile, "r");
+            $str = fread($f, filesize($pathFile));
+            fclose($f);
+            $totStr = $str;
+        }
+        $lines = explode("\n", $totStr);
+        for ($i = 0; $i < count($lines); $i++) {
+            if (self::strStartWith($lines[$i], $key . "=") == false) {
+                $finalRes .= $lines[$i] . "\n";
+            }
+        }
+        $f = fopen($pathFile, "w+");
+        if ($f) {
+            fwrite($f, $finalRes, strlen($finalRes));
+        }
+        fclose($f);
     }
 
     public static function sys_getMainIco():string {

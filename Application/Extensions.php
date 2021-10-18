@@ -72,6 +72,7 @@ class Extensions {
                     "button" => array(
                         "text" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i),
                         "logo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogo"),
+                        "logoColor" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogoColor"),
                         "category" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-cat"),
                     ),
                     "panel" => array(
@@ -223,8 +224,8 @@ class Extensions {
         for ($i = 0; $i < count($new_cats); $i++) {
             if ($new_cats[$i] != "") {
                 $res .= '<button class="btnNavMenu" onclick="displayNavMenu(\''. $new_cats[$i] . '\', \'icon-' . $new_cats[$i] . '\')"'
-                . '><i class="far fa-arrow-alt-circle-down" id="icon-' . $new_cats[$i] . '"></i> '
-                    . $new_cats[$i] . '</button>';
+                . '><i class="bx bxs-layer-plus" ></i> '
+                    . $new_cats[$i] . '<i class="far fa-arrow-alt-circle-down iconDirectory" id="icon-' . $new_cats[$i] . '"></i></button>';
                 $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
                 for ($btnId = 0; $btnId < count($btns); $btnId++) {
                     if ($btns[$btnId]['button']['category'] == $new_cats[$i]) {
@@ -234,7 +235,14 @@ class Extensions {
                         $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
                             . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
                         if ($btns[$btnId]['button']['logo'] != "") {
-                            $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i> ';
+                            $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"';
+                            $res .= ' style="padding: 5px;border-radius: 5px;background-color: ';
+                            if ($btns[$btnId]['button']['logoColor'] != "") {
+                                $res .= $btns[$btnId]['button']['logoColor'];
+                            } else {
+                                $res .= "#b07423";
+                            }
+                            $res .= '"></i> ';
                         }
                         $res .= $btns[$btnId]['button']['text'];
                         $res .= "</button>";
@@ -251,7 +259,14 @@ class Extensions {
                 $res .= '<button class="btnNavMenu" id="' .$btnIdHtml . '" onclick="'
                     . 'displayContextMenu(\'' . $pageIdHtml . '\',\'' . $btnIdHtml . '\')">';
                 if ($btns[$btnId]['button']['logo'] != "") {
-                    $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"></i> ';
+                    $res .= '<i class="' . $btns[$btnId]['button']['logo'] . '"';
+                    $res .= ' style="padding: 5px;border-radius: 5px;background-color: ';
+                    if ($btns[$btnId]['button']['logoColor'] != "") {
+                        $res .= $btns[$btnId]['button']['logoColor'];
+                    } else {
+                        $res .= "#b07423";
+                    }
+                    $res .= '"></i> ';
                 }
                 $res .= $btns[$btnId]['button']['text'];
                 $res .= "</button>";
@@ -301,16 +316,15 @@ class Extensions {
                 $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
                 if ($nb_uis >= 1) {
                     for ($btn = 1; $btn <= $nb_uis; $btn++) {
-                        $pathPhp = $extension['path'] . "/back/panels/php/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-php");
-                        if (file_exists($pathPhp)) {
-                            require $pathPhp;
+                        $pathPhp = $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-php");
+                        if ($pathPhp != "" && file_exists($extension['path'] . "/back/panels/php/" . $pathPhp)) {
+                            require $extension['path'] . "/back/panels/php/" . $pathPhp;
                         }
                     }
                 }
             }
         }
     }
-
     public static function getCssAddedExtensionManager():string {
         $res = "";
         global $cf, $hlp;
@@ -323,7 +337,7 @@ class Extensions {
                 if ($nb_uis >= 1) {
                     for ($btn = 1; $btn <= $nb_uis; $btn++) {
                         $pathCss = $extension['path'] . "/back/panels/css/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-css");
-                        if (file_exists($pathCss)) {
+                        if ($pathCss != $extension['path'] . "/back/panels/css/" && file_exists($pathCss)) {
                             $res .= '<link rel="stylesheet" href="' . $hlp->getMainUrl() . "/" . $pathCss . '">';
                         }
                     }
@@ -333,26 +347,24 @@ class Extensions {
         return $res;
     }
 
-    public static function getHtmlAddedExtensionManager():string {
-        $res = "";
+    public static function getHtmlAddedExtensionManager() {
         global $cf;
-        $extensions = self::$extensionList;
-        for ($i = 0; $i < count($extensions); $i++) {
-            $extension = $extensions[$i];
-            if ($extension['isBack'] && $extension['use'] == "true") {
-                $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
-                $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
-                if ($nb_uis >= 1) {
-                    for ($btn = 1; $btn <= $nb_uis; $btn++) {
-                        $pathHtml = $extension['path'] . "/back/panels/html/" . $cf->getValueFromKeyConf($pathBackManger, "manager-ui-pannel" . $btn . "-html");
-                        if (file_exists($pathHtml)) {
-                            require $pathHtml;
-                        }
-                    }
+        $extensions = self::$extensionsBack;
+        $nb_extensions = count($extensions);
+        $panelsToRequire = array();
+        for ($i = 0; $i < $nb_extensions; $i++) {
+            $extensionX = $extensions[$i];
+            for ($x = 0; $x < count($extensionX); $x++) {
+                $extension = $extensionX[$x];
+                if ($extension['panel']['html'] != "") {
+                    $path = $extension['main-path'] . "/back/panels/html/" . $extension['panel']['html'];
+                    array_push($panelsToRequire, $path);
                 }
             }
         }
-        return $res;
+        for ($i = 0; $i < count($panelsToRequire); $i++) {
+            require $panelsToRequire[$i];
+        }
     }
 
     public static function getJsAddedExtensionManager():string {
@@ -513,6 +525,15 @@ class Extensions {
         return "";
     }
 
+    public static function getConfigExtensionMainFile(string $extensionName):string {
+        for ($i = 0; $i < count(self::$extensionList); $i++) {
+            if (self::$extensionList[$i]['name'] == $extensionName) {
+                return self::$extensionList[$i]['path'] . "/ext.conf";
+            }
+        }
+        return "";
+    }
+
     public static function getManagerUiExtension(string $extensionName):string {
         $res = "";
         for ($i = 0; $i < count(self::$extensionList); $i++) {
@@ -563,6 +584,63 @@ class Extensions {
             }
         }
         return $res;
+    }
+
+    public static function getMainPathExtension(string $extensionName):string {
+        for ($i = 0; $i < count(self::$extensionList); $i++) {
+            if (self::$extensionList[$i]['name'] == $extensionName) {
+                return self::$extensionList[$i]['path'];
+            }
+        }
+        return "";
+    }
+
+    public static function getLangaugeValue(string $extensionName, string $key):string {
+        if (!isset($_SESSION['language'])) {
+            $_SESSION['language'] = "en";
+        }
+        return self::getLangaugeValueFromLang($extensionName, $key, $_SESSION['language']);
+    }
+
+    public static function getLangaugeValueFromLang(string $extensionName, string $key, string $lang):string {
+        global $cf;
+        $targetLanguage = "";
+        $firstAvailableLang = "";
+        $mainExtConf = self::getConfigExtensionMainFile($extensionName);
+        $availableLanguages = explode(",", $cf->getValueFromKeyConf($mainExtConf, "lang"));
+        $mainPath = self::getMainPathExtension($extensionName);
+
+        $nb_languages = count($availableLanguages);
+        for ($i = 0; $i < $nb_languages; $i++) {
+            if ($lang == $availableLanguages[$i]) {
+                $targetLanguage = $availableLanguages[$i];
+                break;
+            }
+            if ($availableLanguages[$i] != "") {
+                if ($firstAvailableLang == "") {
+                    $firstAvailableLang = $availableLanguages[$i];
+                }
+            }
+        }
+        if ($targetLanguage == "") {
+            $targetLanguage = $firstAvailableLang;
+            if ($targetLanguage == "") {
+                return "No targeted language";
+            }
+        }
+
+        $pathLang = $mainPath ."/language/" . $targetLanguage . ".conf";
+        return $cf->getValueFromKeyConf($pathLang, $key);
+    }
+
+    public static function updateLangValue(string $extensionName, string $key, string $lang, string $value) {
+        global $cf;
+        $cf->addValueFormKeyConf(self::getLanguageConfPath($extensionName, $lang), $key, $value);
+    }
+
+    public static function getLanguageConfPath(string $extensionName, string $lang):string {
+        $mainPath = self::getMainPathExtension($extensionName);
+        return $mainPath ."/language/" . $lang . ".conf";
     }
 }
 
