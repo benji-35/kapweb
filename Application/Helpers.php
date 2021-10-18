@@ -163,7 +163,7 @@ class Helpers {
         . "p3-children=\n";
 
     /*
-            INITIALIZE HELPERS
+        INITIALIZE HELPERS
     */
 
     function __construct() {}
@@ -376,6 +376,23 @@ class Helpers {
             return $resStm['id'];
         }
         return 1;
+    }
+
+    public static function getLangWorldMainFileFromLanguage(string $lang, string $key):string {
+        global $cf;
+        $path = "KW/kapweb_inits/ressources/languages/" . $lang . "Lang.conf";
+        $res = "";
+        if (file_exists($path)) {
+            $res = $cf->getValueFromKeyConf($path, $key);
+        }
+        return $res;
+    }
+
+    public static function getLangWorldMainFile(string $key):string {
+        if (!isset($_SESSION['language'])) {
+            $_SESSION['language'] = "en";
+        }
+        return self::getLangWorldMainFileFromLanguage($_SESSION['language'], $key);
     }
 
     /*
@@ -1444,6 +1461,7 @@ class Helpers {
 
         return $res;
     }
+
     /*
             ACCOUNT MANAGING
     */
@@ -1799,6 +1817,30 @@ class Helpers {
         $db->disconnect();
     }
 
+    public static function getAccountIntels():array {
+        global $db;
+        if (self::isConnectedSu()) {
+            $connect = $db->connect();
+            $stm = $connect->prepare("SELECT * FROM su_users WHERE email=?");
+            $stm->execute(array($_SESSION['suemail']));
+            $resStm = $stm->fetch();
+            $db->disconnect();
+            if ($resStm) {
+                return $resStm;
+            }
+        }
+        if (self::isConnectedNo()) {
+            $connect = $db->connect();
+            $stm = $connect->prepare("SELECT * FROM no_users WHERE email=?");
+            $stm->execute(array($_SESSION['no_email']));
+            $resStm = $stm->fetch();
+            $db->disconnect();
+            if ($resStm) {
+                return $resStm;
+            }
+        }
+        return array();
+    }
 
     /*
             COOKIES MANAGING

@@ -4,6 +4,53 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
+.optionsBar {
+    background-color: rgb(36, 36, 36);
+    height: 50px;
+    width: 100%;
+    display: block;
+}
+
+.optionsBarConnect {
+    float: right;
+    display: flex;
+}
+
+.connectIntels {
+    position: relative;
+    top: 50%;
+    transform: translateY(-75%);
+    display: contents;
+    color: white;
+}
+
+.btnAccount {
+    display: flex;
+    border: none;
+    background-color: transparent;
+    color: white;
+    margin-right: 25px;
+}
+
+.btnAccount:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.315);
+}
+
+.logoutButton {
+    background-color: transparent;
+    border: none;
+    color: red;
+    font-size: xx-large;
+    height: 45px;
+    width: 45px;
+}
+
+.logoutButton:hover {
+    cursor: pointer;
+    color: rgb(145, 17, 17);
+}
+
 .content {
     position: absolute;
     width:100%;
