@@ -68,7 +68,7 @@
     if (isset($_POST['chgLanguage'])) {
         $_SESSION['language'] = $_POST['chgLanguage'];
         $hlp->changeSuAccountLanguage($_POST['chgLanguage'], $_SESSION['suemail']);
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("Refresh:" . 0, $_SERVER['PHP_SELF']);
     }
 
     for ($i = 0; $i < count($admins); $i++) {

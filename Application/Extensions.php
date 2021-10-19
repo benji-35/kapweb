@@ -231,6 +231,14 @@ class Extensions {
                 $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
                 for ($btnId = 0; $btnId < count($btns); $btnId++) {
                     if ($btns[$btnId]['button']['category'] == $new_cats[$i]) {
+                        $textButton = $btns[$btnId]['button']['text'];
+                        $pathBack = $btns[$btnId]['main-path'] . "/back/manager-ui.conf";
+                        if ($cf->getValueFromKeyConf($pathBack, "button-translate") == "true") {
+                            $resTrans = self::getLangaugeValue($btns[$btnId]['extensionName'], "btn" . $btns[$btnId]['id'] . "-text");
+                            if ($resTrans != "") {
+                                $textButton = $resTrans;
+                            }
+                        }
                         $path_manager_ui = $btns[$btnId]['main-path'] . "/back/manager-ui.conf";
                         $btnIdHtml = $btns[$btnId]['folderName'] . "-" . $btns[$btnId]['id'];
                         $pageIdHtml = $cf->getValueFromKeyConf($path_manager_ui, "manager-ui-pannel" . ($btns[$btnId]['id']) . "-id");
@@ -246,7 +254,7 @@ class Extensions {
                             }
                             $res .= '"></i> ';
                         }
-                        $res .= $btns[$btnId]['button']['text'];
+                        $res .= $textButton;
                         $res .= "</button>";
                     }
                 }
@@ -278,7 +286,7 @@ class Extensions {
     }
 
     public static function getButtonFromCat(string $catName):string {
-        global $hlp;
+        global $hlp, $cf;
 
         $res = "";
         $extensionsBack = self::$extensionsBack;
@@ -287,6 +295,13 @@ class Extensions {
                 $backExt = $extensionsBack[$i][$backId];
                 $pathBack = $backExt['main-path'] . "/back/manager-ui.conf";
                 if ($hlp->haveAccesTo($backExt['access']) && $backExt['button']['category'] == $catName) {
+                    $textButton = $backExt['button']['text'];
+                    if ($cf->getValueFromKeyConf($pathBack, "button-translate") == "true") {
+                        $resTrans = self::getLangaugeValue($backExt['extensionName'], "btn" . $backExt['id'] . "-text");
+                        if ($resTrans != "") {
+                            $textButton = $resTrans;
+                        }
+                    }
                     $iconBeforeBtn = "";
                     if ($backExt['button']['logo'] != "") {
                         $iconBeforeBtn = '<i class="' . $backExt['button']['logo'] . '"></i> ';
@@ -296,7 +311,7 @@ class Extensions {
                         . $backExt['folderName'] . '-' . $backExt['id'] . '" onclick="'
                         . $callActiveFunction
                         . '">'
-                        . $iconBeforeBtn . $backExt['button']['text'] . '</button>';
+                        . $iconBeforeBtn . $textButton . '</button>';
                 }
             }
         }
@@ -613,25 +628,27 @@ class Extensions {
         $mainPath = self::getMainPathExtension($extensionName);
 
         $nb_languages = count($availableLanguages);
+
         for ($i = 0; $i < $nb_languages; $i++) {
-            if ($lang == $availableLanguages[$i]) {
+            $tryFile = $mainPath ."/languages/" . $availableLanguages[$i] . ".conf";
+            if ($lang == $availableLanguages[$i] && file_exists($tryFile)) {
                 $targetLanguage = $availableLanguages[$i];
                 break;
             }
-            if ($availableLanguages[$i] != "") {
+            if ($availableLanguages[$i] != "" && file_exists($tryFile)) {
                 if ($firstAvailableLang == "") {
                     $firstAvailableLang = $availableLanguages[$i];
                 }
             }
         }
+        $pathLang = $mainPath ."/languages/" . $targetLanguage . ".conf";
         if ($targetLanguage == "") {
             $targetLanguage = $firstAvailableLang;
             if ($targetLanguage == "") {
-                return "No targeted language";
+                return "No targeted language or file does not exists";
             }
+            $pathLang = $mainPath ."/languages/" . $targetLanguage . ".conf";
         }
-
-        $pathLang = $mainPath ."/languages/" . $targetLanguage . ".conf";
         return $cf->getValueFromKeyConf($pathLang, $key);
     }
 
