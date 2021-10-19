@@ -976,6 +976,7 @@ class Helpers {
             "navMenuFiles",
             "Redirects",
             "Images",
+            "refreshMedias",
         );
         $extentions = $ext->getExtensionsBackList();
         for ($extId = 0; $extId < count($extentions); $extId++) {
@@ -1194,15 +1195,34 @@ class Helpers {
         global $db;
         $connect = $db->connect();
         $res = array();
-        $stm = $connect->prepare("SELECT * FROM kp_redirects WHERE last_path=? AND deleted=0");
+        $stm = $connect->prepare("SELECT * FROM kp_redirects WHERE new_path=? AND deleted=0");
         $stm->execute(array($urlStr));
         $resStm = $stm->fetch();
         $db->disconnect();
         if ($resStm) {
-            $totNUrl = $resStm['new_path'];
-            $res = explode("/", $totNUrl);
+            $nNumberHits = $resStm['used'] + 1;
+            $stm = $connect->prepare("UPDATE kp_redirects SET used=? WHERE new_path=?");
+            $stm->execute(array($nNumberHits, $urlStr));
+            $totNUrl = $resStm['last_path'];
+            if ($totNUrl == "/") {
+                return array("");
+            }
+            $resTmp = explode("/", $totNUrl);
+            for ($i = 0; $i < count($resTmp); $i++) {
+                if (isset($resTmp) && $resTmp[$i] != "") {
+                    array_push($res, $resTmp[$i]);
+                }
+            }
         }
         return $res;
+    }
+
+    public static function reinitRedirectHits(int $idReidrect) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE kp_redirects SET used=0 WHERE id=?");
+        $stm->execute(array($idReidrect));
+        $db->disconnect();
     }
 
     public static function getPathPage($url):string {
@@ -1273,8 +1293,10 @@ class Helpers {
             $res = $stm->fetch();
             $db->disconnect();
             if ($res) {
+                var_dump("oups1");
                 return self::getPathPage(array("pageNotFound"));
             } else {
+                var_dump("oups2");
                 $_SESSION['cssPath'] = self::getMainUrl() . "/KW/kapweb_inits/ressources/css/pageNotFound.css";
                 return "KW/kapweb_inits/pages/pageNotFound.php";
             }

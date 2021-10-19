@@ -319,6 +319,10 @@
             $hlp->updateDeletedRedirect($allRedirects[$i]['id'], 0);
             header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
+        if (isset($_POST['reinitHistRedirect-' . $allRedirects[$i]['id']])) {
+            $hlp->reinitRedirectHits($allRedirects[$i]['id']);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
+        }
     }
 ?>
 
@@ -370,6 +374,15 @@
                 <p class="cantSelectText"><?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?></p>
             </div>
             <div class="optionsBarConnect">
+                <?php
+                    if ($hlp->haveAccesTo("refreshMedias")) {
+                ?>
+                <button class="buttonRefreshMedias" title="<?=$hlp->getLangWorldMainFile("refreshMedias")?>" onclick="hideShowRefreshMedias()">
+                    <i class='bx bxs-bolt bx-sm' style='color:#ffffff'></i>
+                </button>
+                <?php
+                    }
+                ?>
                 <div class="connectIntels">
                     <button class="btnAccount" onclick="hideShowSoftwareIntels()">
                         <i class='bx bxs-user bx-sm' style='color:#ffffff;position: relative;transform: translateY(20%);'></i>
@@ -389,7 +402,7 @@
                 <?php
                     if ($hlp->haveAccesTo("Dashboard")) {
                 ?>
-                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class='bx bxs-dashboard iconDirectory'></i><?=" " . $hlp->getLangWorldMainFile("dashboard")?></button>
+                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class='bx bxs-dashboard' style="background-color: #0a0080;padding: 5px;border-radius: 5px"></i><?=" " . $hlp->getLangWorldMainFile("dashboard")?></button>
                 <?php
                     }
                 ?>
@@ -1418,28 +1431,29 @@
                                         <?php
                                             if ($allRedirects[$i]['deleted'] == 1) {
                                         ?>
-                                            <i class='bx bxs-error-circle bx-sm' style='color:#ff0000;position: absolute;transform: translate(-105%, 50%);'></i>
+                                            <i class='bx bxs-error-circle bx-sm' style='color:#ff0000;position: absolute;transform: translate(-105%, 50%);' title="<?=$hlp->getLangWorldMainFile("w-deleted")?>"></i>
                                         <?php
                                             }
                                         ?>
                                     </td>
                                     <td class="lastListingRedirects"><?=$allRedirects[$i]['last_path']?></td>
                                     <td class="newListingRedirects"><?=$allRedirects[$i]['new_path']?></td>
-                                    <td class="useListingRedirects"><?=$allRedirects[$i]['used'] . strtolower($hlp->getLangWorldMainFile("listingRedirects-use"))?></td>
+                                    <td class="useListingRedirects"><?=$allRedirects[$i]['used'] . " " . strtolower($hlp->getLangWorldMainFile("listingRedirects-use"))?></td>
                                     <td class="actionListRedirects">
                                         <form method="POST">
                                             <div class="btn-block">
                                                 <?php
                                                     if ($allRedirects[$i]['deleted'] == 0) {
                                                 ?>
-                                                <button name="<?="deleteRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-delete")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-trash bx-md'></i></button>
+                                                <button name="<?="deleteRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-delete")?>"><i class='bx bx-trash bx-md'></i></button>
                                                 <?php
                                                     } else {
                                                 ?>
-                                                <button name="<?="restoreRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-restore")?>" name="<?="editSuAccount-" . $admins[$i]['uid']?>"><i class='bx bx-copy-alt bx-md'></i></button>
+                                                <button name="<?="restoreRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-restore")?>"><i class='bx bx-copy-alt bx-md'></i></button>
                                                 <?php
                                                     }
                                                 ?>
+                                                <button name="<?="reinitHistRedirect-" . $allRedirects[$i]['id']?>" title="<?=$hlp->getLangWorldMainFile("listingRedirects-reinit")?>"><i class='bx bxs-exit bx-md'></i></button>
                                             </div>
                                         </form>
                                     </td>
@@ -1480,6 +1494,15 @@
                         ?>
                     </select>
                 </form>
+            </div>
+        </div>
+        <div id="refreshMedias" style="display: none;">
+            <div class="contentSoftwareIntels">
+                <p>You can refresh medias by clicking buttons behind</p>
+                <button class="btnRefreshMedia"><i class='bx bxs-error-alt bx-sm' style='color:#ffcc00'></i>Refresh Images</button>
+                <button class="btnRefreshMedia"><i class='bx bxs-error-circle bx-sm' style='color:#ff7600'></i>Refresh Videos</button>
+                <button class="btnRefreshMedia"><i class='bx bxs-error bx-sm' style='color:#ff0000'></i>Refresh Audios</button>
+                <button class="btnRefreshMedia"><i class='bx bxs-radiation bx-sm' style='color:#ff00e0'></i>Refresh all medias</button>
             </div>
         </div>
         <?php

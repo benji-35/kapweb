@@ -473,6 +473,14 @@ th {
     color: gray;
 }
 
+#refreshMedias {
+    position: absolute;
+    width: 350px;
+    right: 0;
+    background-color: #313131;
+    color: gray;
+}
+
 .contentSoftwareIntels {
     width: 80%;
     transform: translateX(-50%);
@@ -522,4 +530,34 @@ th {
     position: absolute;
     top: 0;
     right: 0;
+}
+
+.buttonRefreshMedias {
+    margin-right: 15px;
+    background-color: transparent;
+    border: none;
+}
+
+.buttonRefreshMedias:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.315);
+}
+
+.btnRefreshMedia {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    margin-bottom: 10px;
+    text-align: left;
+    display: flex;
+    color: rgb(199, 199, 199);
+}
+
+.btnRefreshMedia i {
+    margin-right: 5px;
+}
+
+.btnRefreshMedia:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.315);
 }

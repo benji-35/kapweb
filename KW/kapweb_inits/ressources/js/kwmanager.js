@@ -134,7 +134,17 @@ function unselectAllAccessNew(nbAccess) {
 function hideShowSoftwareIntels() {
     if (document.getElementById("softwareIntels").style.display=="none") {
         document.getElementById("softwareIntels").style.display = "block";
+        document.getElementById("refreshMedias").style.display = "none";
     } else {
         document.getElementById("softwareIntels").style.display = "none";
+    }
+}
+
+function hideShowRefreshMedias() {
+    if (document.getElementById("refreshMedias").style.display=="none") {
+        document.getElementById("refreshMedias").style.display = "block";
+        document.getElementById("softwareIntels").style.display = "none";
+    } else {
+        document.getElementById("refreshMedias").style.display = "none";
     }
 }

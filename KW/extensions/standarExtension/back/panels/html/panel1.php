@@ -21,6 +21,10 @@
                     <td><p>Contact Me</p></td>
                     <td><p>With contact me element, you can add easly and quickly a contact me form</p></td>
                 </tr>
+                <tr>
+                    <td><p>Form creator</p></td>
+                    <td><p>With <a href="<?=$hlp->getMainUrl() . "/KW/manager&pageBtn=standarExtension-2&navMenu=Devcompagnie-idNavMenu"?>">Form creator</a> you can create easly new forms and edit forms</p></td>
+                </tr>
             </tbody>
         </table>
         <div class="description-StandarExtension">
