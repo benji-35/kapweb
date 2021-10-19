@@ -1,11 +1,5 @@
-Header set Access-Control-Allow-Origin "https://kit.fontawesome.com/a076d05399.js"
-Header add Access-Control-Allow-Headers "origin, x-requested-with, content-type"
-Header add Access-Control-Allow-Methods "PUT, GET, POST, DELETE, OPTIONS"
-
 RewriteEngine on
 
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_DIRNAME} !-d
 RewriteRule ^(.*)$ index.php?url=$1 [NC,L]
-
-Header add Access-Control-Allow-Origin
