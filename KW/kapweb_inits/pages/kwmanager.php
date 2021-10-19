@@ -396,8 +396,7 @@
                 <?php
                     $accesAdmin = $hlp->haveAccesTo("Administrors");
                     $accesUsers = $hlp->haveAccesTo("Users");
-                    $accesAccess = $hlp->haveAccesTo("Access");
-                    if ($hlp->haveExtensionAccesFromMainClass("navMenuAdmin") || $accesAdmin || $accesUsers || $accesAccess) {
+                    if ($hlp->haveExtensionAccesFromMainClass("navMenuAdmin") || $accesAdmin || $accesUsers) {
                 ?>
                     <button class="btnNavMenu" id="navMenu0" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin', 'navMenu0')"><i class='bx bx-rocket'></i><?=" " . $hlp->getLangWorldMainFile("adminMain")?><i id="iconAdmin" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
@@ -413,11 +412,6 @@
                         if ($hlp->haveAccesTo("Users")) {
                     ?>
                         <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="bx bx-user" style="background-color: red;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin2")?></button>
-                    <?php
-                        }
-                        if ($hlp->haveAccesTo("Access")) {
-                    ?>
-                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="bx bx-user" style="background-color: blue;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin3")?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuAdmin");
@@ -454,13 +448,11 @@
                     ?>
                 </div>
                 <?php
-                    $accessCookies = $hlp->haveAccesTo("Cookies");
                     $accessDb = $hlp->haveAccesTo("Database");
                     $accessDeletedDB = $hlp->haveAccesTo("Deleted Database");
-                    $accessExt = $hlp->haveAccesTo("Extensions");
                     $accessImgs = $hlp->haveAccesTo("Images");
 
-                    if ($accessImgs || $accessCookies || $accessDb || $accessDeletedDB || $accessExt || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
+                    if ($accessImgs || $accessDb || $accessDeletedDB || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
                 <button class="btnNavMenu" id="navMenu2" onclick="displayNavMenu('navMenuFiles', 'iconFiles', 'navMenu2')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
@@ -468,19 +460,9 @@
                 ?>
                 <div class="closeMenuNav" id="navMenuFiles">
                     <?php
-                        if ($accessCookies) {
-                    ?>
-                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="bx bx-cookie" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" " . $hlp->getLangWorldMainFile("cookies")?></button>
-                    <?php
-                        }
                         if ($accessImgs) {
                     ?>
                         <button  id="btnImages"class="btnNavMenu" onclick="displayContextMenu('imagesContext', 'btnImages')"><i class="bx bx-image-alt" style="padding: 5px;border-radius: 5px;background-color: #8d11a7;"></i><?=" " . $hlp->getLangWorldMainFile("w-images")?></button>
-                    <?php
-                        }
-                        if ($accessExt) {
-                    ?>
-                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="bx bx-git-branch" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" " . $hlp->getLangWorldMainFile("extensions")?></button>
                     <?php
                         }
                         if ($accessDb) {
@@ -496,6 +478,34 @@
                     ?>
                     <?php
                         echo $ext->getButtonFromCat("navMenuFiles");
+                    ?>
+                </div>
+                <?php
+                    $accesAccess = $hlp->haveAccesTo("Access");
+                    $accessCookies = $hlp->haveAccesTo("Cookies");
+                    $accessExt = $hlp->haveAccesTo("Extensions");
+
+                    if ($accessExt || $accessCookies || $accesAccess || $hlp->haveExtensionAccesFromMainClass("navMenuSystem")) {
+                ?>
+                    <button class="btnNavMenu" id="navMenu3" onclick="displayNavMenu('navMenuSystem', 'iconSystem', 'navMenu3')"><i class='bx bx-microchip'></i><?=" " . $hlp->getLangWorldMainFile("w-system")?><i id="iconSystem" class="bx bx-down-arrow iconDirectory"></i></button>
+                <?php
+                    }
+                ?>
+                <div class="closeMenuNav" id="navMenuSystem">
+                    <?php
+                        if ($accesAccess) {
+                    ?>
+                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="bx bx-user" style="background-color: blue;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin3")?></button>
+                    <?php
+                        } if ($accessExt) {
+                    ?>
+                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="bx bx-git-branch" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" " . $hlp->getLangWorldMainFile("extensions")?></button>
+                    <?php
+                        } if ($accessCookies) {
+                    ?>
+                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="bx bx-cookie" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" " . $hlp->getLangWorldMainFile("cookies")?></button>
+                    <?php
+                        }
                     ?>
                 </div>
                 <?php
