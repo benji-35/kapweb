@@ -9,7 +9,7 @@ class Helpers {
     private static $db = NULL;
     private static $cf = NULL;
 
-    private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html lang=\"<?=\$hlp->getLanguageShortFromId(\$_SESSION['lang'])?>\">\n"
+    private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html lang=\"<?=\$_SESSION['language']?>\">\n"
         . "\t<head>\n\t\t<title><?=\$_SESSION['titlePage']?></title>\n"
         . "\t\t<meta charset=\"utf-8\">\n"
         . "\t\t<?php\n"
@@ -396,6 +396,9 @@ class Helpers {
         $path = "KW/kapweb_inits/ressources/languages/" . $lang . "Lang.conf";
         $res = "";
         if (file_exists($path)) {
+            $res = $cf->getValueFromKeyConf($path, $key);
+        } else {
+            $path = "KW/kapweb_inits/ressources/languages/enLang.conf";
             $res = $cf->getValueFromKeyConf($path, $key);
         }
         return $res;
@@ -1227,7 +1230,7 @@ class Helpers {
             $res = $resStm['path'];
             $nameGet = $resStm['name'];
             $_SESSION['titlePage'] =  $resStm['title'];
-            $_SESSION['lang'] = $resStm['language'];
+            $_SESSION['language'] = self::getLanguageShortFromId($resStm['language']);
             if ($resStm['builtin'] == 0) {
                 $_SESSION['pageName'] = $resStm['name'];
             }
@@ -1976,6 +1979,23 @@ class Helpers {
         }
     }
 
+    public static function changeSuAccountLanguage(string $lang, string $email) {
+        global $db;
+        $langId = self::getLanguageIdFromShort($lang);
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE su_users SET lang=? WHERE email=?");
+        $stm->execute(array($langId, $email));
+        $db->disconnect();
+    }
+
+    public static function changeNoAccountLanguage(string $lang, string $email) {
+        global $db;
+        $langId = self::getLanguageIdFromShort($lang);
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE no_users SET lang=? WHERE email=?");
+        $stm->execute(array($langId, $email));
+        $db->disconnect();
+    }
 
     public static function disableSuAccount(int $uid) {
         global $db;

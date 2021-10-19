@@ -475,7 +475,9 @@ th {
 
 .contentSoftwareIntels {
     width: 80%;
-    transform: translateX(10%);
+    transform: translateX(-50%);
+    position: relative;
+    left: 50%;
 }
 
 .optionsBarButtons {
@@ -485,4 +487,39 @@ th {
 
 .optionsBarButtons p{
     padding-left: 15px;
+}
+
+#loaderPage {
+    position: fixed;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#loaderPage.hidden {
+    animation: fadeOutLoader 1s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fadeOutLoader {
+    100% {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+.cantSelectText {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.formChangeLang {
+    position: absolute;
+    top: 0;
+    right: 0;
 }

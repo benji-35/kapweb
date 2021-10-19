@@ -65,6 +65,11 @@
         $cf->addValueFormKeyConf($cf->getFilesConfig(), "website_name", $_POST['newWebsiteName']);
         header("location: " . $hlp->getMainUrl() . "/KW/manager");
     }
+    if (isset($_POST['chgLanguage'])) {
+        $_SESSION['language'] = $_POST['chgLanguage'];
+        $hlp->changeSuAccountLanguage($_POST['chgLanguage'], $_SESSION['suemail']);
+        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+    }
 
     for ($i = 0; $i < count($admins); $i++) {
         if (isset($_POST['deleteSuAccount-' . $admins[$i]['uid']])) {
@@ -315,6 +320,12 @@
 
 <!DOCTYPE html>
 <html>
+    <script>
+        window.addEventListener("load", function () {
+            const loader = this.document.getElementById("loaderPage");
+            loader.classList.add("hidden");
+        })
+    </script>
     <head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
@@ -345,10 +356,14 @@
         ?>
     </head>
     <body>
+        <div id="loaderPage">
+            <i class='bx bx-loader-circle bx-spin bx-lg'></i>
+            <h2 class="cantSelectText">Loading...</h2>
+        </div>
         <div class="optionsBar">
             <div class="optionsBarButtons">
                 <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-website-icon")?>" style="height: 50px;width: auto;">
-                <p><?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?></p>
+                <p class="cantSelectText"><?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?></p>
             </div>
             <div class="optionsBarConnect">
                 <div class="connectIntels">
@@ -451,7 +466,7 @@
                     <?php
                         if ($accessCookies) {
                     ?>
-                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="bx bx-save" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" " . $hlp->getLangWorldMainFile("cookies")?></button>
+                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="bx bx-cookie" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" " . $hlp->getLangWorldMainFile("cookies")?></button>
                     <?php
                         }
                         if ($accessImgs) {
@@ -461,7 +476,7 @@
                         }
                         if ($accessExt) {
                     ?>
-                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="bx bx-extension" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" " . $hlp->getLangWorldMainFile("extensions")?></button>
+                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="bx bx-git-branch" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" " . $hlp->getLangWorldMainFile("extensions")?></button>
                     <?php
                         }
                         if ($accessDb) {
@@ -1434,11 +1449,23 @@
                 ?>
             </div>
         </div>
-        <div id="softwareIntels" style="display: none;" onclick="hideShowSoftwareIntels()">
+        <div id="softwareIntels" style="display: none;">
             <div class="contentSoftwareIntels">
-                <p><?="Software version: " . $cf->getValueFromKeyConf($cf->getFilesConfig(), "software-version")?></p>
-                <a href="<?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "help-link")?>" style="color: #a1a1a1;" target="_blank">Help</a>
-                <p><?="email used: " . $_SESSION['suemail']?></p>
+                <p><?=$hlp->getLangWorldMainFile("softwareVersion") . $cf->getValueFromKeyConf($cf->getFilesConfig(), "software-version")?></p>
+                <a href="<?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "help-link")?>" style="color: #a1a1a1;" target="_blank"><?=$hlp->getLangWorldMainFile("w-help")?></a>
+                <p><?=$hlp->getLangWorldMainFile("emailUsed") . $_SESSION['suemail']?></p>
+                <form method="POST" class="formChangeLang">
+                    <select name="chgLanguage" class="selectLang" onchange="this.form.submit()">
+                        <option hidden selected><?=strtoupper($_SESSION['language'])?></option>
+                        <?php
+                            for ($i = 0; $i < count($languages); $i++) {
+                        ?>
+                            <option value="<?=strtolower($languages[$i]['name_short'])?>"><?=strtoupper($languages[$i]['name_short'])?></option>
+                        <?php
+                            }
+                        ?>
+                    </select>
+                </form>
             </div>
         </div>
     </body>

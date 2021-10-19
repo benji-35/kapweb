@@ -629,7 +629,7 @@ class Extensions {
             }
         }
 
-        $pathLang = $mainPath ."/language/" . $targetLanguage . ".conf";
+        $pathLang = $mainPath ."/languages/" . $targetLanguage . ".conf";
         return $cf->getValueFromKeyConf($pathLang, $key);
     }
 
