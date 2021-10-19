@@ -125,6 +125,9 @@ $db->initDb($hlp->getConnectionConfig());
 $canConnect = $db->canConnect();
 $ext->init_extensions();
 
+if (isset($_SESSION['pageId'])) {
+    unset($_SESSION['pageId']);
+}
 if ($hlp->haveConnectionDbIntels() == false || $canConnect == false) {
     require "KW/kapweb_inits/pages/connection_db.php";
 } else {

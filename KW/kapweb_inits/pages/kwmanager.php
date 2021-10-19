@@ -1,6 +1,6 @@
 <?php
     global $db, $hlp, $cf, $ext, $ep;
-    
+
     if ($hlp->isConnectedSu() == false)
         header("location: " . $hlp->getMainUrl() . "/KW");
     if (!isset($_SESSION['suemail']) || !isset($_SESSION['supwd']))
@@ -22,7 +22,7 @@
         $resCheck = $hlp->addPage($_POST['nameFirstPage'], "/", $_POST['titleFirstPage'], true, $_POST['selectLangPageFirst']);
         if ($resCheck == false)
             $_SESSION['pageError'] = "An error occured while create your first page";
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnPages");
     }
     if (isset($_POST['disconnect'])) {
         $hlp->disconnectSelf();
@@ -36,11 +36,11 @@
         $resCheck = $hlp->addPage($_POST['newPageName'], $nurl, $_POST['newTitlePage'], false, $_POST['selectLangPageCreation']);
         if ($resCheck == false)
             $_SESSION['pageError'] = "Page name already taken please get another name for your page";
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnPages");
     }
     if (isset($_POST['deleteAllPages'])) {
         $hlp->deleteAllPages();
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDashboard");
     }
     if (isset($_POST['toOKw'])) {
         $hlp->deleteAllPages();
@@ -63,7 +63,7 @@
     }
     if (isset($_POST['changeNameWebsite'])) {
         $cf->addValueFormKeyConf($cf->getFilesConfig(), "website_name", $_POST['newWebsiteName']);
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDashboard");
     }
     if (isset($_POST['chgLanguage'])) {
         $_SESSION['language'] = $_POST['chgLanguage'];
@@ -82,11 +82,11 @@
         }
         if (isset($_POST['unbanSuAccount-' . $admins[$i]['uid']])) {
             $hlp->unbanSuUserAccount($admins[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnAdmin");
         }
         if (isset($_POST['restoreSuAccount-' . $admins[$i]['uid']])) {
             $hlp->restoreSuUserAccount($admins[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnAdmin");
         }
         if (isset($_POST['disableSuAccount-' . $admins[$i]['uid']])) {
             $hlp->disableSuAccount($admins[$i]['uid']);
@@ -94,33 +94,33 @@
         }
         if (isset($_POST['enableSuAccount-' . $admins[$i]['uid']])) {
             $hlp->enableSuAccount($admins[$i]['uid']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnAdmin");
         }
     }
 
     for ($i = 0; $i < count($users); $i++) {
         if (isset($_POST['deleteUser-' . $users[$i]['uid']])) {
             $hlp->deleteNoUserAccount($users[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnUsers");
         }
         if (isset($_POST['banUser-' . $users[$i]['uid']])) {
             $hlp->banNoUserAccount($users[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnUsers");
         }
         if (isset($_POST['unbanNoUser-' . $users[$i]['uid']])) {
             $hlp->unbanNoUserAccount($users[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnUsers");
         }
         if (isset($_POST['restoreNoUser-' . $users[$i]['uid']])) {
             $hlp->restoreNoUserAccount($users[$i]['email']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnUsers");
         }
     }
 
     for ($i = 0; $i < count($pages); $i++) {
         if (isset($_POST['deletePage-' . $pages[$i]['name']])) {
             $hlp->deletePage($pages[$i]['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnPages");
         }
         if (isset($_POST['savePage-' . $pages[$i]['name']])) {
             if ($_POST['connectionType-' . $pages[$i]['name']] == 0 && ($pages[$i]['needConnect'] == 1 || $pages[$i]['needConnectSu'] == 1)) {
@@ -139,47 +139,50 @@
                 $stm->execute(array($pages[$i]['name']));
                 $db->disconnect();
             }
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnPages");
         }
     }
     for ($i = 0; $i < count($deletedPages); $i++) {
         if (isset($_POST['restorePage-' . $deletedPages[$i]['name']])) {
             $hlp->restorePage($deletedPages[$i]['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDeletedPages");
         }
         if (isset($_POST['finalDeletePage-' . $deletedPages[$i]['name']])) {
             $hlp->finalDeletePages($deletedPages[$i]['name'], $deletedPages[$i]['path'], $deletedPages[$i]['pathCss'], $deletedPages[$i]['pathJs']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDeletedPages");
         }
     }
 
     for ($i = 0; $i < count($tables); $i++) {
         if (isset($_POST['deleteTable-' . $tables[$i]['name']])) {
             $hlp->deleteTable($tables[$i]['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDb");
         }
     }
 
     for ($i = 0; $i < count($dTables); $i++) {
         if (isset($_POST['finalyDeleteTable-' . $dTables[$i]['name']])) {
             $hlp->finalDeleteTable($dTables[$i]['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDeletedDb");
         }
         if (isset($_POST['restoreTable-' . $dTables[$i]['name']])) {
             $hlp->restoreTable($dTables[$i]['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDeletedDb");
         }
     }
 
     for ($i = 0; $i < count($cookies); $i++) {
         if (isset($_POST['deleteCookie-' . $cookies[$i]['name']])) {
             $hlp->deleteCookie($cookies[$i]['name']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnCookies");
         }
         if (isset($_POST['restoreCookie-' . $cookies[$i]['name']])) {
             $hlp->restoreCookie($cookies[$i]['name']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnCookies");
         }
         if (isset($_POST['finalDeleteCookie-' . $cookies[$i]['name']])) {
             $hlp->finalDeleteCookie($cookies[$i]['name']);
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnCookies");
         }
     }
 
@@ -206,7 +209,7 @@
 
         $editLine = $nameArg . " " . $_POST['tableFirstValue'] . $nullable . $opts;
         $hlp->addTable($nameTable, $editLine, $nameArg, $description);
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDb");
     }
 
     if (isset($_POST['newCookie'])) {
@@ -214,10 +217,10 @@
         unset($_SESSION['cookiesError']);
         if ($resCheck == false)
             $_SESSION['cookiesError'] = "The cookie name is already taken";
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnCookies");
     }
 
-    if (isset($_POST['nawAdmin'])) {
+    if (isset($_POST['newAdminSubmit'])) {
         unset($_SESSION['addAdminError']);
         $errorsCreateAdmin = array(
             "This email is already taken in account",
@@ -246,12 +249,12 @@
         } else {
             $_SESSION['addAdminError'] = "Le mot de passe n'est pas le même que le mot de passe de confirmation";
         }
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnAdmin");
     }
 
     if (isset($_POST['saveCurrUrl'])) {
         $cf->addValueFormKeyConf($cf->getFilesConfig(), "main_url", $_POST['currUrl']);
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnDashboard");
     }
 
     $need_ids = false;
@@ -267,15 +270,15 @@
         $extension = $extensionsList[$i];
         if (isset($_POST['extStop-' . $extension['folder']])) {
             $ext->stopExtension($extension['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pagebtn=btnExtensionList");
         }
         if (isset($_POST['extStart-' . $extension['folder']])) {
             $ext->startExtension($extension['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pagebtn=btnExtensionList");
         }
         if (isset($_POST['extDelete-' . $extension['folder']])) {
             $ext->removeExtensionFromUsingList($extension['name']);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pagebtn=btnExtensionList");
         }
     }
 
@@ -293,7 +296,7 @@
         }
         $newAccessIntel = array("name" => $_POST['nameNewAccess'], "access" => $strAccess);
         $hlp->addNewAcces($newAccessIntel);
-        header("location: " . $hlp->getMainUrl() . "/KW/manager");
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnAccess");
     }
 
     $ext->getPhpExtensionManager();
@@ -304,16 +307,17 @@
         } else {
             $hlp->createRedirection($_POST['lastRedirect'], $_POST['newRedirect']);
         }
+        header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnRedirects");
     }
 
     for ($i = 0; $i < count($allRedirects); $i++) {
         if (isset($_POST['deleteRedirect-' . $allRedirects[$i]['id']])) {
             $hlp->updateDeletedRedirect($allRedirects[$i]['id'], 1);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnRedirects");
         }
         if (isset($_POST['restoreRedirect-' . $allRedirects[$i]['id']])) {
             $hlp->updateDeletedRedirect($allRedirects[$i]['id'], 0);
-            header("location: " . $hlp->getMainUrl() . "/KW/manager");
+            header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnRedirects");
         }
     }
 ?>
@@ -739,7 +743,7 @@
                                     }
                                 ?>
                             </select>
-                            <input type="submit" value="créer" name="nawAdmin">
+                            <input type="submit" value="créer" name="newAdminSubmit">
                             <?php
                                 if (isset($_SESSION['addAdminError'])) {
                             ?>
@@ -960,12 +964,12 @@
                             <picture>
                                 <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
                             </picture>
-                            <h3>Créer la première page du site</h3>
+                            <h3><?=$hlp->getLangWorldMainFile("createfirstPage-title")?></h3>
                             <div class="whiteDiv">
-                                <input type="text" placeholder="nom de la page..." name="nameFirstPage" required>
-                                <input type="text" placeholder="titre de la page" name="titleFirstPage" required>
+                                <input type="text" placeholder="<?=$hlp->getLangWorldMainFile("namePage-placeholder")?>" name="nameFirstPage" required>
+                                <input type="text" placeholder="<?=$hlp->getLangWorldMainFile("titlePage-placeholder")?>" name="titleFirstPage" required>
                                 <select name="selectLangPageFirst" required>
-                                    <option value="1" hidden>Selctionner la langue</option>
+                                    <option value="1" hidden><?=$hlp->getLangWorldMainFile("selectLang-selectTitle")?></option>
                                     <?php
                                         for ($i = 0; $i < count($languages); $i++) {
                                     ?>
@@ -974,7 +978,7 @@
                                         }
                                     ?>
                                 </select>
-                                <input type="submit" value="créer" name="createFirstPage">
+                                <input type="submit" value="<?=$hlp->getLangWorldMainFile("w-create")?>" name="createFirstPage">
                                 <?php
                                     if (isset($_SESSION['pageError'])) {
                                 ?>
@@ -983,7 +987,7 @@
                                     }
                                 ?>
                             </div>
-                            <p>Vous pouvez créer votre première page internet en remplissant ce formulaire</p>
+                            <p><?=$hlp->getLangWorldMainFile("sentenceFooter-createFPage")?></p>
                         </form>
                     <?php
                         }
@@ -1468,5 +1472,14 @@
                 </form>
             </div>
         </div>
+        <?php
+            if (isset($_GET['pageBtn']) && $_GET['pageBtn'] != "") {
+        ?>
+            <script>
+                document.getElementById('<?=$_GET['pageBtn']?>').click();
+            </script>
+        <?php
+            }
+        ?>
     </body>
 </html>
