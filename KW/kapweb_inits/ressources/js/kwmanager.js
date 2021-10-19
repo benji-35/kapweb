@@ -1,20 +1,95 @@
-function displayNavMenu(name, iconName) {
+function displayNavMenu(name, iconName, btnName) {
     var doc = document.getElementById(name);
     var children = document.getElementById(iconName);
 
     if (doc.style.display == "block") {
+        window.history.pushState("object or string", "Title", updateHiveNavMenu(btnName));
         doc.style.display = "none";
         if (children.classList.contains("bx-up-arrow")) {
             children.classList.add("bx-down-arrow");
             children.classList.remove("bx-up-arrow");
         }
     } else {
+        window.history.pushState("object or string", "Title", updateDisplayNavMenu(btnName));
         doc.style.display = "block";
         if (children.classList.contains("bx-down-arrow")) {
             children.classList.add("bx-up-arrow");
             children.classList.remove("bx-down-arrow");
         }
     }
+}
+
+function updateDisplayContextMenuUrl(btnName) {
+    var currentUrl = window.location.href;
+    var splittedUrl = currentUrl.split("/");
+    var newUrl = "";
+
+    for (var i = 0; i < splittedUrl.length - 1; i++) {
+        newUrl += splittedUrl[i] + "/";
+    }
+    var options = splittedUrl[splittedUrl.length - 1].split("&");
+
+    newUrl += options[0] + "&pageBtn=" + btnName;
+
+    for (var i = 1; i < options.length; i++) {
+        if (options[i].startsWith("pageBtn=") == false) {
+            newUrl += "&" + options[i];
+        }
+    }
+    return newUrl;
+}
+
+function updateDisplayNavMenu(navMenu) {
+    var currentUrl = window.location.href;
+    var splittedUrl = currentUrl.split("&");
+    var newUrl = splittedUrl[0];
+    var addedInUrl = false;
+
+    for (var i = 1; i < splittedUrl.length; i++) {
+        if (splittedUrl[i].startsWith("navMenu=")) {
+            addedInUrl = true;
+            if (splittedUrl[i] == "navMenu=") {
+                splittedUrl[i] += navMenu;
+            } else {
+                splittedUrl[i] += "," + navMenu;
+            }
+        }
+        newUrl += "&" + splittedUrl[i];
+    }
+    if (addedInUrl == false) {
+        newUrl += "&navMenu=" + navMenu;
+    }
+
+    return newUrl;
+}
+
+function updateHiveNavMenu(navMenu) {
+    var currentUrl = window.location.href;
+    var splittedUrl = currentUrl.split("&");
+    var newUrl = splittedUrl[0];
+
+    for (var i = 1; i < splittedUrl.length; i++) {
+        if (splittedUrl[i].startsWith("navMenu=")) {
+            var sepTitleContent = splittedUrl[i].split("=");
+            var nContent = "";
+            if (sepTitleContent.length > 1) {
+                var sepContent = sepTitleContent[1].split(",");
+                for (var x = 0; x < sepContent.length; x++) {
+                    if (sepContent[x] != navMenu && sepContent[x] != "") {
+                        if (nContent == "") {
+                            nContent = sepContent[x];
+                        } else {
+                            nContent += "," + sepContent[x];
+                        }
+                    }
+                }
+            }
+            splittedUrl[i] = "navMenu=" + nContent;
+        }
+        newUrl += "&" + splittedUrl[i];
+    }
+
+    return newUrl;
 }
 
 function displayContextMenu(name, btnName) {
@@ -28,14 +103,8 @@ function displayContextMenu(name, btnName) {
     for (var i = 0; i < allContexts.length; i++) {
         allContexts[i].style.display = "none";
     }
-    var currentUrl = window.location.href;
-    var splittedUrl = currentUrl.split("/");
-    var newUrl = "";
-    for (var i = 0; i < splittedUrl.length - 1; i++) {
-        newUrl += splittedUrl[i] + "/";
-    }
-    newUrl += splittedUrl[splittedUrl.length - 1].split("&")[0] + "&pageBtn=" + btnName;
-    window.history.pushState("object or string", "Title", newUrl);
+
+    window.history.pushState("object or string", "Title", updateDisplayContextMenuUrl(btnName));
     document.getElementById(name).style.display = "block";
     document.getElementById(btnName).classList.remove('btnNavMenu');
     document.getElementById(btnName).classList.add('btnSelected');

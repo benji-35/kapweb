@@ -399,7 +399,7 @@
                     $accesAccess = $hlp->haveAccesTo("Access");
                     if ($hlp->haveExtensionAccesFromMainClass("navMenuAdmin") || $accesAdmin || $accesUsers || $accesAccess) {
                 ?>
-                    <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i class='bx bx-rocket'></i><?=" " . $hlp->getLangWorldMainFile("adminMain")?><i id="iconAdmin" class="bx bx-down-arrow iconDirectory"></i></button>
+                    <button class="btnNavMenu" id="navMenu0" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin', 'navMenu0')"><i class='bx bx-rocket'></i><?=" " . $hlp->getLangWorldMainFile("adminMain")?><i id="iconAdmin" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -429,7 +429,7 @@
                     $accesRedirect = $hlp->haveAccesTo("Redirects");
                     if ($accessPage || $accesDeletedPage || $hlp->haveExtensionAccesFromMainClass("navMenuWebsite")) {
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i class='bx bx-world' ></i><?=" " . $hlp->getLangWorldMainFile("webSiteMain")?><i id="iconWebsite" class="bx bx-down-arrow iconDirectory"></i></button>
+                <button class="btnNavMenu" id="navMenu1" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite', 'navMenu1')"><i class='bx bx-world' ></i><?=" " . $hlp->getLangWorldMainFile("webSiteMain")?><i id="iconWebsite" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -462,7 +462,7 @@
 
                     if ($accessImgs || $accessCookies || $accessDb || $accessDeletedDB || $accessExt || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="bx bx-down-arrow iconDirectory"></i></button>
+                <button class="btnNavMenu" id="navMenu2" onclick="displayNavMenu('navMenuFiles', 'iconFiles', 'navMenu2')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -1477,6 +1477,19 @@
         ?>
             <script>
                 document.getElementById('<?=$_GET['pageBtn']?>').click();
+            </script>
+        <?php
+            }
+            if (isset($_GET['navMenu']) && $_GET['navMenu'] != "") {
+        ?>
+            <script type="text/javascript">
+                var navMenuValue = "<?=$_GET['navMenu']?>";
+                navsMenu = navMenuValue.split(",");
+                for (var i = 0; i < navsMenu.length; i++) {
+                    if (navsMenu[i] != "") {
+                        document.getElementById(navsMenu[i]).click();
+                    }
+                }
             </script>
         <?php
             }

@@ -223,7 +223,8 @@ class Extensions {
         $res = "";
         for ($i = 0; $i < count($new_cats); $i++) {
             if ($new_cats[$i] != "") {
-                $res .= '<button class="btnNavMenu" onclick="displayNavMenu(\''. $new_cats[$i] . '\', \'icon-' . $new_cats[$i] . '\')"'
+                $idNavMenuBtn = str_replace(" ", "_", $new_cats[$i]) . "-idNavMenu";
+                $res .= '<button class="btnNavMenu" id="' . $idNavMenuBtn . '" onclick="displayNavMenu(\''. $new_cats[$i] . '\', \'icon-' . $new_cats[$i] . '\', \'' . $idNavMenuBtn . '\')"'
                 . '><i class="bx bxs-layer-plus" ></i> '
                     . $new_cats[$i] . '<i class="bx bx-down-arrow iconDirectory" id="icon-' . $new_cats[$i] . '"></i></button>';
                 $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
