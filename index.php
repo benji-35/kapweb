@@ -1,7 +1,6 @@
 <?php
 
 session_start();
-header("Access-Control-Allow-Origin: https://kit.fontawesome.com/a076d05399.js");
 
 use Application\Database;
 use Application\ConfFiles;
