@@ -5,7 +5,7 @@
 ?>
 
 <!DOCTYPE html>
-<html lang="<?=$hlp->getLanguageShortFromId($_SESSION['lang'])?>">
+<html lang="<?=$_SESSION['language']?>">
     <head>
 		<title><?=$_SESSION['titlePage']?></title>
 		<meta charset="utf-8">
