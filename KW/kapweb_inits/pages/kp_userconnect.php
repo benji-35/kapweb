@@ -111,7 +111,7 @@
         <div id="connection" class="formConnect">
             <form method="POST">
                 <picture>
-                        <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
+                        <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-no-connection")?>">
                 </picture>
                 <h3>Connexion</h3>
                 <div class="whiteInForm">
@@ -133,7 +133,7 @@
         <div id="creation" class="formConnect">
             <form method="POST">
                 <picture>
-                    <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
+                    <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-no-createAccount")?>">
                 </picture>
                 <h3>Création de compte</h3>
                 <div class="whiteInForm">

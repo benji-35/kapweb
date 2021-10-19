@@ -347,7 +347,7 @@
     <body>
         <div class="optionsBar">
             <div class="optionsBarButtons">
-                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-manager-icon")?>" style="height: 50px;width: auto;">
+                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-website-icon")?>" style="height: 50px;width: auto;">
                 <p><?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?></p>
             </div>
             <div class="optionsBarConnect">
