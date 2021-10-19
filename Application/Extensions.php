@@ -225,7 +225,7 @@ class Extensions {
             if ($new_cats[$i] != "") {
                 $res .= '<button class="btnNavMenu" onclick="displayNavMenu(\''. $new_cats[$i] . '\', \'icon-' . $new_cats[$i] . '\')"'
                 . '><i class="bx bxs-layer-plus" ></i> '
-                    . $new_cats[$i] . '<i class="far fa-arrow-alt-circle-down iconDirectory" id="icon-' . $new_cats[$i] . '"></i></button>';
+                    . $new_cats[$i] . '<i class="bx bx-down-arrow iconDirectory" id="icon-' . $new_cats[$i] . '"></i></button>';
                 $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
                 for ($btnId = 0; $btnId < count($btns); $btnId++) {
                     if ($btns[$btnId]['button']['category'] == $new_cats[$i]) {

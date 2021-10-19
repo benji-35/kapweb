@@ -370,7 +370,7 @@
                 <?php
                     if ($hlp->haveAccesTo("Dashboard")) {
                 ?>
-                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class="fa fa-house-user iconDirectory"></i><?=" " . $hlp->getLangWorldMainFile("dashboard")?></button>
+                    <button id="btnDashboard" class="btnNavMenu" onclick="displayContextMenu('dashboardContext', 'btnDashboard')"><i class='bx bxs-dashboard iconDirectory'></i><?=" " . $hlp->getLangWorldMainFile("dashboard")?></button>
                 <?php
                     }
                 ?>
@@ -380,7 +380,7 @@
                     $accesAccess = $hlp->haveAccesTo("Access");
                     if ($hlp->haveExtensionAccesFromMainClass("navMenuAdmin") || $accesAdmin || $accesUsers || $accesAccess) {
                 ?>
-                    <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i class='bx bx-rocket'></i><?=" " . $hlp->getLangWorldMainFile("adminMain")?><i id="iconAdmin" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
+                    <button class="btnNavMenu" onclick="displayNavMenu('navMenuAdmin', 'iconAdmin')"><i class='bx bx-rocket'></i><?=" " . $hlp->getLangWorldMainFile("adminMain")?><i id="iconAdmin" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -388,17 +388,17 @@
                     <?php
                         if ($accesAdmin) {
                     ?>
-                        <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class="fas fa-users-cog" style="background-color: green;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin1")?></button>    
+                        <button class="btnNavMenu" id="btnAdmin" onclick="displayContextMenu('administratorsContext', 'btnAdmin')"><i class='bx bxs-user-badge' style="background-color: green;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin1")?></button>    
                     <?php
                         }
                         if ($hlp->haveAccesTo("Users")) {
                     ?>
-                        <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="fa fa-users" style="background-color: red;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin2")?></button>
+                        <button class="btnNavMenu" id="btnUsers" onclick="displayContextMenu('usersContext', 'btnUsers')"><i class="bx bx-user" style="background-color: red;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin2")?></button>
                     <?php
                         }
                         if ($hlp->haveAccesTo("Access")) {
                     ?>
-                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="fa fa-users" style="background-color: blue;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin3")?></button>
+                        <button class="btnNavMenu" id="btnAccess" onclick="displayContextMenu('access', 'btnAccess')"><i class="bx bx-user" style="background-color: blue;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("admin3")?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuAdmin");
@@ -410,7 +410,7 @@
                     $accesRedirect = $hlp->haveAccesTo("Redirects");
                     if ($accessPage || $accesDeletedPage || $hlp->haveExtensionAccesFromMainClass("navMenuWebsite")) {
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i class='bx bx-world' ></i><?=" " . $hlp->getLangWorldMainFile("webSiteMain")?><i id="iconWebsite" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
+                <button class="btnNavMenu" onclick="displayNavMenu('navMenuWebsite', 'iconWebsite')"><i class='bx bx-world' ></i><?=" " . $hlp->getLangWorldMainFile("webSiteMain")?><i id="iconWebsite" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -418,12 +418,12 @@
                     <?php
                         if ($accessPage) {
                     ?>
-                        <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="fa fa-file-word" style="background-color: #bd5f0c;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("pages")?></button>
+                        <button class="btnNavMenu" id="btnPages" onclick="displayContextMenu('pagesContext', 'btnPages')"><i id="iconWebsite" class="bx bx-world" style="background-color: #bd5f0c;padding: 5px;border-radius: 5px;"></i><?=" " . $hlp->getLangWorldMainFile("pages")?></button>
                     <?php
                         }
                         if ($accesDeletedPage) {
                     ?>
-                        <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="fa fa-trash-alt" style="padding: 5px;border-radius: 5px;background-color: #08839f;"></i><?=" " . $hlp->getLangWorldMainFile("delPages")?></button>
+                        <button class="btnNavMenu" id="btnDeletedPages" onclick="displayContextMenu('deletedPagesContext', 'btnDeletedPages')"><i id="iconWebsite" class="bx bx-trash" style="padding: 5px;border-radius: 5px;background-color: #08839f;"></i><?=" " . $hlp->getLangWorldMainFile("delPages")?></button>
                     <?php
                         }
                         if ($accesRedirect) {
@@ -439,10 +439,11 @@
                     $accessDb = $hlp->haveAccesTo("Database");
                     $accessDeletedDB = $hlp->haveAccesTo("Deleted Database");
                     $accessExt = $hlp->haveAccesTo("Extensions");
+                    $accessImgs = $hlp->haveAccesTo("Images");
 
-                    if ($accessCookies || $accessDb || $accessDeletedDB || $accessExt || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
+                    if ($accessImgs || $accessCookies || $accessDb || $accessDeletedDB || $accessExt || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
-                <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="far fa-arrow-alt-circle-down iconDirectory"></i></button>
+                <button class="btnNavMenu" onclick="displayNavMenu('navMenuFiles', 'iconFiles')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
                     }
                 ?>
@@ -450,24 +451,31 @@
                     <?php
                         if ($accessCookies) {
                     ?>
-                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="fas fa-save" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" " . $hlp->getLangWorldMainFile("cookies")?></button>
+                        <button  id="btnCookies"class="btnNavMenu" onclick="displayContextMenu('cookieContext', 'btnCookies')"><i class="bx bx-save" style="padding: 5px;border-radius: 5px;background-color: #b07423;"></i><?=" " . $hlp->getLangWorldMainFile("cookies")?></button>
                     <?php
                         }
-                        if ($accessDb) {
+                        if ($accessImgs) {
                     ?>
-                        <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="fas fa-database" style="padding: 5px;border-radius: 5px;background-color: #b02379;"></i><?=" " . $hlp->getLangWorldMainFile("database")?></button>
-                    <?php
-                        }
-                        if ($accessDeletedDB) {
-                    ?>
-                        <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="fas fa-trash-alt" style="padding: 5px;border-radius: 5px;background-color: #9d1313;"></i><?=" " . $hlp->getLangWorldMainFile("delDatabase")?></button>
+                        <button  id="btnImages"class="btnNavMenu" onclick="displayContextMenu('imagesContext', 'btnImages')"><i class="bx bx-image-alt" style="padding: 5px;border-radius: 5px;background-color: #8d11a7;"></i><?=" " . $hlp->getLangWorldMainFile("w-images")?></button>
                     <?php
                         }
                         if ($accessExt) {
                     ?>
-                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="fas fa-puzzle-piece" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" " . $hlp->getLangWorldMainFile("extensions")?></button>
+                        <button  id="btnExtensionList"class="btnNavMenu" onclick="displayContextMenu('extensionListing', 'btnExtensionList')"><i class="bx bx-extension" style="padding: 5px;border-radius: 5px;background-color: #477b2a;"></i><?=" " . $hlp->getLangWorldMainFile("extensions")?></button>
                     <?php
                         }
+                        if ($accessDb) {
+                    ?>
+                        <button  id="btnDb"class="btnNavMenu" onclick="displayContextMenu('dbContext', 'btnDb')"><i class="bx bx-data" style="padding: 5px;border-radius: 5px;background-color: #b02379;"></i><?=" " . $hlp->getLangWorldMainFile("database")?></button>
+                    <?php
+                        }
+                        if ($accessDeletedDB) {
+                    ?>
+                        <button  id="btnDeletedDb"class="btnNavMenu" onclick="displayContextMenu('deletedTables', 'btnDeletedDb')"><i class="bx bx-trash" style="padding: 5px;border-radius: 5px;background-color: #9d1313;"></i><?=" " . $hlp->getLangWorldMainFile("delDatabase")?></button>
+                    <?php
+                        }
+                    ?>
+                    <?php
                         echo $ext->getButtonFromCat("navMenuFiles");
                     ?>
                 </div>
@@ -892,7 +900,7 @@
                                 </select>
                                 <input type="submit" value="Save" name="<?="savePage-" . $pages[$i]['name']?>">
                             </th>
-                            <th class="editTablePage"><a class="editPageUrl" href="<?=$urlPageEdit?>"><div class="dEditPageLink"><i class="far fa-edit"></i></div></a></th>
+                            <th class="editTablePage"><a class="editPageUrl" href="<?=$urlPageEdit?>"><div class="dEditPageLink"><i class="bx bx-edit-alt"></i></div></a></th>
                         </tr>
                     <?php
                             }
@@ -1417,6 +1425,9 @@
                         <input name="newRedirect" placeholder="<?=$hlp->getLangWorldMainFile("creaetRedirect-new")?>">
                         <input type="submit" value="<?=$hlp->getLangWorldMainFile("creaetRedirect")?>" name="creaeteRedirect">
                     </form>
+                </div>
+                <div class="contextDev" id="imagesContext">
+                    
                 </div>
                 <?php
                     echo $ext->getHtmlAddedExtensionManager();

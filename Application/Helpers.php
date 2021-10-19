@@ -972,6 +972,7 @@ class Helpers {
             "Extensions",
             "navMenuFiles",
             "Redirects",
+            "Images",
         );
         $extentions = $ext->getExtensionsBackList();
         for ($extId = 0; $extId < count($extentions); $extId++) {

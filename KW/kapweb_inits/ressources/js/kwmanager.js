@@ -4,19 +4,15 @@ function displayNavMenu(name, iconName) {
 
     if (doc.style.display == "block") {
         doc.style.display = "none";
-        if (children.classList.contains("fa-arrow-circle-up")) {
-            children.classList.add("fa-arrow-alt-circle-down");
-            children.classList.add("far");
-            children.classList.remove("fa-arrow-circle-up");
-            children.classList.remove("fa");
+        if (children.classList.contains("bx-up-arrow")) {
+            children.classList.add("bx-down-arrow");
+            children.classList.remove("bx-up-arrow");
         }
     } else {
         doc.style.display = "block";
-        if (children.classList.contains("fa-arrow-alt-circle-down")) {
-            children.classList.add("fa-arrow-circle-up");
-            children.classList.add("fa");
-            children.classList.remove("fa-arrow-alt-circle-down");
-            children.classList.remove("far");
+        if (children.classList.contains("bx-down-arrow")) {
+            children.classList.add("bx-up-arrow");
+            children.classList.remove("bx-down-arrow");
         }
     }
 }
@@ -54,7 +50,7 @@ function selectAllAccessNew(nbAccess) {
 function unselectAllAccessNew(nbAccess) {
     var tRows = document.getElementById("tblBodyNAccess").getElementsByTagName("tr");
     for (var i = 0; i < tRows.length; i++) {
-        document.getElementById("access-" + i).checked = false;
+        document.getElementById("access-" + i).checked = bxlse;
     }
 }
 
