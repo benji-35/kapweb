@@ -28,6 +28,14 @@ function displayContextMenu(name, btnName) {
     for (var i = 0; i < allContexts.length; i++) {
         allContexts[i].style.display = "none";
     }
+    var currentUrl = window.location.href;
+    var splittedUrl = currentUrl.split("/");
+    var newUrl = "";
+    for (var i = 0; i < splittedUrl.length - 1; i++) {
+        newUrl += splittedUrl[i] + "/";
+    }
+    newUrl += splittedUrl[splittedUrl.length - 1].split("&")[0] + "&pageBtn=" + btnName;
+    window.history.pushState("object or string", "Title", newUrl);
     document.getElementById(name).style.display = "block";
     document.getElementById(btnName).classList.remove('btnNavMenu');
     document.getElementById(btnName).classList.add('btnSelected');
