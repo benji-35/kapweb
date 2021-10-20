@@ -27,4 +27,5 @@
         }
         header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnImages&navMenu=navMenu2");
     }
+    header("location: " . $hlp->getMainUrl() . "/KW/manager&pageBtn=btnImages&navMenu=navMenu2");
 ?>
