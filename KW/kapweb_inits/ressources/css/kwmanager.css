@@ -583,6 +583,10 @@ th {
     width: 15%;
 }
 
+.tableMedia-img img{
+    height: 50px;
+}
+
 .tableMedia-name {
     width: 15%;
 }
@@ -660,4 +664,8 @@ th {
     width: 300px;
     height: 100px;
     resize: none;
+}
+
+#urlEditImage {
+    display: none;
 }

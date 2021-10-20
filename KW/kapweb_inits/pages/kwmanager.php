@@ -16,9 +16,7 @@
     $languages = $hlp->getRowsTable("kp_languages");
     $accountIntels = $hlp->getAccountIntels();
     $hlp->setLanguageToAccountLanguage();
-    $imagesListing = $hlp->getMediaCatList("images");
-    $videosListing = $hlp->getMediaCatList("videos");
-    $audiosListing = $hlp->getMediaCatList("audios");
+    $mediaListing = $hlp->getAllMedias();
 
     if (isset($_POST['createFirstPage'])) {
         unset($_SESSION['pageError']);
@@ -327,6 +325,10 @@
             header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
     }
+
+    if (isset($_POST['addImageEdit'])) {
+
+    }
 ?>
 
 <!DOCTYPE html>
@@ -466,10 +468,8 @@
                 <?php
                     $accessDb = $hlp->haveAccesTo("Database");
                     $accessDeletedDB = $hlp->haveAccesTo("Deleted Database");
-                    $accessImgs = $hlp->haveAccesTo("Images");
-                    $accesVideos = $hlp->haveAccesTo("Videos");
-                    $accesAudios = $hlp->haveAccesTo("Audios");
-                    if ($accesAudios || $accesVideos || $accessImgs || $accessDb || $accessDeletedDB || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
+                    $accessMedias = $hlp->haveAccesTo("Medias");
+                    if ($accessMedias || $accessDb || $accessDeletedDB || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
                 <button class="btnNavMenu" id="navMenu2" onclick="displayNavMenu('navMenuFiles', 'iconFiles', 'navMenu2')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
@@ -477,19 +477,9 @@
                 ?>
                 <div class="closeMenuNav" id="navMenuFiles">
                     <?php
-                        if ($accessImgs) {
+                        if ($accessMedias) {
                     ?>
-                        <button id="btnImages"class="btnNavMenu" onclick="displayContextMenu('imagesContext', 'btnImages')"><i class="bx bx-image-alt" style="padding: 5px;border-radius: 5px;background-color: #8d11a7;"></i><?=" " . $hlp->getLangWorldMainFile("w-images")?></button>
-                    <?php
-                        }
-                        if ($accesVideos) {
-                    ?>
-                        <button id="btnVideos"class="btnNavMenu" onclick="displayContextMenu('videosContext', 'btnVideos')"><i class='bx bxs-videos' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #1192a7;'></i><?=" " . $hlp->getLangWorldMainFile("w-videos")?></button>
-                    <?php
-                        }
-                        if ($accesAudios) {
-                    ?>
-                        <button id="btnAudios"class="btnNavMenu" onclick="displayContextMenu('audiosContext', 'btnAudios')"><i class='bx bx-music' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #24a711;'></i><?=" " . $hlp->getLangWorldMainFile("w-audios")?></button>
+                        <button id="btnImages"class="btnNavMenu" onclick="displayContextMenu('imagesContext', 'btnImages')"><i class="bx bx-image-alt" style="padding: 5px;border-radius: 5px;background-color: #8d11a7;"></i><?=" " . $hlp->getLangWorldMainFile("w-medias")?></button>
                     <?php
                         }
                         if ($accessDb) {
@@ -1486,7 +1476,7 @@
                 <div class="contextDev" id="imagesContext">
                     <div id="listImages-medias">
                         <table class="tableMedia">
-                            <caption><?=$hlp->getLangWorldMainFile("w-images")?></caption>
+                            <caption><?=$hlp->getLangWorldMainFile("w-medias")?></caption>
                             <thead>
                                 <tr>
                                     <th class="tableMedia-icon"></th>
@@ -1505,22 +1495,12 @@
                                     <td class="tableMedia-description"></td>
                                 </tr>
                                 <?php
-                                    for ($i = 0; $i < count($imagesListing); $i++) {
-                                        $imageSite = $imagesListing[$i];
+                                    for ($i = 0; $i < count($mediaListing); $i++) {
+                                        $imageSite = $mediaListing[$i];
                                 ?>
                                     <tr>
                                         <td class="tableMedia-icon">
-                                            <?php
-                                                if ($cf->strStartWith($imageSite['path'], "http")) {
-                                            ?>
-                                                <i class='bx bx-world bx-md'></i>
-                                            <?php
-                                                } else {
-                                            ?>
-                                                <i class='bx bx-image bx-md'></i>
-                                            <?php
-                                                }
-                                            ?>
+                                            <i class='<?=$hlp->getIconsMedia($imageSite['type'])?> bx-md'></i>
                                         </td>
                                         <td class="tableMedia-img"><img src="<?=$hlp->getPathMedia($imageSite['name'])?>"></td>
                                         <td class="tableMedia-name"><?=$imageSite['name']?></td>
@@ -1550,10 +1530,10 @@
                             </tbody>
                         </table>
                     </div>
-                    <form id="newImage-medias" style="display: none;">
+                    <form method="POST" id="newImage-medias" style="display: none;">
                         <div class="barAction-addMedia">
                             <button type="button" onclick="abortAddImage('btnaddImage-media', 'listImages-medias', 'newImage-medias')" title="<?=$hlp->getLangWorldMainFile("w-abort")?>"><i class='bx bx-arrow-back bx-sm'></i></button>
-                            <button type="submit" title="<?=$hlp->getLangWorldMainFile("w-save")?>"><i class='bx bx-save bx-sm'></i></button>
+                            <button name="addImageEdit" type="submit" title="<?=$hlp->getLangWorldMainFile("w-save")?>"><i class='bx bx-save bx-sm'></i></button>
                         </div>
                         <div class="addContent-media">
                             <div class="navBarMenu-mediaAdd">
@@ -1566,14 +1546,16 @@
                                 <button class="ownToggle" type="button" onclick="ownToggleButton('valueEnableImageAdd', 'valueEnableImageAddOwn')"><i id="valueEnableImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
                                 <h3><?=$hlp->getLangWorldMainFile("extensionListing-title-name")?></h3>
                                 <input type="text" placeholder="<?=$hlp->getLangWorldMainFile("extensionListing-title-name") . "..."?>">
-                                <h3><?="Type"?></h3>
+                                <h3><?="Type url"?></h3>
                                 <input id="valueTypeImageAdd" type="checkbox" name="isEnableImage-add" hidden>
-                                <button class="ownToggle" type="button" onclick="ownToggleButton('valueTypeImageAdd', 'valueTypeImageAddOwn'); "><i id="valueTypeImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
+                                <button class="ownToggle" type="button" onclick="ownToggleButton('valueTypeImageAdd', 'valueTypeImageAddOwn'); imageCheckIsUrlEdit()"><i id="valueTypeImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
                                 <div id="urlEditImage">
-
+                                    <h3>Insert url</h3>
+                                    <input type="url" placeholder="Image url..." name="imgUrl-edit">
                                 </div>
                                 <div id="insertEditImage">
-
+                                    <h3>Insert file</h3>
+                                    <input type="file">
                                 </div>
                             </div>
                             <div class="generalMenu-edit" id="editImage2">
@@ -1582,28 +1564,6 @@
                             </div>
                         </div>
                     </form>
-                </div>
-                <div class="contextDev" id="videosContext">
-                    <table class="tableImages">
-                        <caption><?=$hlp->getLangWorldMainFile("w-videos")?></caption>
-                        <thead>
-                            
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>
-                    </table>
-                </div>
-                <div class="contextDev" id="audiosContext">
-                    <table class="tableImages">
-                        <caption><?=$hlp->getLangWorldMainFile("w-audios")?></caption>
-                        <thead>
-                            
-                        </thead>
-                        <tbody>
-                            
-                        </tbody>
-                    </table>
                 </div>
                 <?php
                     echo $ext->getHtmlAddedExtensionManager();

@@ -441,6 +441,33 @@ class Helpers {
         return $res;
     }
 
+    public static function getIconsMedia(int $mediaId):string {
+        $res = array();
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_typemedias WHERE id=?");
+        $stm->execute(array($mediaId));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm && isset($resStm['icon'])) {
+            return $resStm['icon'];
+        }
+        return "bx bxs-error";
+    }
+
+    public static function getAllMedias():array {
+        $res = array();
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_medias WHERE 1");
+        $stm->execute(array());
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
     public static function getPathMedia(string $name) {
         global $db, $cf;
         $connect = $db->connect();
@@ -887,17 +914,18 @@ class Helpers {
         }
         if (self::tabelExists("kp_typemedias") == false) {
             $structure = "ALTER TABLE kp_typemedias ADD COLUMN name varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_typemedias ADD COLUMN icon varchar(255) NOT NULL DEFAULT \"bx bx-image\";"
                 . "ALTER TABLE kp_typemedias ADD COLUMN description text;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_typemedias (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
             $stm->execute();
             $stm = $connect->prepare($structure);
             $stm->execute();
-            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description) VALUES (?, ?)");
-            $stm->execute(array("images", "images of website"));
-            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description) VALUES (?, ?)");
-            $stm->execute(array("videos", "videos of website"));
-            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description) VALUES (?, ?)");
-            $stm->execute(array("audios", "audios of website"));
+            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description, icon) VALUES (?, ?, ?)");
+            $stm->execute(array("images", "images of website", "bx bx-image"));
+            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description, icon) VALUES (?, ?, ?)");
+            $stm->execute(array("videos", "videos of website", "bx bxs-videos"));
+            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description, icon) VALUES (?, ?, ?)");
+            $stm->execute(array("audios", "audios of website", "bx bxs-music"));
         }
         if ($add_kp_tables == true) {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -1087,7 +1115,7 @@ class Helpers {
             "Extensions",
             "navMenuFiles",
             "Redirects",
-            "Images",
+            "Medias",
             "refreshMedias",
         );
         $extentions = $ext->getExtensionsBackList();

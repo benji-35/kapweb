@@ -186,3 +186,13 @@ function ownToggleButton(idToggleInput, idIconToggle) {
         document.getElementById(idToggleInput).checked = true;
     }
 }
+
+function imageCheckIsUrlEdit() {
+    if (document.getElementById("valueTypeImageAdd").checked) {
+        document.getElementById("urlEditImage").style.display = "block";
+        document.getElementById("insertEditImage").style.display = "none";
+    } else {
+        document.getElementById("urlEditImage").style.display = "none";
+        document.getElementById("insertEditImage").style.display = "block";
+    }
+}
