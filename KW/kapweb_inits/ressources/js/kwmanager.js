@@ -190,9 +190,13 @@ function ownToggleButton(idToggleInput, idIconToggle) {
 function imageCheckIsUrlEdit() {
     if (document.getElementById("valueTypeImageAdd").checked) {
         document.getElementById("urlEditImage").style.display = "block";
+        document.getElementById("urlEditImage").required = true;
         document.getElementById("insertEditImage").style.display = "none";
+        document.getElementById("insertEditImage").required = false;
     } else {
         document.getElementById("urlEditImage").style.display = "none";
+        document.getElementById("urlEditImage").required = false;
         document.getElementById("insertEditImage").style.display = "block";
+        document.getElementById("insertEditImage").required = true;
     }
 }

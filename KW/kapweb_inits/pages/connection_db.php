@@ -82,7 +82,7 @@
         <meta charset="utf-8">
         <title>Connection Database</title>
         <link href="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/css/kwdbconnect.css"?>" rel="stylesheet">
-        <link rel="icon" href="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico"?>">
+        <link rel="icon" href="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico"?>">
     </head>
     <body>
         <?php
@@ -90,7 +90,7 @@
         ?>
             <form class="forms" id="form1" method="POST">
                 <picture>
-                    <img src="<?=$hlp->getMainUrl() . "/" . "KW/kapweb_inits/ressources/imgs/kwLogo.png"?>">
+                    <img src="<?=$hlp->getMainUrl() . "/" . "KW/kapweb_inits/ressources/medias/kwLogo.png"?>">
                 </picture>
                 <h3>PhpMyAdmin Intels</h3>
                 <div class="whiteInForm">
@@ -118,7 +118,7 @@
         ?>
             <form class="forms" id="form2" method="POST">
                 <picture>
-                    <img src="<?=$hlp->getMainUrl() . "/" . "KW/kapweb_inits/ressources/imgs/kwLogo.png"?>">
+                    <img src="<?=$hlp->getMainUrl() . "/" . "KW/kapweb_inits/ressources/medias/kwLogo.png"?>">
                 </picture>
                 <h3>Choose Database</h3>
                 <div class="whiteInForm">

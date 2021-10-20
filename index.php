@@ -134,7 +134,11 @@ if ($hlp->haveConnectionDbIntels() == false || $canConnect == false) {
     if (!$hlp->mainPageExists()) {
         $url = array();
         if (isset($_GET['url'])) {
-            $url = explode('/', $_GET['url']);
+            if ($_GET['url'] == $hlp->getMainUrl() . "/KW/uploadMedia.php") {
+                require "uploadMedia.php";
+            } else {
+                $url = explode('/', $_GET['url']);
+            }
         } else {
             array_push($url, "");
         }

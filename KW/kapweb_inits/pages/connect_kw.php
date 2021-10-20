@@ -88,7 +88,7 @@
         ?>
             <form method="POST" class="formConnect">
                 <picture>
-                    <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-su-connection")?>">
+                    <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/medias/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-su-connection")?>">
                 </picture>
                 <h3>Connection Administrator</h3>
                 <div class="whiteInForm">
@@ -112,7 +112,7 @@
             } else {
         ?>
             <form method="POST" class="formConnect">
-                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-su-createAccount")?>">
+                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/medias/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-su-createAccount")?>">
                 <h3>Create account Administrator</h3>
                 <div class="whiteInForm">
                     <input type="text" placeholder="pseudo..." name="pseudoCreate" required>

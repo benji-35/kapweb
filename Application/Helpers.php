@@ -135,7 +135,7 @@ class Helpers {
         . "img-content=\n"
         . "img-parent=pict\n"
         . "img-children=\n"
-        . "img-src=<?=\$hlp->getMainUrl() . \"/KW/kapweb_inits/ressources/imgs/kwLogo.ico\"?>\n"
+        . "img-src=<?=\$hlp->getMainUrl() . \"/KW/kapweb_inits/ressources/medias/kwLogo.ico\"?>\n"
         . "div2=div\n"
         . "div2-class=whiteSpacing\n"
         . "div2-content=\n"
@@ -468,6 +468,19 @@ class Helpers {
         return $res;
     }
 
+    public static function getAllMediaTypes():array {
+        $res = array();
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_typemedias WHERE 1");
+        $stm->execute(array());
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
     public static function getPathMedia(string $name) {
         global $db, $cf;
         $connect = $db->connect();
@@ -479,11 +492,25 @@ class Helpers {
             if ($cf->strStartWith($resStm['path'], "http")) {
                 return $resStm['path'];
             } else {
-                return self::getMainUrl() . "/" . $resStm['path'];
+                return self::getMainUrl() . "/" . str_replace(" ", "_", $resStm['path']);
             }
         } else {
             return "";
         }
+    }
+
+    public static function newMedia(string $name, int $enable, string $path, int $type, string $description) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("INSERT INTO kp_medias (name, type, description, deleted, path) VALUES (?, ?, ?, ?, ?)");
+        $stm->execute(array(
+            $name,
+            $type,
+            $description,
+            $enable,
+            $path
+        ));
+        $db->disconnect();
     }
 
     /*
@@ -659,7 +686,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kwconnect.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1
             ));
             $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu, builtin) VALUES " .
@@ -673,7 +700,7 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kwmanager.css",
                 "/KW/kapweb_inits/ressources/js/kwmanager.js",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1,
                 1
             ));
@@ -687,7 +714,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kwdbconnect.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1
             ));
             $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, needConnectSu, builtin) VALUES " .
@@ -701,7 +728,7 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kweditpage.css",
                 "/KW/kapweb_inits/ressources/js/kpeditpage.js",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1,
                 1
             ));
@@ -715,7 +742,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/pageNotFound.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1
             ));
             $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, pathJs, ico, builtin) VALUES " .
@@ -729,7 +756,7 @@ class Helpers {
                 0,
                 "/KW/kapweb_inits/ressources/css/kp_useraccount.css",
                 "/KW/kapweb_inits/ressources/js/kp_userconnect.js",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1
             ));
             $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu, builtin) VALUES " .
@@ -742,7 +769,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/edit_content_table.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1,
                 1
             ));
@@ -756,7 +783,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/edit_structure_table.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 1,
                 1
             ));
@@ -770,7 +797,7 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 0,
                 1
             ));
@@ -784,9 +811,24 @@ class Helpers {
                 1,
                 0,
                 "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
-                "/KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
                 0,
                 1
+            ));
+            $stm = $connect->prepare("INSERT INTO pages (name, url, title, path, hided, editable, pathCss, ico, needConnectSu, builtin, mainPage) VALUES " .
+                "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "uploadMedia",
+                "/uploadMedia",
+                "Upload Media",
+                "KW/kapweb_inits/pages/uploadMedia.php",
+                1,
+                0,
+                "/KW/kapweb_inits/ressources/css/kpconfirm_email.css",
+                "/KW/kapweb_inits/ressources/medias/kwLogoOrange.ico",
+                0,
+                1,
+                1,
             ));
         }
         if (self::tabelExists("kp_cookies") == false) {
@@ -901,7 +943,7 @@ class Helpers {
                 1,
                 "",
                 0,
-                "KW/kapweb_inits/ressources/imgs/kwLogoOrange.png"
+                "KW/kapweb_inits/ressources/medias/kwLogoOrange.png"
             ));
             $stm = $connect->prepare("INSERT INTO kp_medias (name, type, description, deleted, path) VALUES (?, ?, ?, ?, ?)");
             $stm->execute(array(
@@ -909,7 +951,7 @@ class Helpers {
                 1,
                 "",
                 0,
-                "KW/kapweb_inits/ressources/imgs/kwLogo.png"
+                "KW/kapweb_inits/ressources/medias/kwLogo.png"
             ));
         }
         if (self::tabelExists("kp_typemedias") == false) {
@@ -1433,7 +1475,6 @@ class Helpers {
             $res = $stm->fetch();
             $db->disconnect();
             if ($res) {
-                var_dump("oups1");
                 return self::getPathPage(array("pageNotFound"));
             } else {
                 var_dump("oups2");

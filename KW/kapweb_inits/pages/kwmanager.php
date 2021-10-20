@@ -326,9 +326,7 @@
         }
     }
 
-    if (isset($_POST['addImageEdit'])) {
-
-    }
+    $allMediaTypes = $hlp->getAllMediaTypes();
 ?>
 
 <!DOCTYPE html>
@@ -375,7 +373,7 @@
         </div>
         <div class="optionsBar">
             <div class="optionsBarButtons">
-                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-website-icon")?>" style="height: 50px;width: auto;">
+                <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/medias/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-website-icon")?>" style="height: 50px;width: auto;">
                 <p class="cantSelectText"><?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "website_name")?></p>
             </div>
             <div class="optionsBarConnect">
@@ -1530,7 +1528,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <form method="POST" id="newImage-medias" style="display: none;">
+                    <form method="POST" id="newImage-medias" style="display: none;" action="<?=$hlp->getMainUrl() ."/uploadMedia"?>" enctype="multipart/form-data">
                         <div class="barAction-addMedia">
                             <button type="button" onclick="abortAddImage('btnaddImage-media', 'listImages-medias', 'newImage-medias')" title="<?=$hlp->getLangWorldMainFile("w-abort")?>"><i class='bx bx-arrow-back bx-sm'></i></button>
                             <button name="addImageEdit" type="submit" title="<?=$hlp->getLangWorldMainFile("w-save")?>"><i class='bx bx-save bx-sm'></i></button>
@@ -1545,9 +1543,19 @@
                                 <input id="valueEnableImageAdd" type="checkbox" name="isEnableImage-add" hidden>
                                 <button class="ownToggle" type="button" onclick="ownToggleButton('valueEnableImageAdd', 'valueEnableImageAddOwn')"><i id="valueEnableImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
                                 <h3><?=$hlp->getLangWorldMainFile("extensionListing-title-name")?></h3>
-                                <input type="text" placeholder="<?=$hlp->getLangWorldMainFile("extensionListing-title-name") . "..."?>">
+                                <input name="newMediaName" type="text" placeholder="<?=$hlp->getLangWorldMainFile("extensionListing-title-name") . "..."?>" required>
+                                <h3><?="Tyep file"?></h3>
+                                <select name="newMedia-type" required>
+                                    <?php
+                                        for ($i = 0; $i < count($allMediaTypes); $i++) {
+                                    ?>
+                                        <option value="<?=$allMediaTypes[$i]['id']?>"><?=$allMediaTypes[$i]['name']?></option>
+                                    <?php
+                                        }
+                                    ?>
+                                </select>
                                 <h3><?="Type url"?></h3>
-                                <input id="valueTypeImageAdd" type="checkbox" name="isEnableImage-add" hidden>
+                                <input id="valueTypeImageAdd" type="checkbox" name="isUrlImage-add" hidden>
                                 <button class="ownToggle" type="button" onclick="ownToggleButton('valueTypeImageAdd', 'valueTypeImageAddOwn'); imageCheckIsUrlEdit()"><i id="valueTypeImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
                                 <div id="urlEditImage">
                                     <h3>Insert url</h3>
@@ -1555,12 +1563,12 @@
                                 </div>
                                 <div id="insertEditImage">
                                     <h3>Insert file</h3>
-                                    <input type="file">
+                                    <input type="file" id="uploadFile" name="uploadFile" placeholder="Insert your file here" required>
                                 </div>
                             </div>
                             <div class="generalMenu-edit" id="editImage2">
                                 <h3>Description</h3>
-                                <textarea class="descriptionEdit"></textarea>
+                                <textarea name="descriptNewMedia" class="descriptionEdit"></textarea>
                             </div>
                         </div>
                     </form>

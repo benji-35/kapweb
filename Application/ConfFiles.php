@@ -8,9 +8,9 @@ class ConfFiles {
 
     private static $baseDbConfig = "db=";
     private static $baseOtherConfig = "#icons\n" 
-        . "main_icon=KW/kapweb_inits/ressources/imgs/kwLogoOrange.ico\n"
-        . "main_iconBlack=KW/kapweb_inits/ressources/imgs/kwLogo.ico\n"
-        . "main_icon_png=KW/kapweb_inits/ressources/imgs/kwLogo.png\n"
+        . "main_icon=KW/kapweb_inits/ressources/medias/kwLogoOrange.ico\n"
+        . "main_iconBlack=KW/kapweb_inits/ressources/medias/kwLogo.ico\n"
+        . "main_icon_png=KW/kapweb_inits/ressources/medias/kwLogo.png\n"
         . "#url for the website\n"
         . "main_url=http://localhost/kapweb\n"
         . "#website name\n"
