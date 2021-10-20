@@ -541,9 +541,6 @@
                 <?php
                     echo $ext->otherButtonAcces();
                 ?>
-                <form class="deconnectForm" method="POST">
-                    <input type="submit" value="disconnect" name="disconnect">
-                </form>
             </div>
             <div class="contextMenu">
                 <div class="contextDev" id="dashboardContext">
