@@ -513,6 +513,39 @@ class Helpers {
         $db->disconnect();
     }
 
+    public static function enableMedia(int $id) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE kp_medias SET deleted=0 WHERE id=?");
+        $stm->execute(array($id));
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+    }
+
+    public static function disbaleMedia(int $id) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("UPDATE kp_medias SET deleted=1 WHERE id=?");
+        $stm->execute(array($id));
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+    }
+
+    public static function deleteMedia(int $id) {
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("DELETE FROM kp_medias WHERE id=?");
+        $stm->execute(array($id));
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+    }
+
     /*
             DATABSE CONNECTION
     */

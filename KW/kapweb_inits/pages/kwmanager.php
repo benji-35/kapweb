@@ -327,6 +327,21 @@
     }
 
     $allMediaTypes = $hlp->getAllMediaTypes();
+    for ($i = 0; $i < count($mediaListing); $i++) {
+        if (isset($_POST['enableMedia-' . $mediaListing[$i]['id']])) {
+            $hlp->enableMedia($mediaListing[$i]['id']);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
+        }
+        if (isset($_POST['disableMedia-' . $mediaListing[$i]['id']])) {
+            $hlp->disbaleMedia($mediaListing[$i]['id']);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
+        }
+        if (isset($_POST['deleteMedia-' . $mediaListing[$i]['id']])) {
+            unlink($mediaListing[$i]['path']);
+            $hlp->deleteMedia($mediaListing[$i]['id']);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -1554,13 +1569,6 @@
                                         }
                                     ?>
                                 </select>
-                                <h3><?="Type url"?></h3>
-                                <input id="valueTypeImageAdd" type="checkbox" name="isUrlImage-add" hidden>
-                                <button class="ownToggle" type="button" onclick="ownToggleButton('valueTypeImageAdd', 'valueTypeImageAddOwn'); imageCheckIsUrlEdit()"><i id="valueTypeImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
-                                <div id="urlEditImage">
-                                    <h3>Insert url</h3>
-                                    <input type="url" placeholder="Image url..." name="imgUrl-edit">
-                                </div>
                                 <div id="insertEditImage">
                                     <h3>Insert file</h3>
                                     <input type="file" id="uploadFile" name="uploadFile" placeholder="Insert your file here" required>
