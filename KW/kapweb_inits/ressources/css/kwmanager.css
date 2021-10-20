@@ -561,3 +561,38 @@ th {
     cursor: pointer;
     background-color: rgba(255, 255, 255, 0.315);
 }
+
+.tableImages {
+    width: 100%;
+    background-color: rgb(189, 185, 178);
+}
+
+.tableImages th {
+    background-color: transparent !important;
+}
+
+.tableImages td {
+    background-color: transparent !important;
+}
+
+.tableMedia-icon {
+    width: 3%;
+}
+
+.tableMedia-img {
+    width: 15%;
+}
+
+.tableMedia-name {
+    width: 15%;
+}
+
+.tableMedia-description {
+    width: 20%;
+}
+
+#newImage-medias {
+    width: 100%;
+    height: 100%;
+    background-color: white;
+}

@@ -411,6 +411,45 @@ class Helpers {
         return self::getLangWorldMainFileFromLanguage($_SESSION['language'], $key);
     }
 
+    public static function getImages():array {
+        $res = array();
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_images WHERE 1");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
+    public static function getVideos():array {
+        $res = array();
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_videos WHERE 1");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
+    public static function getAudios():array {
+        $res = array();
+        global $db;
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_audios WHERE 1");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            array_push($res, $resStm);
+        }
+        $db->disconnect();
+        return $res;
+    }
+
     /*
             DATABSE CONNECTION
     */
@@ -538,9 +577,10 @@ class Helpers {
             $stm->execute();
         }
         if (self::tabelExists("kp_languages") == false) {
-            $structure = "ALTER TABLE kp_languages ADD COLUMN name varchar(255) CHARACTER NOT NULL;"
-                . "ALTER TABLE kp_languages ADD COLUMN name_en varchar(255) CHARACTER NOT NULL;"
-                . "ALTER TABLE kp_languages ADD COLUMN name_short varchar(2) CHARACTER NOT NULL;";
+            $structure = ""
+                . "ALTER TABLE kp_languages ADD COLUMN name varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_languages ADD COLUMN name_en varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_languages ADD COLUMN name_short varchar(2) NOT NULL;";
             $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_languages (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
             $stm->execute();
             $stm = $connect->prepare($structure);
@@ -809,6 +849,47 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
+        if (self::tabelExists("kp_medias") == false) {
+            $structure = "ALTER TABLE kp_medias ADD COLUMN name varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_medias ADD COLUMN type int(11) NOT NULL DEFAULT 0;"
+                . "ALTER TABLE kp_medias ADD COLUMN description text;"
+                . "ALTER TABLE kp_medias ADD COLUMN deleted int(2) NOT NULL DEFAULT 0;"
+                . "ALTER TABLE kp_medias ADD COLUMN path varchar(255);";
+            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_medias (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
+            $stm->execute();
+            $stm = $connect->prepare($structure);
+            $stm->execute();
+            $stm = $connect->prepare("INSERT INTO kp_medias (name, type, description, deleted, path) VALUES (?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "mainIcon",
+                1,
+                "",
+                0,
+                "KW/kapweb_inits/ressources/imgs/kwLogoOrange.png"
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_medias (name, type, description, deleted, path) VALUES (?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "mainIconBlack",
+                1,
+                "",
+                0,
+                "KW/kapweb_inits/ressources/imgs/kwLogo.png"
+            ));
+        }
+        if (self::tabelExists("kp_typemedias") == false) {
+            $structure = "ALTER TABLE kp_typemedias ADD COLUMN name varchar(255) NOT NULL;"
+                . "ALTER TABLE kp_typemedias ADD COLUMN description text;";
+            $stm = $connect->prepare("CREATE TABLE IF NOT EXISTS kp_typemedias (id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY)");
+            $stm->execute();
+            $stm = $connect->prepare($structure);
+            $stm->execute();
+            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description) VALUES (?, ?)");
+            $stm->execute(array("images", "images of website"));
+            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description) VALUES (?, ?)");
+            $stm->execute(array("videos", "videos of website"));
+            $stm = $connect->prepare("INSERT INTO kp_typemedias (name, description) VALUES (?, ?)");
+            $stm->execute(array("audios", "audios of website"));
+        }
         if ($add_kp_tables == true) {
             $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
@@ -893,6 +974,28 @@ class Helpers {
                 3,
                 "int,varchar,text",
                 "aid,name,tableAcces",
+                1,
+                0,
+                0,
+                0
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "kp_medias",
+                6,
+                "int,varchar,int,text,int,varchar",
+                "id,name,type,description,deleted,path",
+                1,
+                0,
+                0,
+                0
+            ));
+            $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            $stm->execute(array(
+                "kp_typemedias",
+                3,
+                "int,varchar,text",
+                "id,name,description",
                 1,
                 0,
                 0,

@@ -1,20 +1,27 @@
-function displayNavMenu(name, iconName, btnName) {
+function displayNavMenu(name, iconName, btnName, inverseDiv) {
     var doc = document.getElementById(name);
-    var children = document.getElementById(iconName);
-
+    if (iconName != null) {
+        var children = document.getElementById(iconName);
+    }
     if (doc.style.display == "block") {
         window.history.pushState("object or string", "Title", updateHiveNavMenu(btnName));
         doc.style.display = "none";
-        if (children.classList.contains("bx-up-arrow")) {
+        if (iconName != null && children.classList.contains("bx-up-arrow")) {
             children.classList.add("bx-down-arrow");
             children.classList.remove("bx-up-arrow");
+        }
+        if (inverseDiv != null) {
+            document.getElementById(inverseDiv).style.display = "block";
         }
     } else {
         window.history.pushState("object or string", "Title", updateDisplayNavMenu(btnName));
         doc.style.display = "block";
-        if (children.classList.contains("bx-down-arrow")) {
+        if (iconName != null && children.classList.contains("bx-down-arrow")) {
             children.classList.add("bx-up-arrow");
             children.classList.remove("bx-down-arrow");
+        }
+        if (inverseDiv != null) {
+            document.getElementById(inverseDiv).style.display = "none";
         }
     }
 }
@@ -147,4 +154,8 @@ function hideShowRefreshMedias() {
     } else {
         document.getElementById("refreshMedias").style.display = "none";
     }
+}
+
+function abortAddImage(btnName, div, inverseDiv) {
+    displayNavMenu(div, null, btnName, inverseDiv);
 }

@@ -95,8 +95,9 @@
                     <input type="email" placeholder="  email..." name="email" required>
                     <input type="password" placeholder="  password..." name="pwd" required>
                     <input type="submit" value="se connecter" name="connect">
-                    <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Forgot your password ?</p></div></a>
-                    <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Back to main page</p></div></a>
+                    <div class="forgetPassword">
+                        <a href="<?=$hlp->getMainUrl()?>"><p>Forgot your password ?</p></a>
+                    </div>
                     <?php
                         if (isset($_SESSION['connectError'])) {
                     ?>
@@ -130,7 +131,6 @@
                         ?>
                     </select>
                     <input type="submit" value="Créer un compte" name="create">
-                    <a href="<?=$hlp->getMainUrl()?>"><div class="fakeBtn"><p>Back to main page</p></div></a>
                     <?php
                         if (isset($_SESSION['connectError'])) {
                     ?>

@@ -16,6 +16,7 @@
     $languages = $hlp->getRowsTable("kp_languages");
     $accountIntels = $hlp->getAccountIntels();
     $hlp->setLanguageToAccountLanguage();
+    $imagesListing = $hlp->getImages();
 
     if (isset($_POST['createFirstPage'])) {
         unset($_SESSION['pageError']);
@@ -464,8 +465,9 @@
                     $accessDb = $hlp->haveAccesTo("Database");
                     $accessDeletedDB = $hlp->haveAccesTo("Deleted Database");
                     $accessImgs = $hlp->haveAccesTo("Images");
-
-                    if ($accessImgs || $accessDb || $accessDeletedDB || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
+                    $accesVideos = $hlp->haveAccesTo("Videos");
+                    $accesAudios = $hlp->haveAccesTo("Audios");
+                    if ($accesAudios || $accesVideos || $accessImgs || $accessDb || $accessDeletedDB || $hlp->haveExtensionAccesFromMainClass("navMenuFiles")) {
                 ?>
                 <button class="btnNavMenu" id="navMenu2" onclick="displayNavMenu('navMenuFiles', 'iconFiles', 'navMenu2')"><i class='bx bx-image-alt' ></i><?=" " . $hlp->getLangWorldMainFile("filesMain")?><i id="iconFiles" class="bx bx-down-arrow iconDirectory"></i></button>
                 <?php
@@ -475,7 +477,17 @@
                     <?php
                         if ($accessImgs) {
                     ?>
-                        <button  id="btnImages"class="btnNavMenu" onclick="displayContextMenu('imagesContext', 'btnImages')"><i class="bx bx-image-alt" style="padding: 5px;border-radius: 5px;background-color: #8d11a7;"></i><?=" " . $hlp->getLangWorldMainFile("w-images")?></button>
+                        <button id="btnImages"class="btnNavMenu" onclick="displayContextMenu('imagesContext', 'btnImages')"><i class="bx bx-image-alt" style="padding: 5px;border-radius: 5px;background-color: #8d11a7;"></i><?=" " . $hlp->getLangWorldMainFile("w-images")?></button>
+                    <?php
+                        }
+                        if ($accesVideos) {
+                    ?>
+                        <button id="btnVideos"class="btnNavMenu" onclick="displayContextMenu('videosContext', 'btnVideos')"><i class='bx bxs-videos' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #1192a7;'></i><?=" " . $hlp->getLangWorldMainFile("w-videos")?></button>
+                    <?php
+                        }
+                        if ($accesAudios) {
+                    ?>
+                        <button id="btnAudios"class="btnNavMenu" onclick="displayContextMenu('audiosContext', 'btnAudios')"><i class='bx bx-music' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #24a711;'></i><?=" " . $hlp->getLangWorldMainFile("w-audios")?></button>
                     <?php
                         }
                         if ($accessDb) {
@@ -1470,7 +1482,72 @@
                     </form>
                 </div>
                 <div class="contextDev" id="imagesContext">
-                    
+                    <div id="listImages-medias">
+                        <table class="tableMedia">
+                            <caption><?=$hlp->getLangWorldMainFile("w-images")?></caption>
+                            <thead>
+                                <tr>
+                                    <th class="tableMedia-icon"></th>
+                                    <th class="tableMedia-img"></th>
+                                    <th class="tableMedia-name">Name</th>
+                                    <th class="tableMedia-action"></th>
+                                    <th class="tableMedia-description">Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="tableMedia-icon"><button id="btnaddImage-media" onclick="displayNavMenu('newImage-medias', null, 'btnaddImage-media', 'listImages-medias')" title="<?=$hlp->getLangWorldMainFile("add-image")?>"><i class='bx bx-plus-medical'></i></button></td>
+                                    <td class="tableMedia-img"><?=$hlp->getLangWorldMainFile("add-image")?></td>
+                                    <td class="tableMedia-name"></td>
+                                    <td class="tableMedia-action"></td>
+                                    <td class="tableMedia-description"></td>
+                                </tr>
+                                <?php
+                                    for ($i = 0; $i < count($imagesListing); $i++) {
+                                ?>
+                                    <tr>
+                                        <td class="tableMedia-icon"></td>
+                                        <td class="tableMedia-img"></td>
+                                        <td class="tableMedia-name"></td>
+                                        <td class="tableMedia-action"></td>
+                                        <td class="tableMedia-description"></td>
+                                    </tr>
+                                <?php
+                                    }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                    <form id="newImage-medias" style="display: none;">
+                        <div class="barAction-addMedia">
+                            <button type="button" onclick="abortAddImage('btnaddImage-media', 'listImages-medias', 'newImage-medias')" title="<?=$hlp->getLangWorldMainFile("w-abort")?>"><i class='bx bx-arrow-back'></i></button>
+                        </div>
+                        <div class="addContent-media">
+                            
+                        </div>
+                    </form>
+                </div>
+                <div class="contextDev" id="videosContext">
+                    <table class="tableImages">
+                        <caption><?=$hlp->getLangWorldMainFile("w-videos")?></caption>
+                        <thead>
+                            
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
+                </div>
+                <div class="contextDev" id="audiosContext">
+                    <table class="tableImages">
+                        <caption><?=$hlp->getLangWorldMainFile("w-audios")?></caption>
+                        <thead>
+                            
+                        </thead>
+                        <tbody>
+                            
+                        </tbody>
+                    </table>
                 </div>
                 <?php
                     echo $ext->getHtmlAddedExtensionManager();
@@ -1498,11 +1575,11 @@
         </div>
         <div id="refreshMedias" style="display: none;">
             <div class="contentSoftwareIntels">
-                <p>You can refresh medias by clicking buttons behind</p>
-                <button class="btnRefreshMedia"><i class='bx bxs-error-alt bx-sm' style='color:#ffcc00'></i>Refresh Images</button>
-                <button class="btnRefreshMedia"><i class='bx bxs-error-circle bx-sm' style='color:#ff7600'></i>Refresh Videos</button>
-                <button class="btnRefreshMedia"><i class='bx bxs-error bx-sm' style='color:#ff0000'></i>Refresh Audios</button>
-                <button class="btnRefreshMedia"><i class='bx bxs-radiation bx-sm' style='color:#ff00e0'></i>Refresh all medias</button>
+                <p><?=$hlp->getLangWorldMainFile("refreshMediaTitle")?></p>
+                <button class="btnRefreshMedia"><i class='bx bxs-error-alt bx-sm' style='color:#ffcc00'></i><?=$hlp->getLangWorldMainFile("refreshImages")?></button>
+                <button class="btnRefreshMedia"><i class='bx bxs-error-circle bx-sm' style='color:#ff7600'></i><?=$hlp->getLangWorldMainFile("refreshVideos")?></button>
+                <button class="btnRefreshMedia"><i class='bx bxs-error bx-sm' style='color:#ff0000'></i><?=$hlp->getLangWorldMainFile("refreshAudios")?></button>
+                <button class="btnRefreshMedia"><i class='bx bxs-radiation bx-sm' style='color:#ff00e0'></i><?=$hlp->getLangWorldMainFile("refreshAll")?></button>
             </div>
         </div>
         <?php
