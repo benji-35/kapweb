@@ -123,8 +123,8 @@
 <!DOCTYPE html>
 <html  lang="<?=$_SESSION['language']?>">
     <head>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
+		<script src="https://unpkg.com/boxicons@2.0.9/dist/boxicons.js"></script>
+        <link href='https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css' rel='stylesheet'>
         <meta charset="utf-8">
         <title><?=$_SESSION['titlePage']?></title>
         <?php
@@ -150,7 +150,7 @@
 			if ($pageExists == true) {
 		?>
 		<form method="POST">
-			<h1><a class="backButton" href="<?=$hlp->getMainUrl() . "/KW/manager"?>"><i class="far fa-caret-square-left"></i></a>Edition</h1>
+			<h1><a class="backButton" href="<?=$hlp->getMainUrl() . "/KW/manager"?>"><i class='bx bxs-left-arrow-square bx-md backIcon'></i></a>Edition</h1>
 			<div class="content">
 				<table id="tblStocks" class="tablePage">
 					<caption><h2>Page Elements</h2></caption>

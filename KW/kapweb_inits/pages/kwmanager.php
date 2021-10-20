@@ -16,7 +16,9 @@
     $languages = $hlp->getRowsTable("kp_languages");
     $accountIntels = $hlp->getAccountIntels();
     $hlp->setLanguageToAccountLanguage();
-    $imagesListing = $hlp->getImages();
+    $imagesListing = $hlp->getMediaCatList("images");
+    $videosListing = $hlp->getMediaCatList("videos");
+    $audiosListing = $hlp->getMediaCatList("audios");
 
     if (isset($_POST['createFirstPage'])) {
         unset($_SESSION['pageError']);
@@ -455,7 +457,7 @@
                         }
                         if ($accesRedirect) {
                     ?>
-                        <button class="btnNavMenu" id="btnRedirects" onclick="displayContextMenu('redirectsManager', 'btnRedirects')"><i class='bx bx-exclude' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #08839f;'></i><?=" " . $hlp->getLangWorldMainFile("redirectsBtnNavMenu")?></button>
+                        <button class="btnNavMenu" id="btnRedirects" onclick="displayContextMenu('redirectsManager', 'btnRedirects')"><i class='bx bx-git-merge' style='color:#ffffff;padding: 5px;border-radius: 5px;background-color: #08839f;'></i><?=" " . $hlp->getLangWorldMainFile("redirectsBtnNavMenu")?></button>
                     <?php
                         }
                         echo $ext->getButtonFromCat("navMenuWebsite");
@@ -1504,13 +1506,43 @@
                                 </tr>
                                 <?php
                                     for ($i = 0; $i < count($imagesListing); $i++) {
+                                        $imageSite = $imagesListing[$i];
                                 ?>
                                     <tr>
-                                        <td class="tableMedia-icon"></td>
-                                        <td class="tableMedia-img"></td>
-                                        <td class="tableMedia-name"></td>
-                                        <td class="tableMedia-action"></td>
-                                        <td class="tableMedia-description"></td>
+                                        <td class="tableMedia-icon">
+                                            <?php
+                                                if ($cf->strStartWith($imageSite['path'], "http")) {
+                                            ?>
+                                                <i class='bx bx-world bx-md'></i>
+                                            <?php
+                                                } else {
+                                            ?>
+                                                <i class='bx bx-image bx-md'></i>
+                                            <?php
+                                                }
+                                            ?>
+                                        </td>
+                                        <td class="tableMedia-img"><img src="<?=$hlp->getPathMedia($imageSite['name'])?>"></td>
+                                        <td class="tableMedia-name"><?=$imageSite['name']?></td>
+                                        <td class="tableMedia-action">
+                                            <form class="btn-block" method="POST">
+                                                <button name="<?="editMedia-" . $imageSite['id']?>" title="<?=$hlp->getLangWorldMainFile("w-edit")?>"><i class='bx bx-edit-alt bx-sm'></i></button>
+                                                <button type="button" title="<?="Id : " . $imageSite['id']?>"><i class='bx bx-dots-horizontal-rounded bx-sm'></i></button>
+                                                <?php
+                                                    if ($imageSite['deleted']) {
+                                                ?>
+                                                    <button name="<?="enableMedia-" . $imageSite['id']?>" title="<?=$hlp->getLangWorldMainFile("w-enable")?>"><i class='bx bxs-toggle-right bx-sm'></i></button>
+                                                <?php
+                                                    } else {
+                                                ?>
+                                                    <button name="<?="disableMedia-" . $imageSite['id']?>" title="<?=$hlp->getLangWorldMainFile("w-disable")?>"><i class='bx bx-toggle-left bx-sm'></i></button>
+                                                <?php
+                                                    }
+                                                ?>
+                                                <button name="<?="deleteMedia-" . $imageSite['id']?>" title="<?=$hlp->getLangWorldMainFile("w-delete")?>"><i class='bx bx-trash bx-sm'></i></button>
+                                            </form>
+                                        </td>
+                                        <td class="tableMedia-description"><?=$imageSite['description']?></td>
                                     </tr>
                                 <?php
                                     }
@@ -1520,10 +1552,34 @@
                     </div>
                     <form id="newImage-medias" style="display: none;">
                         <div class="barAction-addMedia">
-                            <button type="button" onclick="abortAddImage('btnaddImage-media', 'listImages-medias', 'newImage-medias')" title="<?=$hlp->getLangWorldMainFile("w-abort")?>"><i class='bx bx-arrow-back'></i></button>
+                            <button type="button" onclick="abortAddImage('btnaddImage-media', 'listImages-medias', 'newImage-medias')" title="<?=$hlp->getLangWorldMainFile("w-abort")?>"><i class='bx bx-arrow-back bx-sm'></i></button>
+                            <button type="submit" title="<?=$hlp->getLangWorldMainFile("w-save")?>"><i class='bx bx-save bx-sm'></i></button>
                         </div>
                         <div class="addContent-media">
-                            
+                            <div class="navBarMenu-mediaAdd">
+                                <button id="btnImageEdit1" type="button" onclick="changeMenuEdit('btnImageEdit1', 'editImage1')" class="generalButton-edit"><?=$hlp->getLangWorldMainFile("w-general")?></button>
+                                <button id="btnImageEdit2" type="button" onclick="changeMenuEdit('btnImageEdit2', 'editImage2')" class="generalButton-edit">Notes</button>
+                            </div>
+                            <div class="generalMenu-edit" id="editImage1">
+                                <h3><?=$hlp->getLangWorldMainFile("w-enable")?></h3>
+                                <input id="valueEnableImageAdd" type="checkbox" name="isEnableImage-add" hidden>
+                                <button class="ownToggle" type="button" onclick="ownToggleButton('valueEnableImageAdd', 'valueEnableImageAddOwn')"><i id="valueEnableImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
+                                <h3><?=$hlp->getLangWorldMainFile("extensionListing-title-name")?></h3>
+                                <input type="text" placeholder="<?=$hlp->getLangWorldMainFile("extensionListing-title-name") . "..."?>">
+                                <h3><?="Type"?></h3>
+                                <input id="valueTypeImageAdd" type="checkbox" name="isEnableImage-add" hidden>
+                                <button class="ownToggle" type="button" onclick="ownToggleButton('valueTypeImageAdd', 'valueTypeImageAddOwn'); "><i id="valueTypeImageAddOwn" class='bx bx-toggle-left bx-lg'></i></button>
+                                <div id="urlEditImage">
+
+                                </div>
+                                <div id="insertEditImage">
+
+                                </div>
+                            </div>
+                            <div class="generalMenu-edit" id="editImage2">
+                                <h3>Description</h3>
+                                <textarea class="descriptionEdit"></textarea>
+                            </div>
                         </div>
                     </form>
                 </div>

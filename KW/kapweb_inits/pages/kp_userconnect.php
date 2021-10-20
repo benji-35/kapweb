@@ -53,9 +53,9 @@
     if (isset($_POST['create'])) {
         unset($_SESSION['c_errors']);
         if ($_POST['creationPwd'] == $_POST['confirmPwd']) {
-            $lname = NULL;
-            $fname = NULL;
-            $pseudo = NULL;
+            $lname = "";
+            $fname = "";
+            $pseudo = "";
             if (isset($_POST['creaetPseudoUser'])) {
                 $pseudo = $_POST['creaetPseudoUser'];
             }
@@ -73,7 +73,7 @@
                 header("location: " . $hlp->getMainUrl() . "/connect");
             }
         } else {
-            $_SESSION['c_errors'] = "Mot de passe et confirmations du mot passe différent.<br>";
+            $_SESSION['c_errors'] = "The password and the confirm password are differents";
         }
     }
     $need_ids = false;
@@ -111,7 +111,7 @@
         <div id="connection" class="formConnect">
             <form method="POST">
                 <picture>
-                        <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-no-connection")?>">
+                        <img src="<?=$hlp->getMainUrl() . "/KW/kapweb_inits/ressources/imgs/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "img-no-connection")?>">
                 </picture>
                 <h3>Connexion</h3>
                 <div class="whiteInForm">
@@ -125,6 +125,9 @@
                     <?php
                         }
                     ?>
+                    <div class="forgetPassword">
+                        <a href="<?=$hlp->getMainUrl()?>"><p>Forgot your password ?</p></a>
+                    </div>
                 </div>
                 <p>Pas de compte ? Cliquez sur le bouton ci-dessous.</p>
             </form>

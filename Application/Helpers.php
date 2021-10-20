@@ -411,12 +411,29 @@ class Helpers {
         return self::getLangWorldMainFileFromLanguage($_SESSION['language'], $key);
     }
 
-    public static function getImages():array {
-        $res = array();
+    public static function getIdMediaType(string $cateboryName):int {
         global $db;
         $connect = $db->connect();
-        $stm = $connect->prepare("SELECT * FROM kp_images WHERE 1");
-        $stm->execute();
+        $stm = $connect->prepare("SELECT * FROM kp_typemedias WHERE name=?");
+        $stm->execute(array($cateboryName));
+        $resStm = $stm->fetch();
+        $db->disconnect();
+        if ($resStm) {
+            return $resStm['id'];
+        }
+        return -1;
+    }
+
+    public static function getMediaCatList(string $category):array {
+        $res = array();
+        global $db;
+        $idMedia = self::getIdMediaType($category);
+        if ($idMedia < 0) {
+            return $res;
+        }
+        $connect = $db->connect();
+        $stm = $connect->prepare("SELECT * FROM kp_medias WHERE type=?");
+        $stm->execute(array($idMedia));
         while ($resStm = $stm->fetch()) {
             array_push($res, $resStm);
         }
@@ -424,30 +441,22 @@ class Helpers {
         return $res;
     }
 
-    public static function getVideos():array {
-        $res = array();
-        global $db;
+    public static function getPathMedia(string $name) {
+        global $db, $cf;
         $connect = $db->connect();
-        $stm = $connect->prepare("SELECT * FROM kp_videos WHERE 1");
-        $stm->execute();
-        while ($resStm = $stm->fetch()) {
-            array_push($res, $resStm);
-        }
+        $stm = $connect->prepare("SELECT * FROM kp_medias WHERE name=?");
+        $stm->execute(array($name));
+        $resStm = $stm->fetch();
         $db->disconnect();
-        return $res;
-    }
-
-    public static function getAudios():array {
-        $res = array();
-        global $db;
-        $connect = $db->connect();
-        $stm = $connect->prepare("SELECT * FROM kp_audios WHERE 1");
-        $stm->execute();
-        while ($resStm = $stm->fetch()) {
-            array_push($res, $resStm);
+        if ($resStm) {
+            if ($cf->strStartWith($resStm['path'], "http")) {
+                return $resStm['path'];
+            } else {
+                return self::getMainUrl() . "/" . $resStm['path'];
+            }
+        } else {
+            return "";
         }
-        $db->disconnect();
-        return $res;
     }
 
     /*
@@ -1949,7 +1958,7 @@ class Helpers {
         $connect = $db->connect();
         $gpwd = password_hash($pwd, PASSWORD_DEFAULT, $hash_opt);
         $ctime = time();
-        $stm = $connect->prepare("INSERT INTO no_users (cr_date, ls_mod, ls_con, ls_mod_uid, email, password) VALUES (?, ?, ?, ?, ?, ?)");
+        $stm = $connect->prepare("INSERT INTO no_users (cr_date, ls_mod, ls_con, ls_mod_uid, email, password, pseudo, fname, lname) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $stm->execute(array(
             $ctime,
             $ctime,
@@ -1957,21 +1966,13 @@ class Helpers {
             0,
             $email,
             $gpwd,
+            $pseudo,
+            $fname,
+            $lname
         ));
-        if (isset($pseudo)) {
-            $stm = $connect->prepare("UPDATE no_users SET pseudo=? WHERE email=?");
-            $stm->execute(array($pseudo, $email));
-        }
-        if (isset($lname)) {
-            $stm = $connect->prepare("UPDATE no_users SET lname=? WHERE email=?");
-            $stm->execute(array($lname, $email));
-        }
-        if (isset($fname)) {
-            $stm = $connect->prepare("UPDATE no_users SET fname=? WHERE email=?");
-            $stm->execute(array($fname, $email));
-        }
         $db->disconnect();
-        if (self::isNoAccount($email, $pwd) == 1) {
+        $checkAccount = self::isNoAccount($email, $pwd);
+        if ($checkAccount == 1 || $checkAccount == 5) {
             self::generateConfirmMail($email, 0);
             return 1;
         }

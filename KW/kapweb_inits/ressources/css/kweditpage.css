@@ -152,15 +152,19 @@ body {
     color: orange;
     text-decoration: none;
 }
-
+/*
 .backButton i {
     padding-left: 10px;
     padding-right: 10px;
     font-weight: bold;
+}*/
+
+.backIcon {
+    color:#ff9300
 }
 
-.backButton:hover {
-    color: rgb(196, 127, 0);
+.backButton:hover .backIcon{
+    color: #d77c00;
 }
 
 .errorDoNotExists {

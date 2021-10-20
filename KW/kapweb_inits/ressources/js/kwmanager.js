@@ -159,3 +159,30 @@ function hideShowRefreshMedias() {
 function abortAddImage(btnName, div, inverseDiv) {
     displayNavMenu(div, null, btnName, inverseDiv);
 }
+
+function changeMenuEdit(idName, menuEditId) {
+    var btns = document.getElementsByClassName("generalButton-edit");
+    var menus = document.getElementsByClassName("generalMenu-edit");
+    for (var i = 0; i < btns.length; i++) {
+        if (btns[i].classList.contains("buttonSelected-edit")) {
+            btns[i].classList.remove("buttonSelected-edit");
+        }
+    }
+    for (var i = 0; i < menus.length; i++) {
+        menus[i].style.display = "none";
+    }
+    document.getElementById(idName).classList.add("buttonSelected-edit");
+    document.getElementById(menuEditId).style.display = "block";
+}
+
+function ownToggleButton(idToggleInput, idIconToggle) {
+    if (document.getElementById(idToggleInput).checked) {
+        document.getElementById(idIconToggle).classList.remove("bxs-toggle-right");
+        document.getElementById(idIconToggle).classList.add("bx-toggle-left");
+        document.getElementById(idToggleInput).checked = false;
+    } else {
+        document.getElementById(idIconToggle).classList.remove("bx-toggle-left");
+        document.getElementById(idIconToggle).classList.add("bxs-toggle-right");
+        document.getElementById(idToggleInput).checked = true;
+    }
+}

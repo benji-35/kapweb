@@ -95,9 +95,6 @@
                     <input type="email" placeholder="  email..." name="email" required>
                     <input type="password" placeholder="  password..." name="pwd" required>
                     <input type="submit" value="se connecter" name="connect">
-                    <div class="forgetPassword">
-                        <a href="<?=$hlp->getMainUrl()?>"><p>Forgot your password ?</p></a>
-                    </div>
                     <?php
                         if (isset($_SESSION['connectError'])) {
                     ?>
@@ -105,6 +102,9 @@
                     <?php
                         }
                     ?>
+                    <div class="forgetPassword">
+                        <a href="<?=$hlp->getMainUrl()?>"><p>Forgot your password ?</p></a>
+                    </div>
                 </div>
                 <p>Ce passage est obligatoire pour accéder aux menus de gestion de Kapweb</p>
             </form>

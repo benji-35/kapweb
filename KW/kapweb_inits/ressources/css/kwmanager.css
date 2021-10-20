@@ -594,5 +594,70 @@ th {
 #newImage-medias {
     width: 100%;
     height: 100%;
-    background-color: white;
+}
+
+.barAction-addMedia {
+    text-align: left;
+    position: relative;
+    width: 90%;
+    left: 5%;
+}
+
+.addContent-media {
+    width: 80%;
+    margin-left: 10%;
+    margin-right: 10%;
+    background-color: rgb(240, 240, 240);
+    padding-bottom: 12px;
+    margin-top: 20px;
+}
+
+.navBarMenu-mediaAdd {
+    height: 24px;
+    background-color: gray;
+    text-align: left;
+}
+
+.generalButton-edit {
+    height: 100%;
+    background-color: transparent;
+    border: none;
+}
+
+.generalButton-edit:hover {
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.144);
+}
+
+.buttonSelected-edit {
+    border: 1px solid black;
+    border-bottom-style: none;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    background-color: rgb(240, 240, 240) !important;
+}
+
+.buttonSelected-edit:hover {
+    cursor: initial;
+    background-color: rgb(240, 240, 240) !important;
+}
+
+.generalMenu-edit {
+    display: none;
+    text-align: left;
+}
+
+.ownToggle {
+    background-color: transparent;
+    border: none;
+}
+
+.ownToggle:hover {
+    cursor: pointer;
+}
+
+.descriptionEdit {
+    width: 300px;
+    height: 100px;
+    resize: none;
 }
