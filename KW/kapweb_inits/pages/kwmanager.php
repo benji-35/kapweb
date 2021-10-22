@@ -1609,6 +1609,7 @@
                 <button class="btnRefreshMedia"><i class='bx bxs-error-circle bx-sm' style='color:#ff7600'></i><?=$hlp->getLangWorldMainFile("refreshVideos")?></button>
                 <button class="btnRefreshMedia"><i class='bx bxs-error bx-sm' style='color:#ff0000'></i><?=$hlp->getLangWorldMainFile("refreshAudios")?></button>
                 <button class="btnRefreshMedia"><i class='bx bxs-radiation bx-sm' style='color:#ff00e0'></i><?=$hlp->getLangWorldMainFile("refreshAll")?></button>
+                <button class="btnRefreshMedia"><i class='bx bxs-bell-ring bx-sm' style='color:#0042ff'></i><?=$hlp->getLangWorldMainFile("refreshDB")?></button>
             </div>
         </div>
         <?php
