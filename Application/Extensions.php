@@ -379,8 +379,8 @@ class Extensions {
                 }
             }
         }
-        for ($i = 0; $i < count($panelsToRequire); $i++) {
-            require $panelsToRequire[$i];
+        foreach($panelsToRequire as $path) {
+            require $path;
         }
     }
 
