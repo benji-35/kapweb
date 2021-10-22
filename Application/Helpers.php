@@ -1841,6 +1841,10 @@ class Helpers {
             $stm = $connect->prepare("UPDATE su_users SET fname=? WHERE email=?");
             $stm->execute(array($fname, $email));
         }
+        if (isset($lang)) {
+            $stm = $connect->prepare("UPDATE su_users SET lang=? WHERE email=?");
+            $stm->execute(array($lang, $email));
+        }
         $db->disconnect();
         if (self::isEmailUsedInAccounts($email)) {
             self::generateConfirmMail($email, 1);

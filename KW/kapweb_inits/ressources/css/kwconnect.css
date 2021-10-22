@@ -141,3 +141,10 @@ img {
     text-decoration: underline;
     cursor: pointer;
 }
+
+.selectLang {
+    width: 90%;
+    height: 35px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}

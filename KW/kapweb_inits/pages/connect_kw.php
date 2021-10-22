@@ -120,7 +120,7 @@
                     <input type="text" placeholder="nom..." name="lname" required>
                     <input type="text" placeholder="prénom..." name="fname" required>
                     <input type="password" placeholder="password" name="pwdCreate" required>
-                    <select name="lang">
+                    <select class="selectLang" name="lang">
                         <option value="0" hidden selected>Select your language</option>
                         <?php
                             for ($i = 0; $i < count($langauges); $i++) {
