@@ -1141,7 +1141,7 @@ class Helpers {
     public static function addNewAcces(array $intels) {
         global $db;
         $connect = $db->connect();
-        $stm = $connect->prepare("INSERT INTO kp_access (name, tableAcces) VALUES (?, ?)");
+        $stm = $connect->prepare("INSERT INTO kp_access (name, tableAccess) VALUES (?, ?)");
         $stm->execute(array($intels['name'], $intels['access']));
         $db->disconnect();
     }
