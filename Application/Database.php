@@ -13,6 +13,29 @@ class Database
 
     private static $connection = NULL;
 
+    private static $size_value_db = array(
+        "varchar" => "varchar(255)",
+        "text" => "text",
+        "int" => "int(11)",
+        "tinyint" => "tinyint(3)",
+        "smallint" => "smallint(5)",
+        "mediumint" => "mediumint(8)",
+        "bigint" => "bigint(20)",
+        "boolean" => "tinyint(1)",
+        "date" => "date",
+        "decimal" => "decimal(10.0)",
+        "float" => "float",
+        "double" => "double",
+        "real" => "double",
+        "serial" => "bigint(20)",
+        "datetime" => "datetime",
+        "timestamp" => "timestamp",
+        "time" => "time",
+        "timestamp" => "timestamp",
+        "year" => "year(4)",
+        "char" => "char(1)",
+    );
+
     public function __construct() {}
 
     public static function connect() {
@@ -157,6 +180,127 @@ class Database
         if ($connection != NULL)
             return true;
         return false;
+    }
+
+    public static function tabelExists($tableName):bool {
+        global $db;
+        $resReturn = false;
+        $connect = $db->connect();
+        $stm = $connect->prepare("select 1 from kp_tables LIMIT 1");
+        $stm->execute();
+        $res = $stm->fetch();
+        if ($res) {
+            $stm = $connect->prepare("SELECT * FROM kp_tables WHERE name=?");
+            $stm->execute(array($tableName));
+            $res = $stm->fetch();
+            if ($res)
+                $resReturn = true;
+        } else {
+            $stm = $connect->prepare("select 1 from " . $tableName . " LIMIT 1");
+            $stm->execute();
+            $res = $stm->fetch();
+            if ($res)
+                $resReturn = true;
+        }
+        $db->disconnect();
+        return $resReturn;
+    }
+
+    public static function tableVariableExists(string $tableName, string $varName):bool {
+        global $db;
+        $resReturn = false;
+        $connect = $db->connect();
+        $stm = $connect->prepare("select 1 from kp_tables LIMIT 1");
+        $stm->execute();
+        $res = $stm->fetch();
+        if ($res) {
+            $stm = $connect->prepare("SELECT * FROM kp_tables WHERE name=?");
+            $stm->execute(array($tableName));
+            $res = $stm->fetch();
+            if ($res) {
+                $vars = explode(",", $res['args']);
+                foreach ($vars as $targetedVar) {
+                    if ($targetedVar == $varName) {
+                        $resReturn = true;
+                        break;
+                    }
+                }
+            }
+        }
+        $db->disconnect();
+        return $resReturn;
+    }
+
+    private static function getCmdVarToAdd(array $varArray):string {
+        $nameSize = "";
+        $valueDef = "";
+        $nullable = "";
+        $index = "";
+        if (isset($varArray['size']) && $varArray['size'] != "") {
+            $nameSize = $varArray['type'] . "(" . $varArray['size'] . ")";
+        } else {
+            $nameSize = self::$size_value_db[$varArray['type']];
+        }
+        if (!isset($varArray['nullable']) || $varArray['nullable'] == "") {
+            $nullable = " NOT NULL";
+        }
+        if (isset($varArray['value']) && $varArray['value'] != "") {
+            $valueDef = " DEFAULT " . $varArray['value'];
+        } else if ($nullable != "NOT NULL") {
+            $valueDef = " DEFAULT NULL";
+        }
+        if (isset($varArray['index']) && $varArray['index'] != "") {
+            $index = " " . $varArray['index'];
+            if (isset($varArray['ai']) && $varArray['ai'] != "") {
+                $index = " AUTO_INCREMENT" . $index;
+            }
+        }
+        $resStr = $varArray['name'] . " " . $nameSize . $nullable . $valueDef . $index;
+        return $resStr;
+    }
+
+    public static function addTableToDb(array $tableIntels) {
+        global $db;
+        if (!isset($tableIntels['name']) || !isset($tableIntels['vars']) || count($tableIntels['vars']) <= 0) {
+            return;
+        }
+        $nb_vars = 1;
+        $str_args = $tableIntels['vars'][0]['name'];
+        $str_types = $tableIntels['vars'][0]['type'];
+        $strAdding = "CREATE TABLE IF NOT EXISTS " . $tableIntels['name'] . " (" . self::getCmdVarToAdd($tableIntels['vars'][0]) . ")";
+        $connect = $db->connect();
+        $stm = $connect->prepare($strAdding);
+        $stm->execute();
+        foreach($tableIntels['vars'] as $var) {
+            if ($var != $tableIntels['vars'][0]) {
+                $str = "ALTER TABLE " . $tableIntels['name'] . " ADD COLUMN " . self::getCmdVarToAdd($var);
+                $stm = $connect->prepare($str);
+                $stm->execute();
+                $nb_vars++;
+                $str_args .= "," . $var['name'];
+                $str_types .= "," . $var['type'];
+            }
+        }
+        $stm = $connect->prepare("INSERT INTO kp_tables (name, rows, types, args, hided, editable_structure, editable_content, deletable) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+        $stm->execute(array(
+            $tableIntels['name'],
+            $nb_vars,
+            $str_types,
+            $str_args,
+            0,
+            1,
+            1,
+            1
+        ));
+    }
+
+    public static function addVariableToDb(array $tableIntels) {
+        if (!isset($tableIntels['name']) || !isset($tableIntels['vars'])) {
+            return;
+        }
+        foreach($tableIntels['vars'] as $var) {
+
+        }
     }
 }
 

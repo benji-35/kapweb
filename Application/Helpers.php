@@ -654,7 +654,7 @@ class Helpers {
         global $db;
         $connect = $db->connect();
         $add_kp_tables = false;
-        if (self::tabelExists("kp_tables") == false) {
+        if ($db::tabelExists("kp_tables") == false) {
             $add_kp_tables = true;
             //ALTER TABLE `test` ADD `test` INT NOT NULL AUTO_INCREMENT  AFTER `yo`, ADD PRIMARY KEY (`test`); 
             $structure = ""
@@ -672,7 +672,7 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("kp_languages") == false) {
+        if ($db::tabelExists("kp_languages") == false) {
             $structure = ""
                 . "ALTER TABLE kp_languages ADD COLUMN name varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_languages ADD COLUMN name_en varchar(255) NOT NULL;"
@@ -686,7 +686,7 @@ class Helpers {
                 $stm->execute(array(self::$baseLang[$i]['name'], self::$baseLang[$i]['en'], self::$baseLang[$i]['short']));
             }
         }
-        if (self::tabelExists("pages") == false) {
+        if ($db::tabelExists("pages") == false) {
             $id_en = self::getLanguageIdFromShort("en");
             $structure = ""
                 . "ALTER TABLE pages ADD COLUMN url varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
@@ -864,7 +864,7 @@ class Helpers {
                 1,
             ));
         }
-        if (self::tabelExists("kp_cookies") == false) {
+        if ($db::tabelExists("kp_cookies") == false) {
             //ALTER TABLE `test` ADD `test` INT NOT NULL AUTO_INCREMENT  AFTER `yo`, ADD PRIMARY KEY (`test`); 
             $structure = ""
                 . "ALTER TABLE kp_cookies ADD COLUMN description text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL;"
@@ -876,7 +876,7 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("no_users") == false) {
+        if ($db::tabelExists("no_users") == false) {
             $structure = ""
                 . "ALTER TABLE no_users ADD COLUMN cr_date int(11) NOT NULL;"
                 . "ALTER TABLE no_users ADD COLUMN ls_mod int(11) NOT NULL;"
@@ -896,7 +896,7 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("su_users") == false) {
+        if ($db::tabelExists("su_users") == false) {
             $structure = ""
                 . "ALTER TABLE su_users ADD COLUMN cr_date int(11) NOT NULL;"
                 . "ALTER TABLE su_users ADD COLUMN ls_mod int(11) NOT NULL;"
@@ -917,7 +917,7 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("kp_mailconfirm") == false) {
+        if ($db::tabelExists("kp_mailconfirm") == false) {
             $structure = ""
                 . "ALTER TABLE kp_mailconfirm ADD COLUMN email varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_mailconfirm ADD COLUMN uid int(11) NOT NULL DEFAULT -1;"
@@ -929,7 +929,7 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("kp_access") == false) {
+        if ($db::tabelExists("kp_access") == false) {
             $structure = ""
                 . "ALTER TABLE kp_access ADD COLUMN name varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_access ADD COLUMN tableAccess text NOT NULL;";
@@ -950,7 +950,7 @@ class Helpers {
                 "",
             ));
         }
-        if (self::tabelExists("kp_redirects") == false) {
+        if ($db::tabelExists("kp_redirects") == false) {
             $structure = "ALTER TABLE kp_redirects ADD COLUMN last_path varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_redirects ADD COLUMN new_path varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_redirects ADD COLUMN deleted int(2) NOT NULL DEFAULT 0;"
@@ -960,7 +960,7 @@ class Helpers {
             $stm = $connect->prepare($structure);
             $stm->execute();
         }
-        if (self::tabelExists("kp_medias") == false) {
+        if ($db::tabelExists("kp_medias") == false) {
             $structure = "ALTER TABLE kp_medias ADD COLUMN name varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_medias ADD COLUMN type int(11) NOT NULL DEFAULT 0;"
                 . "ALTER TABLE kp_medias ADD COLUMN description text;"
@@ -987,7 +987,7 @@ class Helpers {
                 "KW/kapweb_inits/ressources/medias/kwLogo.png"
             ));
         }
-        if (self::tabelExists("kp_typemedias") == false) {
+        if ($db::tabelExists("kp_typemedias") == false) {
             $structure = "ALTER TABLE kp_typemedias ADD COLUMN name varchar(255) NOT NULL;"
                 . "ALTER TABLE kp_typemedias ADD COLUMN icon varchar(255) NOT NULL DEFAULT \"bx bx-image\";"
                 . "ALTER TABLE kp_typemedias ADD COLUMN description text;";
@@ -1361,30 +1361,6 @@ class Helpers {
             $res = file_exists($pathJs);
         }
         return $res;
-    }
-
-    private static function tabelExists($tableName):bool {
-        global $db;
-        $resReturn = false;
-        $connect = $db->connect();
-        $stm = $connect->prepare("select 1 from kp_tables LIMIT 1");
-        $stm->execute();
-        $res = $stm->fetch();
-        if ($res) {
-            $stm = $connect->prepare("SELECT * FROM kp_tables WHERE name=?");
-            $stm->execute(array($tableName));
-            $res = $stm->fetch();
-            if ($res)
-                $resReturn = true;
-        } else {
-            $stm = $connect->prepare("select 1 from " . $tableName . " LIMIT 1");
-            $stm->execute();
-            $res = $stm->fetch();
-            if ($res)
-                $resReturn = true;
-        }
-        $db->disconnect();
-        return $resReturn;
     }
 
     public static function pageExists($name):bool {

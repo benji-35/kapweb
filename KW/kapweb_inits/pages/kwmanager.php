@@ -342,6 +342,25 @@
             header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
     }
+
+    $refreshMed = $hlp->haveAccesTo("refreshMedias");
+    if ($refreshMed) {
+        if (isset($_POST['refresh-imgs'])) {
+
+        }
+        if (isset($_POST['refresh-vids'])) {
+            
+        }
+        if (isset($_POST['refresh-auds'])) {
+            
+        }
+        if (isset($_POST['refresh-allm'])) {
+            
+        }
+        if (isset($_POST['refresh-dtbs'])) {
+            
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -393,7 +412,7 @@
             </div>
             <div class="optionsBarConnect">
                 <?php
-                    if ($hlp->haveAccesTo("refreshMedias")) {
+                    if ($refreshMed) {
                 ?>
                 <button class="buttonRefreshMedias" title="<?=$hlp->getLangWorldMainFile("refreshMedias")?>" onclick="hideShowRefreshMedias()">
                     <i class='bx bxs-bolt bx-sm' style='color:#ffffff'></i>
@@ -1603,14 +1622,14 @@
             </div>
         </div>
         <div id="refreshMedias" style="display: none;">
-            <div class="contentSoftwareIntels">
+            <form method="POST" class="contentSoftwareIntels">
                 <p><?=$hlp->getLangWorldMainFile("refreshMediaTitle")?></p>
-                <button class="btnRefreshMedia"><i class='bx bxs-error-alt bx-sm' style='color:#ffcc00'></i><?=$hlp->getLangWorldMainFile("refreshImages")?></button>
-                <button class="btnRefreshMedia"><i class='bx bxs-error-circle bx-sm' style='color:#ff7600'></i><?=$hlp->getLangWorldMainFile("refreshVideos")?></button>
-                <button class="btnRefreshMedia"><i class='bx bxs-error bx-sm' style='color:#ff0000'></i><?=$hlp->getLangWorldMainFile("refreshAudios")?></button>
-                <button class="btnRefreshMedia"><i class='bx bxs-radiation bx-sm' style='color:#ff00e0'></i><?=$hlp->getLangWorldMainFile("refreshAll")?></button>
-                <button class="btnRefreshMedia"><i class='bx bxs-bell-ring bx-sm' style='color:#0042ff'></i><?=$hlp->getLangWorldMainFile("refreshDB")?></button>
-            </div>
+                <button class="btnRefreshMedia" name="refresh-imgs"><i class='bx bxs-error-alt bx-sm' style='color:#ffcc00'></i><?=$hlp->getLangWorldMainFile("refreshImages")?></button>
+                <button class="btnRefreshMedia" name="refresh-vids"><i class='bx bxs-error-circle bx-sm' style='color:#ff7600'></i><?=$hlp->getLangWorldMainFile("refreshVideos")?></button>
+                <button class="btnRefreshMedia" name="refresh-auds"><i class='bx bxs-error bx-sm' style='color:#ff0000'></i><?=$hlp->getLangWorldMainFile("refreshAudios")?></button>
+                <button class="btnRefreshMedia" name="refresh-allm"><i class='bx bxs-radiation bx-sm' style='color:#ff00e0'></i><?=$hlp->getLangWorldMainFile("refreshAll")?></button>
+                <button class="btnRefreshMedia" name="refresh-dtbs"><i class='bx bxs-bell-ring bx-sm' style='color:#0042ff'></i><?=$hlp->getLangWorldMainFile("refreshDB")?></button>
+            </form>
         </div>
         <?php
             if (isset($_GET['pageBtn']) && $_GET['pageBtn'] != "") {
