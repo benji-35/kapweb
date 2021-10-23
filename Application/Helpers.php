@@ -2275,6 +2275,23 @@ class Helpers {
         $db->disconnect();
         return false;
     }
+
+    public static function refreshAllMed(int $type = -1, array $meds = array()) {
+        if (count($meds) <= 0) {
+            $meds = self::getAllMedias();
+        }
+        $sizeMeds = count($meds);
+        if ($sizeMeds <= 0) {
+            return;
+        }
+        foreach($meds as $media) {
+            if ($type == -1 || $type == $media['type']) {
+                if (file_exists($media['path']) == false) {
+                    self::deleteMedia($media['id']);
+                }
+            }
+        }
+    }
 }
 
 ?>

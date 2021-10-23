@@ -346,19 +346,23 @@
     $refreshMed = $hlp->haveAccesTo("refreshMedias");
     if ($refreshMed) {
         if (isset($_POST['refresh-imgs'])) {
-
+            $hlp->refreshAllMed(1);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
         if (isset($_POST['refresh-vids'])) {
-            
+            $hlp->refreshAllMed(2);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
         if (isset($_POST['refresh-auds'])) {
-            
+            $hlp->refreshAllMed(3);
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
         if (isset($_POST['refresh-allm'])) {
-            
+            $hlp->refreshAllMed();
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
         if (isset($_POST['refresh-dtbs'])) {
-            
+            header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
     }
 ?>
