@@ -2297,17 +2297,27 @@ class Helpers {
         global $db, $ext, $cf;
         $extensions = $ext->getExtensionList();
         $connect = $db->connect();
-        foreach($extensions as $ext) {
-            if ($ext['isDbExt'] == "true") {
-                $pathDbConf = $ext['path'] . "/database/db.conf";
-                $strDbList = $cf->getValueFromKeyConf($pathDbConf, "");
-                $dbListingExt = explode(",", $strDbList);
-                foreach ($dbListingExt as $dbName) {
-                    if ($ext['use'] != "true") {
-                        $stm = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
-                        $stm->execute(array($dbName));
+        $stm = $connect->prepare("SELECT * FROM kp_tables WHERE hided=0");
+        $stm->execute();
+        while ($resStm = $stm->fetch()) {
+            $foundDb = false;
+            foreach($extensions as $ext) {
+                if ($ext['isDbExt'] == "true") {
+                    $pathDbConf = $ext['path'] . "/database/db.conf";
+                    $strDbList = $cf->getValueFromKeyConf($pathDbConf, "");
+                    $dbListingExt = explode(",", $strDbList);
+                    foreach ($dbListingExt as $dbName) {
+                        if ($dbName == $resStm['name'] && $ext['use'] != "true") {
+                            $foundDb = true;
+                            $stm = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
+                            $stm->execute(array($dbName));
+                        }
                     }
                 }
+            }
+            if ($foundDb == false) {
+                $stm = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
+                $stm->execute(array($resStm['name']));
             }
         }
         $db->disconnect();
