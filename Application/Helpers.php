@@ -2301,23 +2301,26 @@ class Helpers {
         $stm->execute();
         while ($resStm = $stm->fetch()) {
             $foundDb = false;
-            foreach($extensions as $ext) {
-                if ($ext['isDbExt'] == "true") {
-                    $pathDbConf = $ext['path'] . "/database/db.conf";
-                    $strDbList = $cf->getValueFromKeyConf($pathDbConf, "");
-                    $dbListingExt = explode(",", $strDbList);
-                    foreach ($dbListingExt as $dbName) {
-                        if ($dbName == $resStm['name'] && $ext['use'] != "true") {
+            foreach ($extensions as $ext) {
+                $dbs = $cf->getValueFromKeyConf($ext['path'] . "/database/db.conf", "table-used");
+                    $dbList = explode(",", $dbs);
+                    foreach ($dbList as $dbTarget) {
+                        if ($dbTarget != "" && $dbTarget == $resStm['name']) {
+                            if ($ext['isDbExt'] != "true") {
+                                $stm2 = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
+                                $stm2->execute(array($resStm['name']));
+                                $stm2 = $connect->prepare("DROP TABLE " . $resStm['name']);
+                                $stm2->execute();
+                            }
                             $foundDb = true;
-                            $stm = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
-                            $stm->execute(array($dbName));
                         }
                     }
-                }
             }
             if ($foundDb == false) {
-                $stm = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
-                $stm->execute(array($resStm['name']));
+                $stm2 = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
+                $stm2->execute(array($resStm['name']));
+                $stm2 = $connect->prepare("DROP TABLE " . $resStm['name']);
+                $stm2->execute();
             }
         }
         $db->disconnect();
