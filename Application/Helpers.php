@@ -2292,6 +2292,26 @@ class Helpers {
             }
         }
     }
+
+    public static function refreshDb() {
+        global $db, $ext, $cf;
+        $extensions = $ext->getExtensionList();
+        $connect = $db->connect();
+        foreach($extensions as $ext) {
+            if ($ext['isDbExt'] == "true") {
+                $pathDbConf = $ext['path'] . "/database/db.conf";
+                $strDbList = $cf->getValueFromKeyConf($pathDbConf, "");
+                $dbListingExt = explode(",", $strDbList);
+                foreach ($dbListingExt as $dbName) {
+                    if ($ext['use'] != "true") {
+                        $stm = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
+                        $stm->execute(array($dbName));
+                    }
+                }
+            }
+        }
+        $db->disconnect();
+    }
 }
 
 ?>

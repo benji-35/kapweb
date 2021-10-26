@@ -186,6 +186,9 @@ class Database
         global $db;
         $resReturn = false;
         $connect = $db->connect();
+        if ($connect == null) {
+            return false;
+        }
         $stm = $connect->prepare("select 1 from kp_tables LIMIT 1");
         $stm->execute();
         $res = $stm->fetch();
@@ -210,6 +213,9 @@ class Database
         global $db;
         $resReturn = false;
         $connect = $db->connect();
+        if ($connect == null) {
+            return false;
+        }
         $stm = $connect->prepare("select 1 from kp_tables LIMIT 1");
         $stm->execute();
         $res = $stm->fetch();
@@ -269,6 +275,9 @@ class Database
         $str_types = $tableIntels['vars'][0]['type'];
         $strAdding = "CREATE TABLE IF NOT EXISTS " . $tableIntels['name'] . " (" . self::getCmdVarToAdd($tableIntels['vars'][0]) . ")";
         $connect = $db->connect();
+        if ($connect == null) {
+            return;
+        }
         $stm = $connect->prepare($strAdding);
         $stm->execute();
         foreach($tableIntels['vars'] as $var) {

@@ -362,6 +362,7 @@
             header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
         if (isset($_POST['refresh-dtbs'])) {
+            $hlp->refreshDb();
             header("Refresh:" . 0, $_SERVER['PHP_SELF']);
         }
     }
