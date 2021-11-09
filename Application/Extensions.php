@@ -71,9 +71,10 @@ class Extensions {
                     "access" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-accessName"),
                     "button" => array(
                         "text" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i),
-                        "logo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogo"),
-                        "logoColor" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogoColor"),
+                        "logo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-logo"),
+                        "logoColor" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-logoColor"),
                         "category" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-cat"),
+                        "catLogo" => $cf->getValueFromKeyConf($pathBack, "manager-ui-button" . $i . "-catLogo"),
                     ),
                     "panel" => array(
                         "html" => $cf->getValueFromKeyConf($pathBack, "manager-ui-pannel" . $i . "-html"),
@@ -236,17 +237,22 @@ class Extensions {
     public static function otherButtonAcces():string {
         global $cf, $hlp;
         $new_cats = array();
+        $new_catsLogo = array();
         $btns = array();
         $mainCats = array("navMenuAdmin", "navMenuFiles", "navMenuWebsite");
 
         $extensions = self::$extensionsBack;
-        
+
         for ($i = 0; $i < count($extensions); $i++) {
             for($backId = 0; $backId < count($extensions[$i]); $backId++) {
                 if ($hlp->haveAccesTo($extensions[$i][$backId]['access'])) {
                     if (in_array($extensions[$i][$backId]['button']['category'], $mainCats) == false) {
                         if (in_array($extensions[$i][$backId]['button']['category'], $new_cats) == false) {
                             array_push($new_cats, $extensions[$i][$backId]['button']['category']);
+                            array_push($new_catsLogo, array(
+                                "btnName" => $extensions[$i][$backId]['button']['category'],
+                                "btnLogo" => $extensions[$i][$backId]['button']['catLogo'],
+                            ));
                         }
                         array_push($btns, $extensions[$i][$backId]);
                     }
@@ -258,9 +264,13 @@ class Extensions {
 
         for ($i = 0; $i < count($new_cats); $i++) {
             if ($new_cats[$i] != "") {
+                $logoCat = "bxs-layer-plus";
+                if ($new_catsLogo[$i]['btnLogo'] != "") {
+                    $logoCat = $new_catsLogo[$i]['btnLogo'];
+                }
                 $idNavMenuBtn = str_replace(" ", "_", $new_cats[$i]) . "-idNavMenu";
                 $res .= '<button class="btnNavMenu" id="' . $idNavMenuBtn . '" onclick="displayNavMenu(\''. $new_cats[$i] . '\', \'icon-' . $new_cats[$i] . '\', \'' . $idNavMenuBtn . '\')"'
-                    . '><i class="bx bxs-layer-plus" ></i> '
+                    . '><i class="bx ' . $logoCat . '" ></i> '
                     . $new_cats[$i] . '<i class="bx bx-down-arrow iconDirectory" id="icon-' . $new_cats[$i] . '"></i></button>';
                 $res .= '<div class="closeMenuNav" id="' . $new_cats[$i] . '">';
                 for ($btnId = 0; $btnId < count($btns); $btnId++) {

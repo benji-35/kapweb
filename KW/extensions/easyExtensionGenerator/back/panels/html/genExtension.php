@@ -1,33 +1,34 @@
 <?php
     global $db, $ext, $hlp, $ep, $cf;
-    $idPanel = $cf->getValueFromKeyConf($ext->getManagerUiExtension("Extension Generator"), "manager-ui-pannel1-id");
+    $extName = "Extension Generator";
+    $idPanel = $cf->getValueFromKeyConf($ext->getManagerUiExtension($extName), "manager-ui-pannel1-id");
 ?>
 <div class="contextDev" id="<?=$idPanel?>">
     <div class="easyExtensionGen-main">
-        <h1>Easy extension Generator</h1>
+        <h1><?=$ext->getLangaugeValue($extName, "titlePage")?></h1>
         <form method="POST" class="easyExtensionGen-formExtenGenerator">
-            <h1>Generator</h1>
+            <h1><?=$ext->getLangaugeValue($extName, "w-generator")?></h1>
             <div class="easyExtensionGen-whitespacing">
-                <input class="easyExtensionGen-inputIntels" type="text" placeholder="Extension name..." name="extenName">
-                <input class="easyExtensionGen-inputIntels" type="text" placeholder="Your name..." name="authorExt">
+                <input class="easyExtensionGen-inputIntels" type="text" placeholder="<?=$ext->getLangaugeValue($extName, "extName")?>" name="extenName">
+                <input class="easyExtensionGen-inputIntels" type="text" placeholder="<?=$ext->getLangaugeValue($extName, "authName")?>" name="authorExt">
                 <div class="easyExtensionGen-alignCheck">
-                    <label>Is Back Extension</label>
+                    <label><?=$ext->getLangaugeValue($extName, "isBackExt")?></label>
                     <input type="checkbox" name="extIsBack" id="easyExtensionGen-isBack" checked hidden>
-                    <button title="is a back extension ?" id="easyExtensionGen-isBack-btn" type="button" onclick="checkCategory('easyExtensionGen-isBack-btn', 'easyExtensionGen-isBack')">
+                    <button title="<?=$ext->getLangaugeValue($extName, "isBackTitle")?>" id="easyExtensionGen-isBack-btn" type="button" onclick="checkCategory('easyExtensionGen-isBack-btn', 'easyExtensionGen-isBack')">
                         <box-icon type='solid' color='green' size='lg' name='message-square-check'></box-icon>
                     </button>
                 </div>
                 <div class="easyExtensionGen-alignCheck">
-                    <label>Is Front Extension</label>
+                    <label><?=$ext->getLangaugeValue($extName, "isFrontExt")?></label>
                     <input type="checkbox" name="extIsFront" id="easyExtensionGen-isFront" hidden>
-                    <button title="is a front extension ?" id="easyExtensionGen-isFront-btn" type="button" onclick="checkCategory('easyExtensionGen-isFront-btn', 'easyExtensionGen-isFront')">
+                    <button title="<?=$ext->getLangaugeValue($extName, "isFrontTitle")?>" id="easyExtensionGen-isFront-btn" type="button" onclick="checkCategory('easyExtensionGen-isFront-btn', 'easyExtensionGen-isFront')">
                         <box-icon color='red' size='lg' name='message-square-x' type='solid' ></box-icon>
                     </button>
                 </div>
                 <div class="easyExtensionGen-alignCheck">
-                    <label>Is Database Extension</label>
+                    <label><?=$ext->getLangaugeValue($extName, "isDbExt")?></label>
                     <input type="checkbox" name="extIsDb" id="easyExtensionGen-isDb" hidden>
-                    <button title="is a database extension ?" id="easyExtensionGen-isDb-btn" type="button" onclick="checkCategory('easyExtensionGen-isDb-btn', 'easyExtensionGen-isDb')">
+                    <button title="<?=$ext->getLangaugeValue($extName, "isDbTitle")?>" id="easyExtensionGen-isDb-btn" type="button" onclick="checkCategory('easyExtensionGen-isDb-btn', 'easyExtensionGen-isDb')">
                         <box-icon color='red' size='lg' name='message-square-x' type='solid' ></box-icon>
                     </button>
                 </div>
@@ -35,10 +36,10 @@
                 <div id="dependencies-GeneratorDep-devcompagnie">
 
                 </div>
-                <button class="easyExtensionGen-btnAddDep" type="button" onclick="addDep()">Add Dependency</button>
-                <button class="easyExtensionGen-btnGenerate" type="submit" name="startGenerationExtension-Devcompagnie" title="Generate Extension"><box-icon name='code-curly'></box-icon> Generate</button>
+                <button class="easyExtensionGen-btnAddDep" type="button" onclick="addDep('<?=$ext->getLangaugeValue($extName, "placeholderDepName")?>', '<?=$ext->getLangaugeValue($extName, "w-delete")?>')"><?=$ext->getLangaugeValue($extName, "addDep")?></button>
+                <button class="easyExtensionGen-btnGenerate" type="submit" name="startGenerationExtension-Devcompagnie" title="Generate Extension"><box-icon name='code-curly'></box-icon><?=" " . $ext->getLangaugeValue($extName, "w-generate")?></button>
             </div>
-            <p>If your extension does not appear, it's may be because the name is already used for another extension.</p>
+            <p><?=$ext->getLangaugeValue($extName, "descripExtGen")?></p>
         </form>
     </div>
 </div>

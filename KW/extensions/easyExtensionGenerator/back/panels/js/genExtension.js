@@ -1,9 +1,9 @@
-function addDep() {
+function addDep(placeHolderTxt, deleteWorld) {
     var cVal = document.getElementById("nbDependencies-GeneratorDep-devcompagnie").value;
     var nVal = (cVal * 1) + 1;
     var txt = "<fieldset class=\"easyExtensionGen-DependencyAdded\" id=\"nDep-" + nVal + "\"><legend>Dependency</legend>" +
-        "<input type=\"text\" placeholder=\"Dependency extension name...\" name=\"nDep-" + nVal + "\">" +
-        "<button type=\"button\" onclick=\"removeDep('nDep-" + nVal + "')\">Supprimer</button>" +
+        "<input type=\"text\" placeholder=\"" + placeHolderTxt + "\" name=\"nDep-" + nVal + "\">" +
+        "<button type=\"button\" onclick=\"removeDep('nDep-" + nVal + "')\">" + deleteWorld + "</button>" +
         "</fieldset>";
     console.log(txt);
     document.getElementById("dependencies-GeneratorDep-devcompagnie").insertAdjacentHTML("beforeend", txt);
