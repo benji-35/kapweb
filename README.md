@@ -1,6 +1,6 @@
 # kapweb
 
-CMS made too create easly and quickly a new website.
+CMS made to create easly and quickly a new website.
 
 ## INSTALLATION
 
