@@ -32,6 +32,6 @@ If kapweb is correctly connect, tables will be automaticly generate. So you just
 If your website support mail() function from PHP, then you will receive a mail to confirm the super user account.
 If your website does not support the mail() function, then you have to follow what will write behind :
 - You have to go in the database and select the table ```kp_mailconfirm```
-- You must copy the value of ```cid ````and paste it in url bar like that : \[mwebsite url\]/KW/confirmemail/\[cid\]
+- You must copy the value of ```cid ```and paste it in url bar like that : \[mwebsite url\]/KW/confirmemail/\[cid\]
 - Then you just have to confirm your email
 
