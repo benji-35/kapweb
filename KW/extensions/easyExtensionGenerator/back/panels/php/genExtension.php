@@ -34,6 +34,12 @@
             }
         }
 
+        $nbBackUis = 0;
+
+        if ($isBack && $_POST['currNbBackIntels'] > 0) {
+            $nbBackUis = $_POST['currNbBackIntels'];
+        }
+
         $extConf_content = "name=" . $name . "\n"
             . "description=\n"
             . "author=" . $author . "\n"
@@ -75,7 +81,7 @@
             . "# manager-ui-pannel[number]-js= name of file for js page in js directory\n"
             . "# manager-ui-pannel[number]-id= id pannel (without spacing)\n"
             . "#\n\n"
-            . "manager-ui=0";
+            . "manager-ui=" . $nbBackUis . "\n";
 
         $front_base_content = "# All elements can be added in page editor :\n\n"
             . "front-elements=\n\n"
@@ -108,6 +114,44 @@
             mkdir($mainPathExt . "/back/panels/html", 0777, false);
             mkdir($mainPathExt . "/back/panels/js", 0777, false);
             mkdir($mainPathExt . "/back/panels/php", 0777, false);
+            if ($nbBackUis > 0) {
+                $currBackUi = 0;
+                for ($i = 0; $i < $_POST['nbBackIntels'] ; $i++) {
+                    if (isset($_POST['easyExt-automatAdded-' . $i . '-namePageBack'])) {
+                        $emptySpacing = str_replace(" ", "_", $_POST['easyExt-automatAdded-' . $i . '-namePageBack']);
+                        $back_base_content .= ""
+                            . "manager-ui-button" . $currBackUi . "=" . $_POST['easyExt-automatAdded-' . $i . '-namePageBack'] . "\n"
+                            . "manager-ui-button" . $currBackUi . "-cat=" . $_POST['extenName'] . "\n"
+                            . "manager-ui-button" . $currBackUi . "-catLogo=bx-layer-plus\n"
+                            . "manager-ui-button" . $currBackUi . "-logo=bxs-file-plus\n"
+                            . "manager-ui-button" . $currBackUi . "-logoColor=#68ff33\n"
+                            . "manager-ui-button" . $currBackUi . "-accessName=" . $_POST['extenName'] . "\n"
+                            . "manager-ui-pannel" . $currBackUi . "-html=" . $emptySpacing . ".php\n"
+                            . "manager-ui-pannel" . $currBackUi . "-css=" . $emptySpacing . ".css\n"
+                            . "manager-ui-pannel" . $currBackUi . "-php=" . $emptySpacing . ".php\n"
+                            . "manager-ui-pannel" . $currBackUi . "-js=" . $emptySpacing . ".js\n"
+                            . "manager-ui-pannel" . $currBackUi . "-id=" . $_POST['extenName'] . $currBackUi . ".php\n\n";
+                        
+                            $f = fopen($mainPathExt . "/back/panels/css/" . $emptySpacing . ".css", "w+");
+                            fwrite($f, "", strlen(""));
+                            fclose($f);
+                            $f = fopen($mainPathExt . "/back/panels/php/" . $emptySpacing . ".php", "w+");
+                            fwrite($f, "", strlen(""));
+                            fclose($f);
+                            $f = fopen($mainPathExt . "/back/panels/js/" . $emptySpacing . ".js", "w+");
+                            fwrite($f, "", strlen(""));
+                            fclose($f);
+                            $contentHtml = "<?php\n\tglobal \$db, \$ext, \$hlp, \$ep, \$cf;\n\t\$extName = \"" . $_POST['extenName'] . "\";"
+                                ."\$idPanel = \$cf->getValueFromKeyConf(\$ext->getManagerUiExtension(\$extName), \"manager-ui-pannel" . $currBackUi . "-id\");\n?>\n"
+                                . "<div class=\"mainDiv-" . $_POST['extenName'] . "\" id=\"<?=\$idPanel?>\">\n"
+                                . "</div>\n";
+                            $f = fopen($mainPathExt . "/back/panels/html/" . $emptySpacing . ".php", "w+");
+                            fwrite($f, $contentHtml, strlen($contentHtml));
+                            fclose($f);
+                            $currBackUi++;
+                    }
+                }
+            }
             $f = fopen($mainPathExt . "/back/manager-ui.conf", "w+");
             fwrite($f, $back_base_content, strlen($back_base_content));
             fclose($f);

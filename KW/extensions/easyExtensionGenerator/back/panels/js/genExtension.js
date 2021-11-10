@@ -16,12 +16,22 @@ function removeDep(idName) {
 
 function addBackPage(placeholderName, deleteWord) {
     var cVal = document.getElementById('nbBackIntels-easyExt').value;
+    var currVal = document.getElementById('currNbBackIntels-easyExt').value;
+    var nCurrVal = (currVal * 1) + 1;
     var nVal = (cVal * 1) + 1;
     var txt = "<tr id=\"easyExt-automatAdded-" + cVal + "-backPage\">" + 
         "<td class=\"easyExtension-nameTbaleListingBack\"><input type=\"text\" placeholder=\"" + placeholderName + "\" name=\"easyExt-automatAdded-" + cVal + "-namePageBack\"></td>" +
-        "<td class=\"easyExtension-actonsTbaleListingBack\"><button onclick=\"removeDep('easyExt-automatAdded-" + cVal + "-backPage')\" type=\"button\" title=\"" + deleteWord + "\"><i class='bx bxs-trash'></i></button></td></tr>";
+        "<td class=\"easyExtension-actonsTbaleListingBack\"><button onclick=\"removeBackPage('easyExt-automatAdded-" + cVal + "-backPage')\" type=\"button\" title=\"" + deleteWord + "\"><i class='bx bxs-trash'></i></button></td></tr>";
     document.getElementById("easyExtension-tableListBackPages").insertAdjacentHTML("beforeend", txt);
     document.getElementById("nbBackIntels-easyExt").value = nVal;
+    document.getElementById('currNbBackIntels-easyExt').value = nCurrVal;
+}
+
+function removeBackPage(idName) {
+    document.getElementById(idName).remove();
+    var currVal = document.getElementById('currNbBackIntels-easyExt').value;
+    var nCurrVal = (currVal * 1) - 1;
+    document.getElementById('currNbBackIntels-easyExt').value = nCurrVal;
 }
 
 function checkCategory(idBtn, idCheck, idBtnAccess) {
