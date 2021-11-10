@@ -33,6 +33,7 @@
                 return;
             }
         }
+
         $extConf_content = "name=" . $name . "\n"
             . "description=\n"
             . "author=" . $author . "\n"
@@ -59,13 +60,20 @@
             . "# Here you can add button in manager ui and set his interface\n"
             . "#\n"
             . "# manager-ui=number of button to add\n"
+            . "#\n"
+            . "# button-translate=[true/false] -> if you translate each buttons in your language file\n"
+            . "#\n"
             . "# manager-ui-button[number]=text in button\n"
             . "# manager-ui-button[number]-cat=categorie where button will be placed\n"
-            . "# manager-ui-button[number]-catLogo=Logo placed befaore text in button\n"
+            . "# manager-ui-button[number]-catLogo=Logo of category (if you are not sure the category get the logo, you can add this line on each button of your extension)\n"
+            . "# manager-ui-button[number]-logo=Logo placed befaore text in button\n"
+            . "# manager-ui-button[number]-logoColor=Color of the button logo\n"
+            . "# manager-ui-button[number]-accessName= access name for the button. Only super user that get this acces can show and interract with this button\n"
             . "# manager-ui-pannel[number]-html= name of file for html page in html directory\n"
             . "# manager-ui-pannel[number]-css= name of file for css page in css directory\n"
             . "# manager-ui-pannel[number]-php= name of file for php page in php directory\n"
             . "# manager-ui-pannel[number]-js= name of file for js page in js directory\n"
+            . "# manager-ui-pannel[number]-id= id pannel (without spacing)\n"
             . "#\n\n"
             . "manager-ui=0";
 

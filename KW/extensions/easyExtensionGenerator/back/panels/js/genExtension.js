@@ -14,12 +14,38 @@ function removeDep(idName) {
     document.getElementById(idName).remove();
 }
 
-function checkCategory(idBtn, idCheck) {
+function addBackPage(placeholderName, deleteWord) {
+    var cVal = document.getElementById('nbBackIntels-easyExt').value;
+    var nVal = (cVal * 1) + 1;
+    var txt = "<tr id=\"easyExt-automatAdded-" + cVal + "-backPage\">" + 
+        "<td class=\"easyExtension-nameTbaleListingBack\"><input type=\"text\" placeholder=\"" + placeholderName + "\" name=\"easyExt-automatAdded-" + cVal + "-namePageBack\"></td>" +
+        "<td class=\"easyExtension-actonsTbaleListingBack\"><button onclick=\"removeDep('easyExt-automatAdded-" + cVal + "-backPage')\" type=\"button\" title=\"" + deleteWord + "\"><i class='bx bxs-trash'></i></button></td></tr>";
+    document.getElementById("easyExtension-tableListBackPages").insertAdjacentHTML("beforeend", txt);
+    document.getElementById("nbBackIntels-easyExt").value = nVal;
+}
+
+function checkCategory(idBtn, idCheck, idBtnAccess) {
     if (document.getElementById(idCheck).checked == true) {
         document.getElementById(idCheck).checked = false;
         document.getElementById(idBtn).innerHTML = "<box-icon color='red' size='lg' name='message-square-x' type='solid' ></box-icon>";
+        if (idBtnAccess != "none") {
+            document.getElementById(idBtnAccess).style.display = "none";
+        }
     } else {
         document.getElementById(idCheck).checked = true;
         document.getElementById(idBtn).innerHTML = "<box-icon type='solid' color='green' size='lg' name='message-square-check'></box-icon>";
+        if (idBtnAccess != "none") {
+            document.getElementById(idBtnAccess).style.display = "block";
+        }
     }
+}
+
+function goToIntels(idIntel) {
+    document.getElementById('easyExtension-mainDiv').style.display = "none";
+    document.getElementById(idIntel).style.display = "block";
+}
+
+function backToMainDiv(idIntel) {
+    document.getElementById(idIntel).style.display = "none";
+    document.getElementById('easyExtension-mainDiv').style.display = "block";
 }

@@ -6,15 +6,7 @@
 }
 
 .easyExtensionGen-formExtenGenerator {
-    background-color: orange;
-    padding-top: 20px;
-    padding-bottom: 15px;
-    border: 2px solid black;
-    width: 400px;
-    text-align: center;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
+    width: 100%;
 }
 
 .easyExtensionGen-whitespacing {
@@ -92,4 +84,68 @@
 
 .easyExtensionGen-btnAddDep {
     margin-top: 5px;
+}
+
+.pannelIntels-easyExtension {
+    width: 100%;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: orange;
+    padding-top: 20px;
+    padding-bottom: 15px;
+    border: 2px solid black;
+    text-align: center;
+    display: none;
+}
+
+.pannelMainDiv {
+    width: 400px;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: orange;
+    padding-top: 20px;
+    padding-bottom: 15px;
+    border: 2px solid black;
+    text-align: center;
+}
+
+.titleIntels-easyExtension-intels {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.backIntels-easyExtension {
+    margin-right: 10px;
+    border: none;
+    background-color: transparent;
+}
+
+.backIntels-easyExtension:hover {
+    cursor: pointer;
+}
+
+.titleIntels-easyExtension-intels h2 {
+    margin-left: 10px;
+}
+
+.tableListingBackendPage-easyExtension {
+    border-collapse: collapse;
+    width: 100%;
+    text-align: left;
+}
+
+.tableListingBackendPage-easyExtension thead {
+    color: white;
+}
+
+.easyExtension-nameTbaleListingBack, .easyExtension-actonsTbaleListingBack {
+    width: 50%;
+    text-align: center;
+}
+
+.easyExtension-nameTbaleListingBack input {
+    width: 98%;
 }
