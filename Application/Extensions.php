@@ -710,6 +710,7 @@ class Extensions {
         $mainPath = self::getMainPathExtension($extensionName);
         return $mainPath ."/language/" . $lang . ".conf";
     }
+
 }
 
 ?>

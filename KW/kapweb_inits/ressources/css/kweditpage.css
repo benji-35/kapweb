@@ -4,184 +4,84 @@ body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.editDiv {
-    width: 98%;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgb(236, 236, 236);
-    margin-bottom: 20px;
-    margin-top: 15px;
-    padding: 10px;
-    border: 2px solid black;
-}
-
-.headerEdit {
-    background-color: rgb(126, 126, 126);
+.mainContent {
+    position: absolute;
     width: 100%;
-    text-align: center;
-    position: relative;
-    top: -20px;
-}
-
-.footerEdit {
-    width: 100%;
-    background-color: rgb(167, 167, 167);
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
+    top: 75px;
 }
 
-.contentEdit {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 98%;
-    height: 40px;
-    resize: none;
-}
-
-.footerEdit input {
-    width: 150px;
-    height: 50px;
-    margin: 10px;
-    position: relative;
-    top: 50%;
-}
-
-.content {
-    display: flex;
-    flex-wrap: wrap;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.srcInputEdit {
-    width: 80%;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-}
-#tblStocks {
-    /*font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;*/
-    border-collapse: collapse;
+.upMenu {
+    position: absolute;
     width: 100%;
-}
-
-#tblStocks td, #tblStocks th {
-    border: 1px solid #ddd;
-    padding: 8px;
-}
-
-#tblStocks tr:nth-child(even){background-color: #f2f2f2;}
-
-#tblStocks tr:hover {background-color: #ddd;}
-
-#tblStocks th {
-    padding-top: 12px;
-    padding-bottom: 12px;
-    text-align: left;
-    background-color: orange;;
-    color: black;
-}
-
-.formCreatePage {
-    margin-top: 20px;
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    border: 2px solid black;
-    padding: 0;
-    width: 400px;
+    height: 75px;
     background-color: orange;
+    display: flex;
+    flex-wrap: wrap;
 }
 
-.formCreatePage input {
-    width: 80%;
-    margin-left: 10%;
-    margin-right: 10%;
-    height: 50px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.formCreatePage select {
-    width: 80%;
-    height: 30px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-}
-
-.whiteDiv {
-    width: 100%;
-    background-color: white;
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
-
-.backend {
-    width: 100%;
+.navMenuEdit {
+    position: relative;
+    width: 19%;
     text-align: center;
-    margin-bottom: 5px;
+    border: 2px solid black;
+    border-style: none solid none none;
+    margin-right: 2px;
 }
 
-.leftBackend {
-    width: 49%;
-    float: left;
+.editMenuContent {
+    position: relative;
+    width: 80%;
+    background-color: white;
+    text-align: center;
 }
 
-.rightBackend {
-    width: 49%;
+.linkBackManager {
+    height: 28.8px;
+    color: black;
+    text-decoration: none;
+}
+
+.linkBackManager i {
+    vertical-align: -30%;
+}
+
+.titleEdition {
+    margin: 0;
+    padding: 0;
+    height: min-content;
+    margin-left: 20px;
+}
+
+.contentUpMenu {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    height: 100%;
+    top: 50%;
+    transform: translateY(-25%);
+    margin-left: 20px;
+}
+
+.btnNavElem {
+    height: 50px;
+}
+
+.iconNavBar {
     float: right;
 }
 
-.leftBackend textarea {
-    width: 100%;
-    height: 150px;
+.textNavMenu {
+    float: left;
+    margin: 0;
+    margin-right: 10px;
 }
 
-.rightBackend textarea {
-    width: 90%;
-    height: 150px;
-}
-
-.backButton {
-    padding-left: 10px;
-    padding-right: 10px;
-    color: orange;
-    text-decoration: none;
-}
-/*
-.backButton i {
-    padding-left: 10px;
-    padding-right: 10px;
-    font-weight: bold;
-}*/
-
-.backIcon {
-    color:#ff9300
-}
-
-.backButton:hover .backIcon{
-    color: #d77c00;
-}
-
-.errorDoNotExists {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    background-color: orange;
-    padding-top: 15px;
-    padding-bottom: 15px;
-    width: 400px;
+.elemClass {
     border: 2px solid black;
-    text-align: center;
-}
-
-.whiteSPacingError {
-    background-color: white;
-    padding-top: 10px;
-    padding-bottom: 20px;
+    padding: 3px;
+    border-radius: 5px;
+    width: min-content;
 }

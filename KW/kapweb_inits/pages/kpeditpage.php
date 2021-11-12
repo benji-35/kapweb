@@ -118,7 +118,10 @@
 		$ep->saveCssJs($arr);
 		header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 	}
-	?>
+
+	$editMenus = $ep->getAllEditMenus($elems);
+	$navEditMenu = $ep->sortElemsAndGetHtml($elems);
+?>
 
 <!DOCTYPE html>
 <html  lang="<?=$_SESSION['language']?>">
@@ -149,128 +152,20 @@
 		<?php
 			if ($pageExists == true) {
 		?>
-		<form method="POST">
-			<h1><a class="backButton" href="<?=$hlp->getMainUrl() . "/KW/manager"?>"><i class='bx bxs-left-arrow-square bx-md backIcon'></i></a>Edition</h1>
-			<div class="content">
-				<table id="tblStocks" class="tablePage">
-					<caption><h2>Page Elements</h2></caption>
-					<thead>
-						<tr>
-							<th><p>Name (editable)</p></th>
-							<th><p>Type</p></th>
-							<th><p>Parent</p></th>
-							<th><p>Class</p></th>
-							<th><p>Content (editable)</p></th>
-							<th><p>Special Edit (editable)</p></th>
-							<th><p>Add Child</p></th>
-							<th><p>Changes</p></th>
-						</tr>
-					</thead>
-					<tbody id="bodyTableEdit">
-						<?php
-							for ($i = 0; $i < count($elems); $i++) {
-								$balise = $elems[$i];
-						?>
-							<tr>
-								<td><input type="text" value="<?=$balise['name']?>" name="<?="name-" . $balise['name']?>"></td>
-								<td><input type="text" value="<?=$balise['type']?>" readonly></td>
-								<td><input type="text" value="<?=$balise['parent']?>" readonly></td>
-								<td><input type="text" value="<?=$balise['class']?>" name="<?="chgClass-" . $balise['name']?>"></td>
-								<td><textarea name="<?="chgContent-" . $balise['name']?>"><?=$balise['content']?></textarea></td>
-								<td>
-									<?php
-										echo $ep->getSpecificsOptions($balise);
-									?>
-								</td>
-								<td>
-									<?php
-										if ($ep->isBaliseAutoClose($balise['type']) == false) {
-									?>
-									<input type="text" placeholder="Name..." name="<?="addChildName-" . $balise['name']?>">
-									<select name="<?="typeAddChild-" . $balise['name']?>">
-										<?=$ep->getSelectAdded($balise['type'])?>
-									</select>
-									<input type="submit" value="Add Child" name="<?="addChild-" . $balise['name']?>">
-									<?php
-										}
-									?>
-								</td>
-								<td>
-									<?php
-										if ($balise['name'] != "body") {
-									?>
-										<input type="submit" value="Save" name="<?="save-" . $balise['name']?>">
-										<input type="submit" value="Delete" name="<?="delete-" . $balise['name']?>">
-									<?php
-										}
-									?>
-									<input type="submit" value="Reset" name="<?="reset-" . $balise['name']?>">
-								</td>
-							</tr>
-						<?php
-							}
-						?>
-					</tbody>
-				</table>
+
+		<div class="upMenu">
+			<div class="contentUpMenu">
+				<a href="<?=$hlp->getMainUrl() . "/KW/manager"?>" class="linkBackManager"><i class='bx bxs-left-arrow'></i></a>
+				<h2 class="titleEdition">Edition</h2>
 			</div>
-		</form>
-		<form class="formCreatePage" method="POST">
-            <picture>
-                <img src="<?=$hlp->getMainUrl() . "/" . $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_icon_png")?>">
-            </picture>
-            <h3>Create new element</h3>
-            <div class="whiteDiv">
-                <input type="text" placeholder="Name element..." name="newName" required>
-				<input type="text" placeholder="Class name..." name="newClass">
-				<input type="text" placeholder="Content..." name="newContent">
-                <select name="selectTypeElement" required>
-                    <?php
-                        echo $ep->getSelectAdded("div");
-                    ?>
-                </select>
-                <input type="submit" value="Create" name="newElement">
-                <?php
-                    if (isset($_SESSION['newElementError'])) {
-                ?>
-                    <p class="errorMsg" style="background-color: rgba(255, 0, 0, 0.514);"><?=$_SESSION['newElementError']?></p>
-                <?php
-                    }
-                ?>
-            </div>
-            <p>Vous pouvez créer d'autres pages internet en remplissant ce formulaire</p>
-        </form>
-		<div class="backend">
-			<form method="POST">
-				<div class="leftBackend">
-					<h3>CSS</h3>
-					<?php
-						if ($cssJs['css'] != NULL) {
-					?>
-						<textarea id="inputCss" class="cssEdit" name="cssEdit"><?=$cssJs['css']?></textarea>
-					<?php
-						} else {
-					?>
-						<textarea class="cssEdit" name="cssEditNo" readonly>Pas de css pour cette page</textarea>
-					<?php
-						}
-					?>
-				</div>
-				<div class="rightBackend">
-					<h3>JS</h3>
-					<?php
-						if ($cssJs['js'] != NULL) {
-					?>
-						<textarea id="inputJs" class="jsEdit" name="jsEdit"><?=$cssJs['js']?></textarea>
-					<?php
-						} else {
-					?>
-						<textarea class="jsEdit" name="jsEditNo" readonly>Pas de js pour cette page</textarea>
-					<?php
-						}
-					?>
-				</div>
-				<input type="submit" value="Save CSS JS" name="saveCssJs">
-			</form>
+		</div>
+		<div class="mainContent">
+			<div class="navMenuEdit">
+				<?=$navEditMenu?>
+			</div>
+			<div class="editMenuContent">
+				<?=$editMenus?>
+			</div>
 		</div>
 		<?php
 			} else {

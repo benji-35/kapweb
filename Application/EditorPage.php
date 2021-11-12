@@ -22,6 +22,38 @@ class EditorPage {
         "['isConnectedNormalB']" => "<?php \$r = \$hlp->isConnectedNo(); if (\$r == 1) {echo \"true\";} else {echo \"false\";}/*don't touch this line*/?>",
     );
 
+    private static $representationTypeElement = array(
+        "div" => "bx bx-window",
+        "h1" => "bx bx-text",
+        "h2" => "bx bx-text",
+        "h3" => "bx bx-text",
+        "h4" => "bx bx-text",
+        "h5" => "bx bx-text",
+        "h6" => "bx bx-text",
+        "p" => "bx bx-text",
+        "a" => "bx bx-link",
+        "img" => "bx bx-image-alt",
+        "source" => "bx bx-collapse",
+        "audio" => "bx bxs-music",
+        "video" => "bx bxs-video-recording",
+        "button" => "bx bxs-joystick-button",
+        "i" => "bx bxs-inbox",
+        "form" => "bx bxs-paper-plane",
+        "input" => "bx bxs-edit-alt",
+        "textarea" => "bx bxs-edit-alt",
+        "picture" => "bx bxs-image-alt",
+        "table" => "bx bx-table",
+        "nav" => "bx bxs-navigation",
+        "ul" => "bx bx-list-ul",
+        "li" => "bx bx-list-ol",
+        "select" => "bx bx-checkbox-checked",
+        "option" => "bx bx-bar-chart",
+        "optgroup" => "bx bx-bar-chart-square",
+        "label" => "bx bxs-label",
+    );
+
+    private static $representationTypeElementUnknown = "bx bxs-extension";
+
     private static $extensionsElementsGlob = array();
 
     public function __construct() {}
@@ -914,6 +946,82 @@ class EditorPage {
             return $res;
         }
         return '';
+    }
+
+    private static function getElemsFromParent(string $parentName, array $elems):array {
+        $res = array();
+        $nElems = $elems;
+        foreach ($elems as $i => $elem) {
+            if ($elem['parent'] == $parentName) {
+                unset($nElems[$i]);
+                array_push($res, array(
+                    "name" => $elem['name'],
+                    "type" => $elem['type'],
+                    "class" => $elem['class'],
+                    "parent" => $elem['parent'],
+                    "children" => self::getElemsFromParent($elem['name'], $nElems),
+                    "content" => $elem['content'],
+                ));
+            }
+        }
+        return $res;
+    }
+
+    public static function sortElems(array $elems):array {
+        return self::getElemsFromParent("", $elems);
+    }
+
+    private static function getIconHtmlElement(string $type) {
+        if (array_key_exists($type, self::$representationTypeElement)) {
+            return self::$representationTypeElement[$type];
+        } else {
+            return self::$representationTypeElementUnknown;
+        }
+    }
+
+    private static function getElemsFromParentReturnHtml(string $parentName, array $elems, int $sizeBtn):string {
+        $res = "";
+        $nElems = $elems;
+        $nSize = $sizeBtn - 5;
+        foreach ($elems as $i => $elem) {
+            if ($elem['parent'] == $parentName) {
+                unset($nElems[$i]);
+                $icon = self::getIconHtmlElement($elem['type']);
+                $nameNoSpacing = str_replace(" ", "_", $elem['name']);
+                if (isset($elem['children']) && $elem['children'] != "") {
+                    $res .= "<button style=\"width: $sizeBtn%\" class=\"btnNavElem\" onclick=\"openNavBar('navMenu-" . $nameNoSpacing . "', 'editMenu-" . $nameNoSpacing . "', 'iconNavMenu-" . $nameNoSpacing . "')\"><i class=\"$icon textNavMenu\"></i><p class=\"textNavMenu\">". $elem['name'] . "</p><i id=\"iconNavMenu-" . $nameNoSpacing . "\" class=\"bx bxs-down-arrow iconNavBar\"></i></button>";
+                    $res .= "<div style=\"display: none;\" id=\"navMenu-" . $nameNoSpacing . "\">";
+                    $res .= self::getElemsFromParentReturnHtml($elem['name'], $nElems, $nSize);
+                    $res .= "</div>";
+                } else {
+                    $res .= "<button style=\"width: $sizeBtn%\" class=\"btnNavElem\" onclick=\"openEditMenu('editMenu-" . $nameNoSpacing . "')\"><i class=\"$icon textNavMenu\"></i><p class=\"textNavMenu\">". $elem['name'] . "</p></button>";
+                }
+            }
+        }
+        return $res;
+    }
+
+    public static function sortElemsAndGetHtml(array $elems):string {
+        return self::getElemsFromParentReturnHtml("", $elems, 98);
+    }
+
+    public static function getAllEditMenus(array $elems):string {
+        $res = "";
+        foreach ($elems as $elem) {
+            $nameNoSpacing = str_replace(" ", "_", $elem['name']);
+            $res .= "<div class=\"editMenu\" id=\"editMenu-" . $nameNoSpacing . "\" style=\"display: none;\">";
+            $res .= "<h3>" . $elem['name'] . "</h3>";
+            $res .= "<div class=\"classEdit\"><h4>calsses : </h4>";
+            $classesElems = explode(" ", $elem['class']);
+            foreach ($classesElems as $classesElem) {
+                if (isset($classesElem) && $classesElem != "") {
+                    $res .= "<div class=\"elemClass\"><p>" . $classesElem . "</p></div>";
+                }
+            }
+            $res .= "</div>";
+            $res .= "</div>";
+        }
+        return $res;
     }
 }
 ?>

@@ -1,12 +1,20 @@
-var textareas = document.getElementsByTagName('textarea');
-var count = textareas.length;
-for(var i=0;i<count;i++){
-    textareas[i].onkeydown = function(e){
-        if(e.keyCode==9 || e.which==9){
-            e.preventDefault();
-            var s = this.selectionStart;
-            this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
-            this.selectionEnd = s+1; 
-        }
+function openNavBar (idNaveBar, idEditMenu, idIcon) {
+    var docNavBAr = document.getElementById(idNaveBar);
+
+    if (docNavBAr.style.display == "none") {
+        docNavBAr.style.display = "block";
+        document.getElementById(idIcon).className = "bx bxs-up-arrow iconNavBar";
+    } else {
+        docNavBAr.style.display = "none";
+        document.getElementById(idIcon).className = "bx bxs-down-arrow iconNavBar";
     }
+    openEditMenu(idEditMenu);
+}
+
+function openEditMenu(idEditMenu) {
+    var editsMenus = document.getElementsByClassName("editMenu");
+    for (var i = 0; i < editsMenus.length; i++) {
+        editsMenus[i].style.display = "none";
+    }
+    document.getElementById(idEditMenu).style.display = "block";
 }
