@@ -100,21 +100,23 @@ class Extensions {
                 );
                 $vars = explode(",", $cf->getValueFromKeyConf($pathDbConf, $table));
                 foreach($vars as $varGet) {
-                    $keyVar = $table . "-" . $varGet;
-                    $arrayVar = array(
-                        "name" => $varGet,
-                        "type" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-type"),
-                        "size" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-size"),
-                        "value" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-value"),
-                        "nullable" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-nullable"),
-                        "index" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-index"),
-                        "ai" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-ai"),
-                    );
-                    array_push($tableIntels['vars'], $arrayVar);
+                    if (isset($varGet) && $varGet != "") {
+                        $keyVar = $table . "-" . $varGet;
+                        $arrayVar = array(
+                            "name" => $varGet,
+                            "type" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-type"),
+                            "size" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-size"),
+                            "value" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-value"),
+                            "nullable" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-nullable"),
+                            "index" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-index"),
+                            "ai" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-ai"),
+                        );
+                        array_push($tableIntels['vars'], $arrayVar);
+                    }
                 }
-                if ($db->tabelExists($table)) {
+                if ($db->tabelExists($table) && count($tableIntels['vars']) > 0) {
                     $db->addVariableToDb($tableIntels);
-                } else {
+                } else if (count($tableIntels['vars']) > 0) {
                     $db->addTableToDb($tableIntels);
                 }
             }
