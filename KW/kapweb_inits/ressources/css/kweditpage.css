@@ -29,6 +29,7 @@ body {
     border: 2px solid black;
     border-style: none solid none none;
     margin-right: 2px;
+    background-color: rgb(80, 80, 80);
 }
 
 .editMenuContent {
@@ -67,6 +68,17 @@ body {
 
 .btnNavElem {
     height: 50px;
+    background-color: transparent;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    text-transform: capitalize;
+    text-align: left;
+    font-size: medium;
+}
+
+.btnNavElem:hover {
+    background-color: rgba(94, 94, 94, 0.5);
 }
 
 .iconNavBar {
@@ -84,4 +96,16 @@ body {
     padding: 3px;
     border-radius: 5px;
     width: min-content;
+}
+
+.editBarElement {
+    width: 100%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    background-color: #bababa;
+}
+
+.contentTextValue {
+    width: 80%;
+    height: 300px;
 }

@@ -18,3 +18,16 @@ function openEditMenu(idEditMenu) {
     }
     document.getElementById(idEditMenu).style.display = "block";
 }
+
+function removeClass(classTextAreaId, idClass, nameClass) {
+    var txtClasses = document.getElementById(classTextAreaId).value;
+    document.getElementById(idClass).remove();
+    var classes = txtClasses.split("\n");
+    var nTxtClasses = "";
+    for (var i = 0; i < classes.length; i++) {
+        if (classes[i] != nameClass) {
+            nTxtClasses += classes[i] + "\n";
+        }
+    }
+    document.getElementById(classTextAreaId).value = nTxtClasses;
+}

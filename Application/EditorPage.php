@@ -1002,23 +1002,41 @@ class EditorPage {
     }
 
     public static function sortElemsAndGetHtml(array $elems):string {
-        return self::getElemsFromParentReturnHtml("", $elems, 98);
+        return self::getElemsFromParentReturnHtml("", $elems, 100);
     }
 
     public static function getAllEditMenus(array $elems):string {
         $res = "";
         foreach ($elems as $elem) {
             $nameNoSpacing = str_replace(" ", "_", $elem['name']);
-            $res .= "<div class=\"editMenu\" id=\"editMenu-" . $nameNoSpacing . "\" style=\"display: none;\">";
+            $type = $elem['type'];
+            $res .= "<div class=\"editMenu\" id=\"editMenu-" . $nameNoSpacing . "\" style=\"display: none;\"><form method=\"POST\">";
             $res .= "<h3>" . $elem['name'] . "</h3>";
+            $res .= "<div class=\"editBarElement\">";
+            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
+            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
+            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
+            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
+            $res .= "</div>";
             $res .= "<div class=\"classEdit\"><h4>calsses : </h4>";
             $classesElems = explode(" ", $elem['class']);
+            $inClassTextArea = "";
+            $idClass = 0;
             foreach ($classesElems as $classesElem) {
                 if (isset($classesElem) && $classesElem != "") {
-                    $res .= "<div class=\"elemClass\"><p>" . $classesElem . "</p></div>";
+                    $res .= "<button id=\"$nameNoSpacing-class$idClass\" type=\"button\" onclick=\"removeClass('$nameNoSpacing-calssArea', '$nameNoSpacing-class$idClass', '$classesElem')\" class=\"elemClass\"><p>" . $classesElem . "</p></button>";
+                    $inClassTextArea .= $classesElem . "\n";
+                    $idClass++;
                 }
             }
             $res .= "</div>";
+            $res .= "<textarea id=\"$nameNoSpacing-calssArea\" hidden name=\"class-" . $elem['name'] . "\">" . $inClassTextArea . "</textarea>";
+            if ($type == "p" || $type == "h1" || $type == "h2" || $type == "h3" || $type == "h4" || $type == "h5" || $type == "h6") {
+                $res .= "<textarea class=\"contentTextValue\">" . $elem['content'] . "</textarea>";
+            } else {
+
+            }
+            $res .= "</form>";
             $res .= "</div>";
         }
         return $res;
