@@ -132,7 +132,7 @@
                             . "manager-ui-button" . $currBackUi . "=" . $_POST['easyExt-automatAdded-' . $i . '-namePageBack'] . "\n"
                             . "manager-ui-button" . $currBackUi . "-cat=" . $_POST['extenName'] . "\n"
                             . "manager-ui-button" . $currBackUi . "-catLogo=bx-layer-plus\n"
-                            . "manager-ui-button" . $currBackUi . "-logo=bxs-file-plus\n"
+                            . "manager-ui-button" . $currBackUi . "-logo=bx bxs-file-plus\n"
                             . "manager-ui-button" . $currBackUi . "-logoColor=#68ff33\n"
                             . "manager-ui-button" . $currBackUi . "-accessName=" . $_POST['extenName'] . "\n"
                             . "manager-ui-pannel" . $currBackUi . "-html=" . $emptySpacing . ".php\n"
