@@ -50,8 +50,8 @@
                     <h2><?=$ext->getLangaugeValue($extName, 'intelsBackTitle')?></h2>
                 </div>
                 <div class="easyExtensionGen-whitespacing">
-                    <input type="number" id="nbBackIntels-easyExt" name="nbBackIntels" value="0">
-                    <input type="number" id="currNbBackIntels-easyExt" name="currNbBackIntels" value="0">
+                    <input type="number" id="nbBackIntels-easyExt" name="nbBackIntels" value="0" hidden>
+                    <input type="number" id="currNbBackIntels-easyExt" name="currNbBackIntels" value="0" hidden>
                     <table class="tableListingBackendPage-easyExtension">
                         <caption><?=$ext->getLangaugeValue($extName, 'listingBackPageTitle')?></caption>
                         <thead>
