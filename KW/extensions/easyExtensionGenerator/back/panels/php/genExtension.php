@@ -60,7 +60,7 @@
             . "icon=\n"
             . "\n"
             . "This file was generatded by easy generator extension\n"
-            . "Made by © Devcompagnie\n";
+            . "Made by ©Devcompagnie\n";
 
         $back_base_content = "#\n"
             . "# Here you can add button in manager ui and set his interface\n"
