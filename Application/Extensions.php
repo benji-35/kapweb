@@ -93,28 +93,30 @@ class Extensions {
         $pathDbConf = $extList['path'] . "/database/db.conf";
         $tables = explode(",", $cf->getValueFromKeyConf($pathDbConf, "table-used"));
         foreach($tables as $table) {
-            $tableIntels = array(
-                "name" => $table,
-                "vars" => array()
-            );
-            $vars = explode(",", $cf->getValueFromKeyConf($pathDbConf, $table));
-            foreach($vars as $varGet) {
-                $keyVar = $table . "-" . $varGet;
-                $arrayVar = array(
-                    "name" => $varGet,
-                    "type" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-type"),
-                    "size" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-size"),
-                    "value" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-value"),
-                    "nullable" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-nullable"),
-                    "index" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-index"),
-                    "ai" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-ai"),
+            if (isset($table) && $table != "") {
+                $tableIntels = array(
+                    "name" => $table,
+                    "vars" => array()
                 );
-                array_push($tableIntels['vars'], $arrayVar);
-            }
-            if ($db->tabelExists($table)) {
-                $db->addVariableToDb($tableIntels);
-            } else {
-                $db->addTableToDb($tableIntels);
+                $vars = explode(",", $cf->getValueFromKeyConf($pathDbConf, $table));
+                foreach($vars as $varGet) {
+                    $keyVar = $table . "-" . $varGet;
+                    $arrayVar = array(
+                        "name" => $varGet,
+                        "type" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-type"),
+                        "size" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-size"),
+                        "value" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-value"),
+                        "nullable" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-nullable"),
+                        "index" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-index"),
+                        "ai" => $cf->getValueFromKeyConf($pathDbConf, $keyVar . "-ai"),
+                    );
+                    array_push($tableIntels['vars'], $arrayVar);
+                }
+                if ($db->tabelExists($table)) {
+                    $db->addVariableToDb($tableIntels);
+                } else {
+                    $db->addTableToDb($tableIntels);
+                }
             }
         }
     }
