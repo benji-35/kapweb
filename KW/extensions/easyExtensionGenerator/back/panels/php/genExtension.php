@@ -115,7 +115,7 @@
             mkdir($mainPathExt . "/back/panels/js", 0777, false);
             mkdir($mainPathExt . "/back/panels/php", 0777, false);
             if ($nbBackUis > 0) {
-                $currBackUi = 0;
+                $currBackUi = 1;
                 for ($i = 0; $i < $_POST['nbBackIntels'] ; $i++) {
                     if (isset($_POST['easyExt-automatAdded-' . $i . '-namePageBack'])) {
                         $emptySpacing = str_replace(" ", "_", $_POST['easyExt-automatAdded-' . $i . '-namePageBack']);
@@ -130,7 +130,7 @@
                             . "manager-ui-pannel" . $currBackUi . "-css=" . $emptySpacing . ".css\n"
                             . "manager-ui-pannel" . $currBackUi . "-php=" . $emptySpacing . ".php\n"
                             . "manager-ui-pannel" . $currBackUi . "-js=" . $emptySpacing . ".js\n"
-                            . "manager-ui-pannel" . $currBackUi . "-id=" . $_POST['extenName'] . $currBackUi . ".php\n\n";
+                            . "manager-ui-pannel" . $currBackUi . "-id=" . $_POST['extenName'] . $currBackUi . "\n\n";
                         
                             $f = fopen($mainPathExt . "/back/panels/css/" . $emptySpacing . ".css", "w+");
                             fwrite($f, "", strlen(""));
@@ -141,9 +141,10 @@
                             $f = fopen($mainPathExt . "/back/panels/js/" . $emptySpacing . ".js", "w+");
                             fwrite($f, "", strlen(""));
                             fclose($f);
-                            $contentHtml = "<?php\n\tglobal \$db, \$ext, \$hlp, \$ep, \$cf;\n\t\$extName = \"" . $_POST['extenName'] . "\";"
+                            $contentHtml = "<?php\n\tglobal \$db, \$ext, \$hlp, \$ep, \$cf;\n\t\$extName = \"" . $_POST['extenName'] . "\";\n\t"
                                 ."\$idPanel = \$cf->getValueFromKeyConf(\$ext->getManagerUiExtension(\$extName), \"manager-ui-pannel" . $currBackUi . "-id\");\n?>\n"
-                                . "<div class=\"mainDiv-" . $_POST['extenName'] . "\" id=\"<?=\$idPanel?>\">\n"
+                                . "\n<div class=\"contextDev\" id=\"<?=\$idPanel?>\">\n"
+                                . "\t<h1>" . $_POST['easyExt-automatAdded-' . $i . '-namePageBack'] . "</h1>\n"
                                 . "</div>\n";
                             $f = fopen($mainPathExt . "/back/panels/html/" . $emptySpacing . ".php", "w+");
                             fwrite($f, $contentHtml, strlen($contentHtml));

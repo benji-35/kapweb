@@ -1612,6 +1612,7 @@
                 <p><?=$hlp->getLangWorldMainFile("softwareVersion") . $cf->getValueFromKeyConf($cf->getFilesConfig(), "software-version")?></p>
                 <a href="<?=$cf->getValueFromKeyConf($cf->getFilesConfig(), "help-link")?>" style="color: #a1a1a1;" target="_blank"><?=$hlp->getLangWorldMainFile("w-help")?></a>
                 <p><?=$hlp->getLangWorldMainFile("emailUsed") . $_SESSION['suemail']?></p>
+                <p><?=$hlp->getLangWorldMainFile("phpVers") . " : " . phpversion()?></p>
                 <form method="POST" class="formChangeLang">
                     <select name="chgLanguage" class="selectLang" onchange="this.form.submit()">
                         <option hidden selected><?=strtoupper($_SESSION['language'])?></option>
