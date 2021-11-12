@@ -113,9 +113,15 @@
 	}
 	if (isset($_POST['saveCssJs'])) {
 		$arr = array(
-			"css" => $_POST['cssEdit'],
-			"js" => $_POST['jsEdit']
+			"css" => $cssJs['css'],
+			"js" => $cssJs['js']
 		);
+		if (isset($_POST['cssEdit'])) {
+			$arr['css'] = $_POST['cssEdit'];
+		}
+		if (isset($_POST['jsEdit'])) {
+			$arr['js'] = $_POST['jsEdit'];
+		}
 		$ep->saveCssJs($arr);
 		header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 	}
