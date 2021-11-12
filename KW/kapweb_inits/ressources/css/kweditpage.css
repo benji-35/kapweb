@@ -24,11 +24,8 @@ body {
 
 .navMenuEdit {
     position: relative;
-    width: 19%;
+    width: 20%;
     text-align: center;
-    border: 2px solid black;
-    border-style: none solid none none;
-    margin-right: 2px;
     background-color: rgb(80, 80, 80);
 }
 
@@ -108,9 +105,26 @@ body {
 .contentTextValue {
     width: 80%;
     height: 300px;
+    resize: vertical;
 }
 
 .btnEditBarElement {
     margin-right: 5px;
     margin-left: 5px;
+}
+
+.jsCssTextArea {
+    width: 90%;
+    height: 500px;
+    resize: vertical;
+}
+
+.addElement {
+    position: absolute;
+    display: none;
+    z-index: 2;
+}
+
+.formAddElement {
+    display: none;
 }

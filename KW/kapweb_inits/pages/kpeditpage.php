@@ -44,8 +44,8 @@
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
 		if (isset($_POST['addChild-' . $nameNoSpacing])) {
-			if (isset($_POST['addChildName-' . $balise['name']]) && isset($_POST['typeAddChild-' . $balise['name']])) {
-				$ep->addElement($_POST['addChildName-' . $balise['name']], $_POST['typeAddChild-' . $balise['name']], $balise['name']);
+			if (isset($_POST['addChildName-' . $nameNoSpacing]) && isset($_POST['typeAddChild-' . $nameNoSpacing])) {
+				$ep->addElement($_POST['addChildName-' . $nameNoSpacing], $_POST['typeAddChild-' . $nameNoSpacing], $balise['name'], "", "", $_POST['positionAddChild-' . $nameNoSpacing]);
 				header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 			}
 		}
@@ -153,7 +153,6 @@
 		<?php
 			if ($pageExists == true) {
 		?>
-
 		<div class="upMenu">
 			<div class="contentUpMenu">
 				<a href="<?=$hlp->getMainUrl() . "/KW/manager"?>" class="linkBackManager"><i class='bx bxs-left-arrow'></i></a>
@@ -163,9 +162,31 @@
 		<div class="mainContent">
 			<div class="navMenuEdit">
 				<?=$navEditMenu?>
+				<button id="btnNavBarCss" style="width: 100%;" class="btnNavElem" onclick="openEditMenu('editMenuCss')"><i class='bx bxl-css3 textNavMenu'></i><p class="textNavMenu">CSS</p></button>
+				<button id="btnNavBarJs" style="width: 100%;" class="btnNavElem" onclick="openEditMenu('editMenuJs')"><i class='bx bxl-nodejs textNavMenu'></i><p class="textNavMenu">JS</p></button>
 			</div>
 			<div class="editMenuContent">
 				<?=$editMenus?>
+				<div id="editMenuCss" class="editMenu" style="display: none;">
+					<form method="POST">
+						<h1>CCS</h1>
+						<div class="editBarElement">
+							<button name="saveCssJs" title="<?=$hlp->getLangWorldMainFile("w-save", "Save")?>"><i class='bx bxs-save bx-sm'></i></button>
+							<button type="button" onclick="resetJsCssContent('cssEdit')" title="<?=$hlp->getLangWorldMainFile("w-reset", "Reset")?>"><i class='bx bx-reset bx-sm'></i></button>
+						</div>
+						<textarea id="cssEdit" name="cssEdit" class="jsCssTextArea"><?=$cssJs['css']?></textarea>
+					</form>
+				</div>
+				<div id="editMenuJs" class="editMenu" style="display: none;">
+					<form method="POST">
+						<h1>JS</h1>
+						<div class="editBarElement">
+							<button name="saveCssJs" title="<?=$hlp->getLangWorldMainFile("w-save", "Save")?>"><i class='bx bxs-save bx-sm'></i></button>
+							<button type="button" onclick="resetJsCssContent('jsEdit')" title="<?=$hlp->getLangWorldMainFile("w-reset", "Reset")?>"><i class='bx bx-reset bx-sm'></i></button>
+						</div>
+						<textarea id="jsEdit" name="jsEdit" class="jsCssTextArea"><?=$cssJs['js']?></textarea>
+					</form>
+				</div>
 			</div>
 		</div>
 		<?php

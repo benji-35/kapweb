@@ -31,3 +31,15 @@ function removeClass(classTextAreaId, idClass, nameClass) {
     }
     document.getElementById(classTextAreaId).value = nTxtClasses;
 }
+
+function resetJsCssContent(idJssCss) {
+    document.getElementById(idJssCss).value = "";
+}
+
+function showHideAddElem(idShowHide, state) {
+    if (state == true) {
+        document.getElementById(idShowHide).style.display = "block";
+    } else {
+        document.getElementById(idShowHide).style.display = "none";
+    }
+}

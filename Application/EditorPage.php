@@ -113,7 +113,7 @@ class EditorPage {
         return $to_write;
     }
 
-    public static function addElement($name, $type, $parent="body", $class="", $content="") {
+    public static function addElement($name, $type, $parent="body", $class="", $content="", int $position=-1) {
         global $ext;
         if (!isset($_SESSION['editName'])) {
             return;
@@ -130,7 +130,32 @@ class EditorPage {
                 if ($children == "") {
                     $children = $name;
                 } else {
-                    $children .= "," . $name;
+                    if ($position == -1) {
+                        $children .= "," . $name;
+                    } else {
+                        $childrenList = explode(",", $children);
+                        $nchildrenList = array();
+                        if ($position >= count($childrenList)) {
+                            array_push($nchildrenList, $name);
+                        } else {
+                            $currId = 0;
+                            foreach ($childrenList as $childList) {
+                                if ($currId == $position) {
+                                    array_push($nchildrenList, $name);
+                                }
+                                array_push($nchildrenList, $childList);
+                                $currId++;
+                            }
+                        }
+                        $children = "";
+                        foreach ($nchildrenList as $child) {
+                            if ($children == "") {
+                                $children = $child;
+                            } else {
+                                $children .= "," . $child;
+                            }
+                        }
+                    }
                 }
                 $elements[$i]['children'] = $children;
                 break;
@@ -1037,15 +1062,36 @@ class EditorPage {
         $saveWord = $hlp->getLangWorldMainFile("w-save", "Save");
         $deleteWorld = $hlp->getLangWorldMainFile("w-delete", "Delete");
         $resetWord = $hlp->getLangWorldMainFile("w-reset", "Reset");
+        $addWord = $hlp->getLangWorldMainFile("w-add", "To Add");
+        $cancelWord = $hlp->getLangWorldMainFile("w-cancel", "Cancel");
+        $nameWord = $hlp->getLangWorldMainFile("w-name", "Name");
         foreach ($elems as $elem) {
+            $selectPos = "<option value=\"0\">Avant tous les enfants</option>";
+            $children = explode(",", $elem['children']);
+            foreach ($children as $i => $child) {
+                if ($child != "") {
+                    $idPos = $i + 1;
+                    $selectPos .= "<option value=\"$idPos\">Après $child</option>";
+                }
+            }
+            $selectPos .= "<option value=\"-1\">à la fin</option>";
             $nameNoSpacing = str_replace(" ", "_", $elem['name']);
             $type = $elem['type'];
+            $selectOptAdd = self::getSelectAdded($type);
             $res .= "<div class=\"editMenu\" id=\"editMenu-" . $nameNoSpacing . "\" style=\"display: none;\"><form method=\"POST\">";
             $res .= "<h3>" . $elem['name'] . "</h3>";
             $res .= "<div class=\"editBarElement\">";
             $res .= "<button class=\"btnEditBarElement\" title=\"$saveWord\" name=\"save-$nameNoSpacing\"><i class='bx bxs-save bx-sm'></i></button>";
             $res .= "<button class=\"btnEditBarElement\" title=\"$resetWord\"><i class='bx bx-reset bx-sm'></i></button>";
-            $res .= "<button class=\"btnEditBarElement\" title=\"$deleteWorld\"><i class='bx bxs-trash bx-sm'></i></button>";
+            $res .= "<button name=\"delete-$nameNoSpacing\" class=\"btnEditBarElement\" title=\"$deleteWorld\"><i class='bx bxs-trash bx-sm'></i></button>";
+            $res .= "<button name=\"reset-$nameNoSpacing\" type=\"button\" class=\"btnEditBarElement\" title=\"$addWord\" onclick=\"showHideAddElem('$nameNoSpacing-formAddElem', true)\"><i class='bx bxs-plus-circle bx-sm'></i></button>";
+            $res .= "<div class=\"formAddElement\" id=\"$nameNoSpacing-formAddElem\">";
+            $res .= "<select name=\"typeAddChild-$nameNoSpacing\">$selectOptAdd</select>";
+            $res .= "<select name=\"positionAddChild-$nameNoSpacing\">$selectPos</select>";
+            $res .= "<input type=\"text\" placeholder=\"$nameWord...\" name=\"addChildName-$nameNoSpacing\">";
+            $res .= "<input type=\"submit\" value=\"$addWord\" name=\"addChild-$nameNoSpacing\">";
+            $res .= "<button type=\"button\" onclick=\"showHideAddElem('$nameNoSpacing-formAddElem', false)\">$cancelWord</button>";
+            $res .= "</div>";
             $res .= "</div>";
             $res .= "<div class=\"classEdit\"><h4>calsses : </h4>";
             $classesElems = explode(" ", $elem['class']);
