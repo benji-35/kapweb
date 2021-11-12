@@ -661,14 +661,14 @@ class Extensions {
         return "";
     }
 
-    public static function getLangaugeValue(string $extensionName, string $key):string {
+    public static function getLangaugeValue(string $extensionName, string $key, string $defaultResult=""):string {
         if (!isset($_SESSION['language'])) {
             $_SESSION['language'] = "en";
         }
-        return self::getLangaugeValueFromLang($extensionName, $key, $_SESSION['language']);
+        return self::getLangaugeValueFromLang($extensionName, $key, $_SESSION['language'], $defaultResult);
     }
 
-    public static function getLangaugeValueFromLang(string $extensionName, string $key, string $lang):string {
+    public static function getLangaugeValueFromLang(string $extensionName, string $key, string $lang, string $defaultResult = ""):string {
         global $cf;
         $targetLanguage = "";
         $firstAvailableLang = "";
@@ -694,7 +694,7 @@ class Extensions {
         if ($targetLanguage == "") {
             $targetLanguage = $firstAvailableLang;
             if ($targetLanguage == "") {
-                return "No targeted language or file does not exists";
+                return $defaultResult;
             }
             $pathLang = $mainPath ."/languages/" . $targetLanguage . ".conf";
         }

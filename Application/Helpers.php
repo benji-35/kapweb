@@ -391,24 +391,27 @@ class Helpers {
         return $res;
     }
 
-    public static function getLangWorldMainFileFromLanguage(string $lang, string $key):string {
+    public static function getLangWorldMainFileFromLanguage(string $lang, string $key, string $defaultResult = ""):string {
         global $cf;
         $path = "KW/kapweb_inits/ressources/languages/" . $lang . "Lang.conf";
-        $res = "";
+        $res = $defaultResult;
         if (file_exists($path)) {
             $res = $cf->getValueFromKeyConf($path, $key);
         } else {
             $path = "KW/kapweb_inits/ressources/languages/enLang.conf";
             $res = $cf->getValueFromKeyConf($path, $key);
         }
+        if ($res == "") {
+            $res = $defaultResult;
+        }
         return $res;
     }
 
-    public static function getLangWorldMainFile(string $key):string {
+    public static function getLangWorldMainFile(string $key, string $defaultResult = ""):string {
         if (!isset($_SESSION['language'])) {
             $_SESSION['language'] = "en";
         }
-        return self::getLangWorldMainFileFromLanguage($_SESSION['language'], $key);
+        return self::getLangWorldMainFileFromLanguage($_SESSION['language'], $key, $defaultResult);
     }
 
     public static function getIdMediaType(string $cateboryName):int {
