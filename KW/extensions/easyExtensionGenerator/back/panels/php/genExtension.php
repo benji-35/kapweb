@@ -44,7 +44,7 @@
             . "description=\n"
             . "author=" . $author . "\n"
             . "version=1.0\n"
-            . "lang=en\n"
+            . "lang=en,fr\n"
             . "\n"
             . "#is front extension\n"
             . "isFront=" . $isFront . "\n"
@@ -103,6 +103,9 @@
             . "#db1-table1-index=[empty / PRIMARY KEY / UNIQUE]\n"
             . "#db1-table1-ai=[true / false / empty] -> is auto increment variable\n"
             . "\n#If value of line is null, you can delete the line.\n\ntable-used=\n";
+        
+        $base_en_langFile = "hellowWorld=Hello World !\n";
+        $base_fr_langFile = "hellowWorld=Bonjour le monde !\n";
         $mainPathExt = "KW/extensions/" . str_replace(" ", "_", $name);
         if (file_exists($mainPathExt)) {
             return;
@@ -154,6 +157,7 @@
                                 ."\$idPanel = \$cf->getValueFromKeyConf(\$ext->getManagerUiExtension(\$extName), \"manager-ui-pannel" . $currBackUi . "-id\");\n?>\n"
                                 . "\n<div class=\"contextDev\" id=\"<?=\$idPanel?>\">\n"
                                 . "\t<h1>" . $_POST['easyExt-automatAdded-' . $i . '-namePageBack'] . "</h1>\n"
+                                . "\t<p><?=\$ext->getLangaugeValue(\$extName, \"hellowWorld\")?></p>\n"
                                 . "</div>\n";
                             $f = fopen($mainPathExt . "/back/panels/html/" . $emptySpacing . ".php", "w+");
                             fwrite($f, $contentHtml, strlen($contentHtml));
@@ -172,6 +176,14 @@
             fwrite($f, $db_base_content, strlen($db_base_content));
             fclose($f);
         }
+        mkdir($mainPathExt . "/languages", 0777, false);
+        $f = fopen($mainPathExt . "/languages/en.conf", "w+");
+        fwrite($f, $base_en_langFile, strlen($base_en_langFile));
+        fclose($f);
+        $f = fopen($mainPathExt . "/languages/fr.conf", "w+");
+        fwrite($f, $base_fr_langFile, strlen($base_fr_langFile));
+        fclose($f);
+
         $currExtListing = $cf->getValueFromKeyConf("KW/extensions/ext.conf", "list-ext");
         if ($currExtListing == "") {
             $currExtListing = str_replace(" ", "_", $name);
