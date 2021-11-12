@@ -250,15 +250,17 @@ class Database
         if (!isset($varArray['nullable']) || $varArray['nullable'] == "") {
             $nullable = " NOT NULL";
         }
-        if (isset($varArray['value']) && $varArray['value'] != "") {
-            $valueDef = " DEFAULT " . $varArray['value'];
-        } else if ($nullable != "NOT NULL") {
-            $valueDef = " DEFAULT NULL";
-        }
         if (isset($varArray['index']) && $varArray['index'] != "") {
             $index = " " . $varArray['index'];
             if (isset($varArray['ai']) && $varArray['ai'] != "") {
                 $index = " AUTO_INCREMENT" . $index;
+            }
+        }
+        if (isset($varArray['value']) && $varArray['value'] != "") {
+            $valueDef = " DEFAULT " . $varArray['value'];
+        } else if ($nullable != "NOT NULL") {
+            if ((!isset($varArray['ai']) || $varArray['ai'] != "true") || (!isset($varArray['index']) || $varArray['index'] != "PRIMARY KEY")) {
+                $valueDef = " DEFAULT NULL";
             }
         }
         $resStr = $varArray['name'] . " " . $nameSize . $nullable . $valueDef . $index;
@@ -281,7 +283,7 @@ class Database
         $stm = $connect->prepare($strAdding);
         $stm->execute();
         foreach($tableIntels['vars'] as $var) {
-            if ($var != $tableIntels['vars'][0]) {
+            if ($var['name'] != $tableIntels['vars'][0]['name']) {
                 $str = "ALTER TABLE " . $tableIntels['name'] . " ADD COLUMN " . self::getCmdVarToAdd($var);
                 $stm = $connect->prepare($str);
                 $stm->execute();
