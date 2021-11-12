@@ -824,6 +824,28 @@ class EditorPage {
         return $res;
     }
 
+    private static function readSortElemPage(array $elems, string $parent, array $currArr):array {
+        $res = $currArr;
+        $nParents = array();
+
+        foreach($elems as $i => $elem) {
+            if (isset($elem)) {
+                if ($elem['name'] == $parent) {
+                    if (isset($elem['children']) && $elem['children'] != "") {
+                        $children = explode(",", $elem['children']);
+                        $nParents = $children;
+                    }
+                    array_push($res, $elem);
+                    unset($elems[$i]);
+                }
+            }
+        }
+        foreach ($nParents as $nPar) {
+            $res = self::readSortElemPage($elems, $nPar, $res);
+        }
+        return $res;
+    }
+
     public static function generateHtmlCode():string {
         global $cf, $hlp;
         if (!isset($_SESSION['editName'])) {
@@ -835,6 +857,7 @@ class EditorPage {
         for ($i = 0; $i < count($nameElems); $i++) {
             array_push($res, self::genArrayElements($nameElems[$i]));
         }
+        $res = self::readSortElemPage($res, "body", array());
         $resStr .= self::getHtmlStringBalise($res, "body");
         return $resStr;
     }
@@ -984,14 +1007,17 @@ class EditorPage {
         $nElems = $elems;
         $nSize = $sizeBtn - 5;
         foreach ($elems as $i => $elem) {
-            if ($elem['parent'] == $parentName) {
+            if ($elem['name'] == $parentName) {
                 unset($nElems[$i]);
                 $icon = self::getIconHtmlElement($elem['type']);
                 $nameNoSpacing = str_replace(" ", "_", $elem['name']);
                 if (isset($elem['children']) && $elem['children'] != "") {
+                    $children = explode(",",$elem['children']);
                     $res .= "<button style=\"width: $sizeBtn%\" class=\"btnNavElem\" onclick=\"openNavBar('navMenu-" . $nameNoSpacing . "', 'editMenu-" . $nameNoSpacing . "', 'iconNavMenu-" . $nameNoSpacing . "')\"><i class=\"$icon textNavMenu\"></i><p class=\"textNavMenu\">". $elem['name'] . "</p><i id=\"iconNavMenu-" . $nameNoSpacing . "\" class=\"bx bxs-down-arrow iconNavBar\"></i></button>";
                     $res .= "<div style=\"display: none;\" id=\"navMenu-" . $nameNoSpacing . "\">";
-                    $res .= self::getElemsFromParentReturnHtml($elem['name'], $nElems, $nSize);
+                    foreach ($children as $child) {
+                        $res .= self::getElemsFromParentReturnHtml($child, $nElems, $nSize);
+                    }
                     $res .= "</div>";
                 } else {
                     $res .= "<button style=\"width: $sizeBtn%\" class=\"btnNavElem\" onclick=\"openEditMenu('editMenu-" . $nameNoSpacing . "')\"><i class=\"$icon textNavMenu\"></i><p class=\"textNavMenu\">". $elem['name'] . "</p></button>";
@@ -1002,21 +1028,24 @@ class EditorPage {
     }
 
     public static function sortElemsAndGetHtml(array $elems):string {
-        return self::getElemsFromParentReturnHtml("", $elems, 100);
+        return self::getElemsFromParentReturnHtml("body", $elems, 100);
     }
 
     public static function getAllEditMenus(array $elems):string {
+        global $hlp;
         $res = "";
+        $saveWord = $hlp->getLangWorldMainFile("w-save", "Save");
+        $deleteWorld = $hlp->getLangWorldMainFile("w-delete", "Delete");
+        $resetWord = $hlp->getLangWorldMainFile("w-reset", "Reset");
         foreach ($elems as $elem) {
             $nameNoSpacing = str_replace(" ", "_", $elem['name']);
             $type = $elem['type'];
             $res .= "<div class=\"editMenu\" id=\"editMenu-" . $nameNoSpacing . "\" style=\"display: none;\"><form method=\"POST\">";
             $res .= "<h3>" . $elem['name'] . "</h3>";
             $res .= "<div class=\"editBarElement\">";
-            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
-            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
-            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
-            $res .= "<button class=\"btnEditBarElement\"><i></i></button>";
+            $res .= "<button class=\"btnEditBarElement\" title=\"$saveWord\" name=\"save-$nameNoSpacing\"><i class='bx bxs-save bx-sm'></i></button>";
+            $res .= "<button class=\"btnEditBarElement\" title=\"$resetWord\"><i class='bx bx-reset bx-sm'></i></button>";
+            $res .= "<button class=\"btnEditBarElement\" title=\"$deleteWorld\"><i class='bx bxs-trash bx-sm'></i></button>";
             $res .= "</div>";
             $res .= "<div class=\"classEdit\"><h4>calsses : </h4>";
             $classesElems = explode(" ", $elem['class']);
@@ -1032,7 +1061,7 @@ class EditorPage {
             $res .= "</div>";
             $res .= "<textarea id=\"$nameNoSpacing-calssArea\" hidden name=\"class-" . $elem['name'] . "\">" . $inClassTextArea . "</textarea>";
             if ($type == "p" || $type == "h1" || $type == "h2" || $type == "h3" || $type == "h4" || $type == "h5" || $type == "h6") {
-                $res .= "<textarea class=\"contentTextValue\">" . $elem['content'] . "</textarea>";
+                $res .= "<textarea class=\"contentTextValue\" name=\"chgContent-$nameNoSpacing\">" . $elem['content'] . "</textarea>";
             } else {
 
             }
@@ -1042,4 +1071,5 @@ class EditorPage {
         return $res;
     }
 }
+
 ?>

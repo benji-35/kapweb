@@ -34,21 +34,22 @@
 	}
 	for ($i = 0; $i < count($elems); $i++) {
 		$balise = $elems[$i];
-		if (isset($_POST['delete-' . $balise['name']])) {
+		$nameNoSpacing = str_replace(" ", "_", $balise['name']);
+		if (isset($_POST['delete-' . $nameNoSpacing])) {
 			$ep->deleteElement($balise['name']);
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
-		if (isset($_POST['reset-' . $balise['name']])) {
+		if (isset($_POST['reset-' . $nameNoSpacing])) {
 			$ep->resetElement($balise['name']);
 			header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 		}
-		if (isset($_POST['addChild-' . $balise['name']])) {
+		if (isset($_POST['addChild-' . $nameNoSpacing])) {
 			if (isset($_POST['addChildName-' . $balise['name']]) && isset($_POST['typeAddChild-' . $balise['name']])) {
 				$ep->addElement($_POST['addChildName-' . $balise['name']], $_POST['typeAddChild-' . $balise['name']], $balise['name']);
 				header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 			}
 		}
-		if (isset($_POST['save-' . $balise['name']])) {
+		if (isset($_POST['save-' . $nameNoSpacing])) {
 			$contentChg = $balise['content'];
 			$class = $balise['class'];
 			$name = $balise['name'];
@@ -58,36 +59,36 @@
 			$src = "";
 			$link = "";
 			$target = "";
-			if (isset($_POST['imgSrc-' . $balise['name']])) {
+			if (isset($_POST['imgSrc-' . $nameNoSpacing])) {
 				$src = $_POST['imgSrc-' . $balise['name']];
 			}
-			if (isset($_POST['chgLink-' . $balise['name']])) {
+			if (isset($_POST['chgLink-' . $nameNoSpacing])) {
 				$link = $_POST['chgLink-' . $balise['name']];
 			}
-			if (isset($_POST["chgTarget-" . $balise['name']])) {
+			if (isset($_POST["chgTarget-" . $nameNoSpacing])) {
 				$target = $_POST["chgTarget-" . $balise['name']];
 			}
-			if (isset($_POST["chgContent-" . $balise['name']])) {
-				$contentChg = $_POST["chgContent-" . $balise['name']];
+			if (isset($_POST["chgContent-" . $nameNoSpacing])) {
+				$contentChg = $_POST["chgContent-" . $nameNoSpacing];
 			}
-			if (isset($_POST["chgClass-" . $balise['name']])) {
+			if (isset($_POST["chgClass-" . $nameNoSpacing])) {
 				$class = $_POST["chgClass-" . $balise['name']];
 			}
-			if (isset($_POST['name-' . $balise['name']])) {
+			if (isset($_POST['name-' . $nameNoSpacing])) {
 				$name = $_POST['name-' . $balise['name']];
 			}
 			if ($balise['type'] == "input") {
-				if (isset($_POST['chgPh-' . $balise['name']])) {
+				if (isset($_POST['chgPh-' . $nameNoSpacing])) {
 					$ph = $_POST['chgPh-' . $balise['name']];
 				} else {
 					$ph = $balise['placeholder'];
 				}
-				if (isset($_POST['readonly-' . $balise['name']])) {
+				if (isset($_POST['readonly-' . $nameNoSpacing])) {
 					$ireado = $_POST['readonly-' . $balise['name']];
 				} else {
 					$ph = $balise['placeholder'];
 				}
-				if (isset($_POST['chgIVal-' . $balise['name']])) {
+				if (isset($_POST['chgIVal-' . $nameNoSpacing])) {
 					$ival = $_POST['chgIVal-' . $balise['name']];
 				} else {
 					$ph = $balise['placeholder'];
