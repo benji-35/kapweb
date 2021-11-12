@@ -30,7 +30,7 @@
                     <div class="easyExtensionGen-alignCheck">
                         <label><?=$ext->getLangaugeValue($extName, "isDbExt")?></label>
                         <input type="checkbox" name="extIsDb" id="easyExtensionGen-isDb" hidden>
-                        <button title="<?=$ext->getLangaugeValue($extName, "isDbTitle")?>" id="easyExtensionGen-isDb-btn" type="button" onclick="checkCategory('easyExtensionGen-isDb-btn', 'easyExtensionGen-isDb', 'btnAccess-c-easyExtension')">
+                        <button title="<?=$ext->getLangaugeValue($extName, "isDbTitle")?>" id="easyExtensionGen-isDb-btn" type="button" onclick="checkCategory('easyExtensionGen-isDb-btn', 'easyExtensionGen-isDb', 'none'); //'btnAccess-c-easyExtension'">
                             <box-icon color='red' size='lg' name='message-square-x' type='solid' ></box-icon>
                         </button>
                         <button type="button" id="btnAccess-c-easyExtension" title="<?=$ext->getLangaugeValue($extName, "optionAcces")?>" style="display: none;" onclick="goToIntels('easyExtension-dbDiv')"><i class='bx bxs-right-arrow'></i></button>
@@ -78,6 +78,7 @@
                 </div>
                 <div class="easyExtensionGen-whitespacing">
                     <input type="number" name="nbDbIntels" hidden>
+                    <input type="number" name="currNbDbIntels" hidden>
                 </div>
             </div>
         </form>

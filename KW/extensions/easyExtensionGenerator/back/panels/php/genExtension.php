@@ -94,6 +94,15 @@
             . "#[name of element]-vars=[var name 1],[var name 2],...\n"
             . "#\n";
 
+        $db_base_content = "#table-used=[db1,db2,...]\n\n"
+            . "#db1=[table1, table2, table3,...]\n\n"
+            . "#db1-table1-type=[ varchar / text / int / tinyint / smallint / mediumint / bigint / boolean / date / decimal / float / double / real / serial / datetime / timestamp / time / year / char ]\n"
+            . "#db1-table1-size=[varaible's size]\n"
+            . "#db1-table1-value=[you can let this line empty or enter a starting value] !important! if your variable is auto increment, do not put a starting value\n"
+            . "#db1-table1-nullable=[true / false / empty]\n"
+            . "#db1-table1-index=[empty / PRIMARY KEY / UNIQUE]\n"
+            . "#db1-table1-ai=[true / false / empty] -> is auto increment variable\n"
+            . "\n#If value of line is null, you can delete the line.\n\ntable-used=\n";
         $mainPathExt = "KW/extensions/" . str_replace(" ", "_", $name);
         if (file_exists($mainPathExt)) {
             return;
@@ -155,6 +164,12 @@
             }
             $f = fopen($mainPathExt . "/back/manager-ui.conf", "w+");
             fwrite($f, $back_base_content, strlen($back_base_content));
+            fclose($f);
+        }
+        if (isset($_POST['extIsDb'])) {
+            mkdir($mainPathExt . "/database", 0777, false);
+            $f = fopen($mainPathExt . "/database/db.conf", "w+");
+            fwrite($f, $db_base_content, strlen($db_base_content));
             fclose($f);
         }
         $currExtListing = $cf->getValueFromKeyConf("KW/extensions/ext.conf", "list-ext");
