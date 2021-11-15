@@ -64,6 +64,10 @@ class EditorPage {
         self::$hlp = $hlp;
     }
 
+    public static function getUnknownIconElement():string {
+        return self::$representationTypeElementUnknown;
+    }
+
     private static function stringOfElemsArr(array $arr, array $names):string {
         global $ext;
         if (count($arr) <= 0)
@@ -427,17 +431,20 @@ class EditorPage {
             );
         }
         $path = "KW/public/pages/" . $_SESSION['editName'] . ".conf";
+        $typeGet = preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName));
         $res = array(
             "name" => $elemName,
-            "type" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName)),
+            "type" => $typeGet,
             "class" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-class")),
             "parent" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-parent")),
             "children" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-children")),
             "content" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-content")),
+            "icon" => self::getIconHtmlElement($typeGet),
         );
 
         if ($ext->isExtensionBaliseType($res['type'])) {
             $vars = $ext->getVarsFromFrontElement($res['type']);
+            $res['icon'] = $ext->getIconFromElement($typeGet);
             for ($i = 0; $i < count($vars); $i++) {
                 if ($vars[$i] != "") {
                     $res = array_merge($res, array($vars[$i] => $cf->getValueFromKeyConf($path, $elemName . "-" . $vars[$i])));
@@ -549,10 +556,6 @@ class EditorPage {
                             $dependecy = $dependencies[$depId];
                             echo 'Type = "' . $type . '", dependency="' . $dependecy . '"' . "\n";
                             if ($dependecy != "" && $type==$dependecy) {
-                                echo "add dependency";
-                                echo "\n";
-                                var_dump($dependenciesElems);
-                                echo "\n\n";
                                 if (array_key_exists($dependecy, $dependenciesElems)) {
                                     array_push($dependenciesElems[$dependecy], $elem['name']);
                                 } else {
@@ -562,9 +565,7 @@ class EditorPage {
                         }
                     }
                 }
-                var_dump($dependenciesElems);
                 if (count($dependenciesElems) > 0) {
-                    var_dump($dependenciesElems);
                     $dependenciesNames = array_keys($dependenciesElems);
                     for ($keyId = 0; $keyId < count($dependenciesNames); $keyId++) {
                         $nameDependency = $dependenciesNames[$keyId];
@@ -954,21 +955,25 @@ class EditorPage {
     public static function getSpecificsOptions(array $balise):string {
         global $ext;
         $type = $balise['type'];
+        $nameNoSpacing = str_replace(" ", "_", $balise['name']);
         if ($type == "input") {
             return '<label>Readonly :</label>
-            <input type="checkbox" name="readonly-'. $balise['name'] . '">
-            <input type="text" placeholder="Placeholder..." value="' . $balise['placeholder'] . '" name="chgPh-' . $balise['name'] . '">
-            <input type="text" placeholder="Value..." value="' . $balise['value'] . '" name="chgIVal-' . $balise['name'] . '">';
+            <input type="checkbox" name="readonly-'. $nameNoSpacing . '">
+            <input type="text" placeholder="Placeholder..." value="' . $balise['placeholder'] . '" name="chgPh-' . $nameNoSpacing . '">
+            <input type="text" placeholder="Value..." value="' . $balise['value'] . '" name="chgIVal-' . $nameNoSpacing . '">';
         }
         if ($type == "img") {
-            return '<input type="text" placeholder="Source of image..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $balise['name'] . '">';
+            return '<input type="text" placeholder="Source of image..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $nameNoSpacing . '">';
         }
         if ($type == "source") {
-            return '<input type="text" placeholder="Source..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $balise['name'] . '">';
+            return '<input type="text" placeholder="Source..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $nameNoSpacing . '">';
         }
         if ($type == "a") {
-            return '<input type="text" placeholder="Link..." value="' . str_replace("\"", "'", $balise['link']) . '" name="chgLink-' . $balise['name'] . '">' . 
-            '<input type="text" placeholder="Target..." value="' . str_replace("\"", "'", $balise['target']) . '" name="chgTarget-' . $balise['name'] . '">';
+            return '<input type="text" placeholder="Link..." value="' . str_replace("\"", "'", $balise['link']) . '" name="chgLink-' . $nameNoSpacing . '">' . 
+            '<input type="text" placeholder="Target..." value="' . str_replace("\"", "'", $balise['target']) . '" name="chgTarget-' . $nameNoSpacing . '">';
+        }
+        if ($type == "p" || $type == "h1" || $type == "h2" || $type == "h3" || $type == "h4" || $type == "h5" || $type == "h6") {
+            return "<textarea class=\"contentTextValue\" name=\"chgContent-$nameNoSpacing\">" . $balise['content'] . "</textarea>";
         }
         if ($ext->isExtensionBaliseType($balise['type'])) {
             $vars = $ext->getVarsFromFrontElement($balise['type']);
@@ -986,7 +991,7 @@ class EditorPage {
             }
             for ($i = 0; $i < count($vars); $i++) {
                 if ($vars[$i] != "") {
-                    $res = str_replace("\$kw['" . $vars[$i] . "']", $balise['name'] . "-" . $vars[$i], $res);
+                    $res = str_replace("\$kw['" . $vars[$i] . "']", $nameNoSpacing . "-" . $vars[$i], $res);
                     $currVal = $balise[$vars[$i]];
                     $res = str_replace("\$kw['get-" . $vars[$i] . "']", $currVal, $res);
                 }
@@ -1028,13 +1033,15 @@ class EditorPage {
     }
 
     private static function getElemsFromParentReturnHtml(string $parentName, array $elems, int $sizeBtn):string {
+        global $ext;
         $res = "";
         $nElems = $elems;
         $nSize = $sizeBtn - 5;
         foreach ($elems as $i => $elem) {
             if ($elem['name'] == $parentName) {
                 unset($nElems[$i]);
-                $icon = self::getIconHtmlElement($elem['type']);
+                $baliseArray = self::genArrayElements($elem['name']);
+                $icon = $baliseArray['icon'];
                 $nameNoSpacing = str_replace(" ", "_", $elem['name']);
                 if (isset($elem['children']) && $elem['children'] != "") {
                     $children = explode(",",$elem['children']);
@@ -1057,7 +1064,7 @@ class EditorPage {
     }
 
     public static function getAllEditMenus(array $elems):string {
-        global $hlp;
+        global $hlp, $ext;
         $res = "";
         $saveWord = $hlp->getLangWorldMainFile("w-save", "Save");
         $deleteWorld = $hlp->getLangWorldMainFile("w-delete", "Delete");
@@ -1074,6 +1081,7 @@ class EditorPage {
                     $selectPos .= "<option value=\"$idPos\">Après $child</option>";
                 }
             }
+            $baliseArray = self::genArrayElements($elem['name']);
             $selectPos .= "<option value=\"-1\">à la fin</option>";
             $nameNoSpacing = str_replace(" ", "_", $elem['name']);
             $type = $elem['type'];
@@ -1094,6 +1102,8 @@ class EditorPage {
             $res .= "</div>";
             $res .= "</div>";
             $res .= "<div class=\"classEdit\"><h4>calsses : </h4>";
+            $res .= "<input id=\"nameNClass-$nameNoSpacing\" type=\"text\" placeholder=\"Enter name of new class...\">";
+            $res .= "<button type=\"button\" onclick=\"addClass('$nameNoSpacing-calssArea', 'nameNClass-$nameNoSpacing')\">New Class</button>";
             $classesElems = explode(" ", $elem['class']);
             $inClassTextArea = "";
             $idClass = 0;
@@ -1106,11 +1116,7 @@ class EditorPage {
             }
             $res .= "</div>";
             $res .= "<textarea id=\"$nameNoSpacing-calssArea\" hidden name=\"class-" . $elem['name'] . "\">" . $inClassTextArea . "</textarea>";
-            if ($type == "p" || $type == "h1" || $type == "h2" || $type == "h3" || $type == "h4" || $type == "h5" || $type == "h6") {
-                $res .= "<textarea class=\"contentTextValue\" name=\"chgContent-$nameNoSpacing\">" . $elem['content'] . "</textarea>";
-            } else {
-
-            }
+            $res .= self::getSpecificsOptions($baliseArray);
             $res .= "</form>";
             $res .= "</div>";
         }

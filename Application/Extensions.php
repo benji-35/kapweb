@@ -529,6 +529,28 @@ class Extensions {
         return array();
     }
 
+    public static function getIconFromElement($type):string {
+        global $ep, $cf;
+        $res = $ep->getUnknownIconElement();
+        $found = false;
+        foreach (self::$extensionListFrontElement as $elem) {
+            foreach ($elem['elems'] as $nElem) {
+                if ($nElem['name'] == $type) {
+                    $found = true;
+                    $resLogo = $cf->getValueFromKeyConf($nElem['path-options'], $nElem['name'] . "-logo");
+                    if ($resLogo != "") {
+                        $res = $resLogo;
+                    }
+                    break;
+                }
+            }
+            if ($found == true) {
+                break;
+            }
+        }
+        return $res;
+    }
+
     public static function getPageEditHtmlFromElement($elemName):string {
         for ($i = 0; $i < count(self::$extensionListFrontElement); $i++) {
             $elems = self::$extensionListFrontElement[$i]['elems'];
