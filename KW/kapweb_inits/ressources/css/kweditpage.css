@@ -25,7 +25,7 @@ body {
 .navMenuEdit {
     position: relative;
     width: 20%;
-    text-align: center;
+    text-align: right;
     background-color: rgb(80, 80, 80);
 }
 
