@@ -439,12 +439,10 @@ class EditorPage {
             "parent" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-parent")),
             "children" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-children")),
             "content" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-content")),
-            "icon" => self::getIconHtmlElement($typeGet),
         );
 
         if ($ext->isExtensionBaliseType($res['type'])) {
             $vars = $ext->getVarsFromFrontElement($res['type']);
-            $res['icon'] = $ext->getIconFromElement($typeGet);
             for ($i = 0; $i < count($vars); $i++) {
                 if ($vars[$i] != "") {
                     $res = array_merge($res, array($vars[$i] => $cf->getValueFromKeyConf($path, $elemName . "-" . $vars[$i])));
@@ -1041,7 +1039,10 @@ class EditorPage {
             if ($elem['name'] == $parentName) {
                 unset($nElems[$i]);
                 $baliseArray = self::genArrayElements($elem['name']);
-                $icon = $baliseArray['icon'];
+                $icon = self::getIconHtmlElement($baliseArray['type']);
+                if ($ext->isExtensionBaliseType($baliseArray['type'])) {
+                    $icon = $ext->getIconFromElement($baliseArray['type']);
+                }
                 $nameNoSpacing = str_replace(" ", "_", $elem['name']);
                 if (isset($elem['children']) && $elem['children'] != "") {
                     $children = explode(",",$elem['children']);
