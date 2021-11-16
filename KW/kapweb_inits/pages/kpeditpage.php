@@ -181,20 +181,20 @@
 				<?=$editMenus?>
 				<div id="editMenuCss" class="editMenu" style="display: none;">
 					<form method="POST">
-						<h1>CCS</h1>
 						<div class="editBarElement">
-							<button name="saveCssJs" title="<?=$hlp->getLangWorldMainFile("w-save", "Save")?>"><i class='bx bxs-save bx-sm'></i></button>
-							<button type="button" onclick="resetJsCssContent('cssEdit')" title="<?=$hlp->getLangWorldMainFile("w-reset", "Reset")?>"><i class='bx bx-reset bx-sm'></i></button>
+							<h3>CCS</h3>
+							<button class="btnEditBarElement" name="saveCssJs" title="<?=$hlp->getLangWorldMainFile("w-save", "Save")?>"><i class='bx bxs-save bx-sm'></i></button>
+							<button class="btnEditBarElement" type="button" onclick="resetJsCssContent('cssEdit')" title="<?=$hlp->getLangWorldMainFile("w-reset", "Reset")?>"><i class='bx bx-reset bx-sm'></i></button>
 						</div>
 						<textarea id="cssEdit" name="cssEdit" class="jsCssTextArea"><?=$cssJs['css']?></textarea>
 					</form>
 				</div>
 				<div id="editMenuJs" class="editMenu" style="display: none;">
 					<form method="POST">
-						<h1>JS</h1>
 						<div class="editBarElement">
-							<button name="saveCssJs" title="<?=$hlp->getLangWorldMainFile("w-save", "Save")?>"><i class='bx bxs-save bx-sm'></i></button>
-							<button type="button" onclick="resetJsCssContent('jsEdit')" title="<?=$hlp->getLangWorldMainFile("w-reset", "Reset")?>"><i class='bx bx-reset bx-sm'></i></button>
+							<h3>JS</h3>
+							<button class="btnEditBarElement" name="saveCssJs" title="<?=$hlp->getLangWorldMainFile("w-save", "Save")?>"><i class='bx bxs-save bx-sm'></i></button>
+							<button class="btnEditBarElement" type="button" onclick="resetJsCssContent('jsEdit')" title="<?=$hlp->getLangWorldMainFile("w-reset", "Reset")?>"><i class='bx bx-reset bx-sm'></i></button>
 						</div>
 						<textarea id="jsEdit" name="jsEdit" class="jsCssTextArea"><?=$cssJs['js']?></textarea>
 					</form>
