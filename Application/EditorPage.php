@@ -73,19 +73,18 @@ class EditorPage {
         if (count($arr) <= 0)
             return "";
         $to_write = "";
-        for ($i = 0; $i <= count($names); $i++) {
-            if (isset($names[$i])) {
+        foreach ($names as $name) {
+            if (isset($name)) {
                 if ($to_write == "") {
-                    $to_write = "elements=" . $names[$i];
+                    $to_write = "elements=" . $name;
                 } else {
-                    $to_write .= "," . $names[$i];
+                    $to_write .= "," . $name;
                 }
             }
         }
         $to_write .= "\n";
-        for ($i = 0; $i < count($arr); $i++) {
-            if (isset($arr[$i])) {
-                $balise = $arr[$i];
+        foreach ($arr as $balise) {
+            if (isset($balise)) {
                 $to_write .= $balise['name'] . "=" . $balise['type'] . "\n";
                 $to_write .= $balise['name'] . "-class=" . $balise['class'] . "\n";
                 $to_write .= $balise['name'] . "-content=" . $balise['content'] . "\n";
@@ -199,27 +198,23 @@ class EditorPage {
         fclose($f);
     }
 
-    private static function getDeletedStr($arr, $name):array {
-        if (!isset($_SESSION['editName'])) {
-            return array();
-        }
-        $children = "";
-        for ($i = 0; $i <= count($arr); $i++) {
-            if (isset($arr[$i])) {
-                if ($arr[$i]['name'] == $name) {
-                    $children = $arr[$i]['children'];
-                    unset($arr[$i]);
-                    break;
+    private static function deleteElemFromFileRetArray(array $elems, string $nameElem):array {
+
+        foreach ($elems as $i => $elem) {
+            if ($elem['name'] == $nameElem) {
+                if ($elem['children'] == "") {
+                    unset ($elems[$i]);
+                } else {
+                    $children = explode(",", $elem['children']);
+                    unset ($elems[$i]);
+                    foreach ($children as $child) {
+                        $elems = self::deleteElemFromFileRetArray($elems, $child);
+                    }
                 }
             }
         }
-        if ($children != "") {
-            $arrChildren = explode(",", $children);
-            for ($i = 0; $i < count($arrChildren); $i++) {
-                $arr = self::getDeletedStr($arr, $arrChildren[$i]);
-            }
-        }
-        return $arr;
+    
+        return $elems;
     }
 
     public static function deleteElement($name) {
@@ -229,14 +224,10 @@ class EditorPage {
         $elements = array();
         $nameElems = self::getElementsName();
 
-        for ($i = 0; $i <= count($nameElems); $i++) {
-            if ($nameElems[$i] != $name) {
-                array_push($elements, self::genArrayElements($nameElems[$i]));
-            } else {
-                unset($nameElems[$i]);
-            }
+        foreach ($nameElems as $nameElem) {
+            array_push($elements, self::genArrayElements($nameElem));
         }
-        $n_arr = self::getDeletedStr($elements, $name);
+        $n_arr = self::deleteElemFromFileRetArray($elements, $name);
 
         $to_write = self::stringOfElemsArr($n_arr, $nameElems);
 
@@ -271,7 +262,7 @@ class EditorPage {
         }
         $arrChildren = explode(",", $children);
         for ($i = 0; $i < count($arrChildren); $i++) {
-            $elements = self::getDeletedStr($elements, $arrChildren[$i]);
+            $elements = self::deleteElemFromFileRetArray($elements, $arrChildren[$i]);
         }
         for ($i = 0; $i <= count($elements); $i++) {
             if (isset($elements[$i])) {
@@ -999,7 +990,7 @@ class EditorPage {
             }
             return $res;
         }
-        return '<div class="errorElement"><h2>Sorry, an error occured while charging extension front page</h2></div>';
+        return '<div class="errorElement"><h2>Sorry, an error occurred while loading the edit page for this item. It may be part of an inactive extension</h2></div>';
     }
 
     private static function getElemsFromParent(string $parentName, array $elems):array {
@@ -1094,8 +1085,10 @@ class EditorPage {
             $res .= "<div class=\"editBarElement\">";
             $res .= "<h3>" . $elem['name'] . " ($type)</h3>";
             $res .= "<button class=\"btnEditBarElement\" title=\"$saveWord\" name=\"save-$nameNoSpacing\"><i class='bx bxs-save bx-sm'></i></button>";
-            $res .= "<button class=\"btnEditBarElement\" title=\"$resetWord\"><i class='bx bx-reset bx-sm'></i></button>";
-            $res .= "<button name=\"delete-$nameNoSpacing\" class=\"btnEditBarElement\" title=\"$deleteWorld\"><i class='bx bxs-trash bx-sm'></i></button>";
+            $res .= "<button class=\"btnEditBarElement\" title=\"$resetWord\" name=\"reset-$nameNoSpacing\"><i class='bx bx-reset bx-sm'></i></button>";
+            if ($elem['name'] != "body") {
+                $res .= "<button name=\"delete-$nameNoSpacing\" class=\"btnEditBarElement\" title=\"$deleteWorld\"><i class='bx bxs-trash bx-sm'></i></button>";
+            }
             $res .= "<button name=\"reset-$nameNoSpacing\" type=\"button\" class=\"btnEditBarElement\" title=\"$addWord\" onclick=\"showHideAddElem('$nameNoSpacing-formAddElem', true)\"><i class='bx bxs-plus-circle bx-sm'></i></button>";
             $res .= "<div class=\"formAddElement\" id=\"$nameNoSpacing-formAddElem\">";
             $res .= "<select name=\"typeAddChild-$nameNoSpacing\">$selectOptAdd</select>";

@@ -56,11 +56,33 @@ body {
 .contentUpMenu {
     display: flex;
     flex-wrap: wrap;
-    position: relative;
+    position: absolute;
     height: 100%;
     top: 50%;
     transform: translateY(-25%);
     margin-left: 20px;
+    left: 0;
+}
+
+.contentUpMenuAction {
+    display: flex;
+    flex-wrap: wrap;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 20px;
+    height: 50px;
+    right: 0;
+}
+
+.contentUpMenuAction button {
+    width: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.contentUpMenuAction button:hover {
+    cursor: pointer;
 }
 
 .btnNavElem {
