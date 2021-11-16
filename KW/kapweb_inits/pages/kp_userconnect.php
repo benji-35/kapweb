@@ -78,10 +78,14 @@
     }
     $need_ids = false;
     $need_pseudo = false;
+    $canDisplayCreation = false;
     if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-ids") == "true")
         $need_ids = true;
     if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-pseudo") == "true")
         $need_pseudo = true;
+    if ($cf->getValueFromKeyConf($cf->getFilesConfig(), "user-signin-enable") == "true") {
+        $canDisplayCreation = true;
+    }
 
 ?>
 <!DOCTYPE html>
@@ -129,10 +133,23 @@
                         <a href="<?=$hlp->getMainUrl()?>"><p>Forgot your password ?</p></a>
                     </div>
                 </div>
+                <?php
+                    if ($canDisplayCreation == true) {
+                ?>
                 <p>Pas de compte ? Cliquez sur le bouton ci-dessous.</p>
+                <button type="button" onclick="openClosePannel('creation', 'connection')">Créer un compte</button>
+                <?php
+                    } else {
+                ?>
+                <p>Le site ne vous permet pas de créer de compte.</p>
+                <?php
+                    }
+                ?>
             </form>
-            <button onclick="openClosePannel('creation', 'connection')">Créer un compte</button>
         </div>
+        <?php
+            if ($canDisplayCreation == true) {
+        ?>
         <div id="creation" class="formConnect">
             <form method="POST">
                 <picture>
@@ -171,5 +188,8 @@
             </form>
             <button onclick="openClosePannel('connection', 'creation')">Déjà un compte ?</button>
         </div>
+        <?php
+            }
+        ?>
     </body>
 </html>

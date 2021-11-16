@@ -141,3 +141,7 @@ img {
     text-decoration: underline;
     cursor: pointer;
 }
+
+#creation {
+    display: none;
+}
