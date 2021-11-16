@@ -49,6 +49,12 @@
 				header("location: " . $hlp->getMainUrl() . "/KW/editPage/" . $_SESSION['urlEdit']);
 			}
 		}
+		if (isset($_POST['newClass-' . $nameNoSpacing])) {
+			if (isset($_POST['nameNClass-' . $nameNoSpacing])) {
+				$ep->addClassElement($balise, $_POST['nameNClass-' . $nameNoSpacing]);
+				header("location:");
+			}
+		}
 		if (isset($_POST['save-' . $nameNoSpacing])) {
 			$contentChg = $balise['content'];
 			$class = $balise['class'];
@@ -60,36 +66,36 @@
 			$link = "";
 			$target = "";
 			if (isset($_POST['imgSrc-' . $nameNoSpacing])) {
-				$src = $_POST['imgSrc-' . $balise['name']];
+				$src = $_POST['imgSrc-' . $nameNoSpacing];
 			}
 			if (isset($_POST['chgLink-' . $nameNoSpacing])) {
-				$link = $_POST['chgLink-' . $balise['name']];
+				$link = $_POST['chgLink-' . $nameNoSpacing];
 			}
 			if (isset($_POST["chgTarget-" . $nameNoSpacing])) {
-				$target = $_POST["chgTarget-" . $balise['name']];
+				$target = $_POST["chgTarget-" . $nameNoSpacing];
 			}
 			if (isset($_POST["chgContent-" . $nameNoSpacing])) {
 				$contentChg = $_POST["chgContent-" . $nameNoSpacing];
 			}
 			if (isset($_POST["chgClass-" . $nameNoSpacing])) {
-				$class = $_POST["chgClass-" . $balise['name']];
+				$class = $_POST["chgClass-" . $nameNoSpacing];
 			}
 			if (isset($_POST['name-' . $nameNoSpacing])) {
-				$name = $_POST['name-' . $balise['name']];
+				$name = $_POST['name-' . $nameNoSpacing];
 			}
 			if ($balise['type'] == "input") {
 				if (isset($_POST['chgPh-' . $nameNoSpacing])) {
-					$ph = $_POST['chgPh-' . $balise['name']];
+					$ph = $_POST['chgPh-' . $nameNoSpacing];
 				} else {
 					$ph = $balise['placeholder'];
 				}
 				if (isset($_POST['readonly-' . $nameNoSpacing])) {
-					$ireado = $_POST['readonly-' . $balise['name']];
+					$ireado = $_POST['readonly-' . $nameNoSpacing];
 				} else {
 					$ph = $balise['placeholder'];
 				}
 				if (isset($_POST['chgIVal-' . $nameNoSpacing])) {
-					$ival = $_POST['chgIVal-' . $balise['name']];
+					$ival = $_POST['chgIVal-' . $nameNoSpacing];
 				} else {
 					$ph = $balise['placeholder'];
 				}

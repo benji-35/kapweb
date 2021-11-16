@@ -1088,8 +1088,8 @@ class EditorPage {
             $type = $elem['type'];
             $selectOptAdd = self::getSelectAdded($type);
             $res .= "<div class=\"editMenu\" id=\"editMenu-" . $nameNoSpacing . "\" style=\"display: none;\"><form method=\"POST\">";
-            $res .= "<h3>" . $elem['name'] . "</h3>";
             $res .= "<div class=\"editBarElement\">";
+            $res .= "<h3>" . $elem['name'] . " ($type)</h3>";
             $res .= "<button class=\"btnEditBarElement\" title=\"$saveWord\" name=\"save-$nameNoSpacing\"><i class='bx bxs-save bx-sm'></i></button>";
             $res .= "<button class=\"btnEditBarElement\" title=\"$resetWord\"><i class='bx bx-reset bx-sm'></i></button>";
             $res .= "<button name=\"delete-$nameNoSpacing\" class=\"btnEditBarElement\" title=\"$deleteWorld\"><i class='bx bxs-trash bx-sm'></i></button>";
@@ -1102,26 +1102,35 @@ class EditorPage {
             $res .= "<button type=\"button\" onclick=\"showHideAddElem('$nameNoSpacing-formAddElem', false)\">$cancelWord</button>";
             $res .= "</div>";
             $res .= "</div>";
-            $res .= "<div class=\"classEdit\"><h4>calsses : </h4>";
+            $res .= "<div id=\"$nameNoSpacing-classEdit\" class=\"classEdit\"><h4>calsses : </h4>";
             $res .= "<input id=\"nameNClass-$nameNoSpacing\" type=\"text\" placeholder=\"Enter name of new class...\">";
-            $res .= "<button type=\"button\" onclick=\"addClass('$nameNoSpacing-calssArea', 'nameNClass-$nameNoSpacing')\">New Class</button>";
+            $res .= "<button type=\"button\" onclick=\"addClass('chgClass-$nameNoSpacing', 'nameNClass-$nameNoSpacing', '$nameNoSpacing-classEdit', '$nameNoSpacing')\">New Class</button>";
             $classesElems = explode(" ", $elem['class']);
             $inClassTextArea = "";
             $idClass = 0;
             foreach ($classesElems as $classesElem) {
                 if (isset($classesElem) && $classesElem != "") {
-                    $res .= "<button id=\"$nameNoSpacing-class$idClass\" type=\"button\" onclick=\"removeClass('$nameNoSpacing-calssArea', '$nameNoSpacing-class$idClass', '$classesElem')\" class=\"elemClass\"><p>" . $classesElem . "</p></button>";
-                    $inClassTextArea .= $classesElem . "\n";
+                    $res .= "<button id=\"$nameNoSpacing-class$idClass\" type=\"button\" onclick=\"removeClass('chgClass-$nameNoSpacing', '$nameNoSpacing-class$idClass', '$classesElem')\" class=\"elemClass\"><p>" . $classesElem . "</p></button>";
+                    if ($inClassTextArea == "") {
+                        $inClassTextArea .= $classesElem;
+                    } else {
+                        $inClassTextArea .= " " . $classesElem;
+                    }
                     $idClass++;
                 }
             }
             $res .= "</div>";
-            $res .= "<textarea id=\"$nameNoSpacing-calssArea\" hidden name=\"class-" . $elem['name'] . "\">" . $inClassTextArea . "</textarea>";
+            $res .= "<textarea id=\"chgClass-$nameNoSpacing\" name=\"chgClass-$nameNoSpacing\" class=\"class-" . $elem['name'] . "\" hidden>" . $inClassTextArea . "</textarea>";
             $res .= self::getSpecificsOptions($baliseArray);
             $res .= "</form>";
             $res .= "</div>";
         }
         return $res;
+    }
+
+    public static function addClassElement(array $elem, string $className) {
+        var_dump($className);
+        var_dump($elem);
     }
 }
 
