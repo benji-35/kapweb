@@ -144,3 +144,14 @@ body {
 .formAddElement {
     display: none;
 }
+
+.errorElement {
+    background-color: pink;
+    width: 80%;
+    transform: translateX(-50%);
+    left: 50%;
+    position: absolute;
+    margin-top: 25px;
+    border: 2px solid red;
+    border-radius: 10px;
+}

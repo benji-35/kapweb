@@ -973,6 +973,9 @@ class EditorPage {
         if ($type == "p" || $type == "h1" || $type == "h2" || $type == "h3" || $type == "h4" || $type == "h5" || $type == "h6") {
             return "<textarea class=\"contentTextValue\" name=\"chgContent-$nameNoSpacing\">" . $balise['content'] . "</textarea>";
         }
+        if ($type == "div" || $type == "picture") {
+            return "";
+        }
         if ($ext->isExtensionBaliseType($balise['type'])) {
             $vars = $ext->getVarsFromFrontElement($balise['type']);
             $editPagePath = $ext->getPageEditHtmlFromElement($balise['type']);
@@ -996,7 +999,7 @@ class EditorPage {
             }
             return $res;
         }
-        return '';
+        return '<div class="errorElement"><h2>Sorry, an error occured while charging extension front page</h2></div>';
     }
 
     private static function getElemsFromParent(string $parentName, array $elems):array {
