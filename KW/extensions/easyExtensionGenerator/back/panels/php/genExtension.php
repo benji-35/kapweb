@@ -27,8 +27,8 @@
             }
         }
         $exts = $ext->getExtensionList();
-        for ($i = 0; $i < count($exts); $i++) {
-            if ($exts[$i]['name'] == $name) {
+        foreach ($exts as $ext) {
+            if ($ext['name'] == $name) {
                 //le nom est déjà utlisé donc on abandonne
                 return;
             }

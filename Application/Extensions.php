@@ -374,8 +374,7 @@ class Extensions {
     public static function getPhpExtensionManager() {
         global $cf;
         $extensions = self::$extensionList;
-        for ($i = 0; $i < count($extensions); $i++) {
-            $extension = $extensions[$i];
+        foreach ($extensions as $extension) {
             if ($extension['isBack'] && $extension['use'] == "true") {
                 $pathBackManger = $extension['path'] . "/back/manager-ui.conf";
                 $nb_uis = $cf->getValueFromKeyConf($pathBackManger, "manager-ui");
