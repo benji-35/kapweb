@@ -951,7 +951,7 @@ class EditorPage {
             <input type="text" placeholder="Placeholder..." value="' . $balise['placeholder'] . '" name="chgPh-' . $nameNoSpacing . '">
             <input type="text" placeholder="Value..." value="' . $balise['value'] . '" name="chgIVal-' . $nameNoSpacing . '">';
         }
-        if ($type == "img") {
+        if ($type == "img" || $type == "audio" || $type == "video") {
             return '<input type="text" placeholder="Source of image..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $nameNoSpacing . '">';
         }
         if ($type == "source") {
@@ -964,7 +964,7 @@ class EditorPage {
         if ($type == "p" || $type == "h1" || $type == "h2" || $type == "h3" || $type == "h4" || $type == "h5" || $type == "h6") {
             return "<textarea class=\"contentTextValue\" name=\"chgContent-$nameNoSpacing\">" . $balise['content'] . "</textarea>";
         }
-        if ($type == "div" || $type == "picture") {
+        if ($type == "div" || $type == "picture" || $type == "button" || $type == "form" || $type == "table" || $type == "nav") {
             return "";
         }
         if ($ext->isExtensionBaliseType($balise['type'])) {
