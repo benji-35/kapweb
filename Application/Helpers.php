@@ -59,6 +59,10 @@ class Helpers {
         . "}\n"
         . ".presentationPage img {\n"
         . "\tpadding-top: 25px;\n"
+        . "}\n\n"
+        . "#img {\n"
+        . "\twidth: 50px;\n"
+        . "\theight: 50px;\n"
         . "}\n";
     private static $jsBaseContent = "//welcome, this page is created for js for the page ";
     private static $baseLang = array(

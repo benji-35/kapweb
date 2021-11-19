@@ -439,8 +439,9 @@ class EditorPage {
                     $res = array_merge($res, array($vars[$i] => $cf->getValueFromKeyConf($path, $elemName . "-" . $vars[$i])));
                 }
             }
-        } else if ($res['type'] == "img") {
+        } else if ($res['type'] == "img" || $res['type'] == "audio" || $res['type'] == "video") {
             $res = array_merge($res, array("src" => $cf->getValueFromKeyConf($path, $elemName . "-src")));
+            $res = array_merge($res, array("srcType" => $cf->getValueFromKeyConf($path, $elemName . "-srcType")));
         } else if ($res['type'] == "input") {
             $inputArray = array(
                 "itype" => preg_replace('/\p{C}+/u', "", $cf->getValueFromKeyConf($path, $elemName . "-itype")),
@@ -777,7 +778,7 @@ class EditorPage {
         return true;
     }
 
-    private static function getHtmlStringBalise($arr, $parent) {
+    private static function getHtmlStringBalise($arr, $parent, $medias) {
         global $cf, $hlp, $db, $ext;
         $res = "";
         $sizeArr = count($arr);
@@ -794,21 +795,22 @@ class EditorPage {
                         }
                         if ($balise['type'] == "img") {
                             $src = "";
-                            if ($cf->strStartWith($balise['src'], "<?=")) {
-                                $balise['src'] = $cf->getStrFromPos($balise['src'], 3);
-                                $balise['src'] = $cf->strRmChars($balise['src'], strlen($balise['src']) - 2, strlen($balise['src']));
-                                $execs = explode(" . ", $balise['src']);
-                                for ($x = 0; $x < count($execs); $x++) {
-                                    if ($execs[$x][0] != "'" && $execs[$x][0] != "\"") {
-                                        $src .= self::getCmdExec($execs[$x]);
-                                    } else {
-                                        $strSrc = $cf->getStrFromPos($execs[$x], 1);
-                                        $strSrc = $cf->strRmChars($strSrc, strlen($strSrc) - 1, strlen($strSrc));
-                                        $src .= $strSrc;
+                            if ($balise['srcType'] == "media") {
+                                $found = false;
+                                foreach ($medias as $media) {
+                                    if ($media['type'] == "1" && $media['name'] == $balise['src']) {
+                                        $src = $hlp->getMainUrl() . "/" . $media['path'];
+                                        $found = true;
+                                        break;
                                     }
                                 }
-                            } else {
+                                if ($found == false) {
+                                    $src = $balise['src'];
+                                }
+                            } else if ($balise['srcType'] == "url") {
                                 $src = $balise['src'];
+                            } else {
+                                $src = $balise['srcType'];
                             }
                             $res .= " src=\"" . $src . "\"";
                         }
@@ -829,7 +831,7 @@ class EditorPage {
                         if (self::isBaliseAutoClose($balise['type'])) {
                             $res .= ">";
                         } else {
-                            $res .= ">\n" . $balise['content'] . "\n" . self::getHtmlStringBalise($arr, $balise['name']) . "\n";
+                            $res .= ">\n" . $balise['content'] . "\n" . self::getHtmlStringBalise($arr, $balise['name'], $medias) . "\n";
                             $res .= "</" . $balise['type'] . ">\n";
                         }
                     }
@@ -873,7 +875,8 @@ class EditorPage {
             array_push($res, self::genArrayElements($nameElems[$i]));
         }
         $res = self::readSortElemPage($res, "body", array());
-        $resStr .= self::getHtmlStringBalise($res, "body");
+        $mediaListing = $hlp->getAllMedias();
+        $resStr .= self::getHtmlStringBalise($res, "body", $mediaListing);
         return $resStr;
     }
 
@@ -941,6 +944,22 @@ class EditorPage {
         }
     }
 
+    private static function getMediasSelect(int $typeMedia, string $idSelect="", string $currentChoice=""):string {
+        global $hlp;
+        $medias = $hlp->getAllMedias();
+        $res = "<select id=\"$idSelect\" name=\"$idSelect\">";
+        if ($currentChoice != "") {
+            $res .= "<option value=\"$currentChoice\" hidden selected>$currentChoice</option>";
+        }
+        foreach ($medias as $media) {
+            if ($media['type'] == $typeMedia) {
+                $res .= "<option value=\"" . $media['name'] . "\">" . $media['name'] . "</option>";
+            }
+        }
+        $res .= "</select>";
+        return $res;
+    }
+
     public static function getSpecificsOptions(array $balise):string {
         global $ext;
         $type = $balise['type'];
@@ -952,7 +971,37 @@ class EditorPage {
             <input type="text" placeholder="Value..." value="' . $balise['value'] . '" name="chgIVal-' . $nameNoSpacing . '">';
         }
         if ($type == "img" || $type == "audio" || $type == "video") {
-            return '<input type="text" placeholder="Source of image..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $nameNoSpacing . '">';
+            $isMediaStart = true;
+            if ($balise['srcType'] == "url") {
+                $isMediaStart = false;
+            }
+            $res = '<select onchange="changeMediaType(\'' . "srcMedia-$nameNoSpacing" . '\', \'' . "srcUrl-$nameNoSpacing" . '\', \'srcType-' . $nameNoSpacing . '\')" name="srcType-' . $nameNoSpacing . '" id="srcType-' . $nameNoSpacing . '"><option value="' . $balise['srcType'] . '" selected hidden>' . $balise['srcType'] . '</option><option value="media">Saved Media</option><option value="url">URL</option></select>';
+            if ($isMediaStart == true) {
+                $res .= "<div id=\"srcMedia-$nameNoSpacing\">";
+            } else {
+                $res .= "<div id=\"srcMedia-$nameNoSpacing\" style=\"display: none;\">";
+            }
+            $srcBase = $balise['src'];
+            if ($isMediaStart == false) {
+                $srcBase = "";
+            }
+            if ($type == "img") {
+                $res .= self::getMediasSelect(1, "mediaSrc-$nameNoSpacing", $srcBase);
+            } else if ($type == "audio") {
+                $res .= self::getMediasSelect(2, "mediaSrc-$nameNoSpacing", $srcBase);
+            } else {
+                $res .= self::getMediasSelect(3, "mediaSrc-$nameNoSpacing", $srcBase);
+            }
+            $res .= "</div>";
+            if ($isMediaStart == true) {
+                $res .= "<div id=\"srcUrl-$nameNoSpacing\" style=\"display: none;\">";
+                $res .= "<input type=\"text\" placeholder=\"Url...\" name=\"urlSrc-$nameNoSpacing\">";
+            } else {
+                $res .= "<div id=\"srcUrl-$nameNoSpacing\">";
+                $res .= "<input type=\"text\" placeholder=\"Url...\" name=\"urlSrc-$nameNoSpacing\" value=\"" . $balise['src'] . "\">";
+            }
+            $res .= "</div>";
+            return $res;
         }
         if ($type == "source") {
             return '<input type="text" placeholder="Source..." value="' . str_replace("\"", "'", $balise['src']) . '" name="imgSrc-' . $nameNoSpacing . '">';

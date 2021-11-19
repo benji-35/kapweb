@@ -65,8 +65,16 @@
 			$src = "";
 			$link = "";
 			$target = "";
-			if (isset($_POST['imgSrc-' . $nameNoSpacing])) {
-				$src = $_POST['imgSrc-' . $nameNoSpacing];
+			$srcType = "";
+			if (isset($_POST['srcType-' . $nameNoSpacing])) {
+				$srcType = $_POST['srcType-' . $nameNoSpacing];
+				if ($srcType == "url") {
+					if (isset($_POST['urlSrc-' . $nameNoSpacing])) {
+						$src = $_POST['urlSrc-' . $nameNoSpacing];
+					}
+				} else {
+					$src = $_POST['mediaSrc-' . $nameNoSpacing];
+				}
 			}
 			if (isset($_POST['chgLink-' . $nameNoSpacing])) {
 				$link = $_POST['chgLink-' . $nameNoSpacing];
@@ -111,6 +119,7 @@
 				"src" => $src,
 				"link" => $link,
 				"target" => $target,
+				"srcType" => $srcType,
 			);
 			$arrUpdate = $ep->updateArraySaveFromExtensions($arrUpdate, $balise);
 			$ep->updateElement($balise['name'], $arrUpdate);
@@ -130,8 +139,16 @@
 			$src = "";
 			$link = "";
 			$target = "";
-			if (isset($_POST['imgSrc-' . $nameNoSpacing])) {
-				$src = $_POST['imgSrc-' . $nameNoSpacing];
+			$srcType = "";
+			if (isset($_POST['srcType-' . $nameNoSpacing])) {
+				$srcType = $_POST['srcType-' . $nameNoSpacing];
+				if ($srcType == "url") {
+					if (isset($_POST['urlSrc-' . $nameNoSpacing])) {
+						$src = $_POST['urlSrc-' . $nameNoSpacing];
+					}
+				} else {
+					$src = $_POST['mediaSrc-' . $nameNoSpacing];
+				}
 			}
 			if (isset($_POST['chgLink-' . $nameNoSpacing])) {
 				$link = $_POST['chgLink-' . $nameNoSpacing];
@@ -176,6 +193,7 @@
 				"src" => $src,
 				"link" => $link,
 				"target" => $target,
+				"srcType" => $srcType,
 			);
 			$arrUpdate = $ep->updateArraySaveFromExtensions($arrUpdate, $balise);
 			$ep->updateElement($balise['name'], $arrUpdate);

@@ -69,3 +69,16 @@ function addClass(idTextareaClasses, idInputClassName, idEditClass, nameNoSpacin
     document.getElementById(idInputClassName).value = "";
     document.getElementById(idEditClass).innerHTML += nButton;
 }
+
+function changeMediaType(idDivSrcMedia, idDivUrlMedia, idSelect) {
+    var valueSelect = document.getElementById(idSelect).value;
+
+
+    if (valueSelect == "url") {
+        document.getElementById(idDivUrlMedia).style.display = "block";
+        document.getElementById(idDivSrcMedia).style.display = "none";
+    } else {
+        document.getElementById(idDivSrcMedia).style.display = "block";
+        document.getElementById(idDivUrlMedia).style.display = "none";
+    }
+}
