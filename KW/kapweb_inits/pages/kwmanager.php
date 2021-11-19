@@ -1564,7 +1564,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <form method="POST" id="newImage-medias" style="display: none;" action="<?=$hlp->getMainUrl() ."/uploadMedia"?>" enctype="multipart/form-data">
+                    <form method="POST" id="newImage-medias" style="display: none;" action="<?=$hlp->getMainUrl() ."/KW/uploadMedia"?>" enctype="multipart/form-data">
                         <div class="barAction-addMedia">
                             <button type="button" onclick="abortAddImage('btnaddImage-media', 'listImages-medias', 'newImage-medias')" title="<?=$hlp->getLangWorldMainFile("w-abort")?>"><i class='bx bx-arrow-back bx-sm'></i></button>
                             <button name="addImageEdit" type="submit" title="<?=$hlp->getLangWorldMainFile("w-save")?>"><i class='bx bx-save bx-sm'></i></button>

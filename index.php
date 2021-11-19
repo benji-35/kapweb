@@ -233,6 +233,8 @@ if ($hlp->haveConnectionDbIntels() == false || $canConnect == false) {
                 } else {
                     require $hlp->getPathPage(array("pageNotFound")); 
                 }
+            } else if (count($url) >= 2 && $url[0] == "KW" && $url[1] == "uploadMedia") {
+                require $hlp->getPathPage($url);
             } else if (count($url) == 2 && $url[0] == "confirmEmail") {
                 unset($_SESSION['confEmail']);
                 $_SESSION['confEmail'] = $url[1];

@@ -860,7 +860,7 @@ class Helpers {
                 "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stm->execute(array(
                 "uploadMedia",
-                "/uploadMedia",
+                "/KW/uploadMedia",
                 "Upload Media",
                 "KW/kapweb_inits/pages/uploadMedia.php",
                 1,
