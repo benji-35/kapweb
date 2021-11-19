@@ -92,6 +92,7 @@
             . "#[name of element]-back=[true/false] -> know if we need to generate back php (BEFORE !DOCTYPE) or not\n"
             . "#[name of element]-css=[true/false] -> know if we need to generate css or not\n"
             . "#[name of element]-vars=[var name 1],[var name 2],...\n"
+            . "#[name of element]-logo=[logo boxicon] -> to have a graphic representation in page editor\n"
             . "#\n";
 
         $db_base_content = "#table-used=[db1,db2,...]\n\n"
