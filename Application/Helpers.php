@@ -2308,27 +2308,19 @@ class Helpers {
         $stm = $connect->prepare("SELECT * FROM kp_tables WHERE hided=0");
         $stm->execute();
         while ($resStm = $stm->fetch()) {
-            $foundDb = false;
             foreach ($extensions as $ext) {
-                $dbs = $cf->getValueFromKeyConf($ext['path'] . "/database/db.conf", "table-used");
+                if ($ext['isDbExt'] == "true") {
+                    $dbs = $cf->getValueFromKeyConf($ext['path'] . "/database/db.conf", "table-used");
                     $dbList = explode(",", $dbs);
                     foreach ($dbList as $dbTarget) {
                         if ($dbTarget != "" && $dbTarget == $resStm['name']) {
-                            if ($ext['isDbExt'] != "true") {
-                                $stm2 = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
-                                $stm2->execute(array($resStm['name']));
-                                $stm2 = $connect->prepare("DROP TABLE " . $resStm['name']);
-                                $stm2->execute();
-                            }
-                            $foundDb = true;
+                            $stm2 = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
+                            $stm2->execute(array($dbTarget));
+                            $stm2 = $connect->prepare("DROP TABLE $dbTarget");
+                            $stm2->execute();
                         }
                     }
-            }
-            if ($foundDb == false) {
-                $stm2 = $connect->prepare("DELETE FROM kp_tables WHERE name=?");
-                $stm2->execute(array($resStm['name']));
-                $stm2 = $connect->prepare("DROP TABLE " . $resStm['name']);
-                $stm2->execute();
+                }
             }
         }
         $db->disconnect();
