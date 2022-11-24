@@ -9,6 +9,11 @@ class Helpers {
     private static $db = NULL;
     private static $cf = NULL;
 
+    private static function startWith($string, $handle): bool {
+        $len = strlen($handle);
+        return (substr($string, 0, $len) === $handle);
+    }
+
     private static $phpBaseContent = "<?php\n?>\n<!DOCTYPE html>\n<html lang=\"<?=\$_SESSION['language']?>\">\n"
         . "\t<head>\n\t\t<title><?=\$_SESSION['titlePage']?></title>\n"
         . "\t\t<meta charset=\"utf-8\">\n"
@@ -203,14 +208,22 @@ class Helpers {
     }
 
     public static function getMainUrl():string {
-        global $cf;
-        $res = $cf->getValueFromKeyConf($cf->getFilesConfig(), "main_url");
-        if ($res != "") {
-            return $res;
-        } else {
-            self::$cf->addValueFormKeyConf($cf->getFilesConfig(), "main_url", "http://localhost/kapweb");
-            return "http://localhost/kapweb";
+        $currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+
+        if (self::startWith($currentUrl, "http://localhost") || self::startWith($currentUrl, "https://localhost")) {
+            $explode = explode("/", $_SERVER['REQUEST_URI'], 3);
+            return $currentUrl . "/" . $explode[1] . "/";
         }
+        return $currentUrl;
+    }
+
+    public static function getCurrentUrl():string {
+        $mainUrl = self::getMainUrl();
+        if (self::startWith($mainUrl, "http://localhost") || self::startWith($mainUrl, "https://localhost")) {
+            $explode = explode("/", $_SERVER['REQUEST_URI'], 3);
+            return $mainUrl . $explode[2];
+        }
+        return "" . $mainUrl . $_SERVER['REQUEST_URI'];
     }
 
     public static function deleteAllFilePage() {
